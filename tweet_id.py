@@ -4,13 +4,13 @@ import sys
 import gzip
 
 txt_column = int(sys.argv[1])
-tst = gzip.open(sys.argv[2],"wb")
-infiles = sys.argv[3:]
+infiles = sys.argv[2:]
 
 cid = 0
 l = 9
 
 for f in infiles:
+    print f
     id_tweets = []
     if f[-2:] == "gz":
         infile = gzip.open(f,"rb")
@@ -19,12 +19,14 @@ for f in infiles:
     for tweet in infile.readlines():
         zeros = l - len(str(cid))
         tid = zeros * '0' + str(cid)
-        tokens = tweet.split(" ")
+        tokens = tweet.decode('utf-8').split(" ")
         meta = tokens[:txt_column]
-        txt = [x.decode('utf-8') for x in tokens[txt_column:]]
-        id_tweet = "\t".join([zeros] + meta + [" ".join(txt)])
+        txt = tokens[txt_column:]
+        id_tweet = "\t".join([tid] + meta + [" ".join(txt)])
         id_tweets.append(id_tweet)
+        cid += 1
     infile.close()
-    for it in id_tweet:
-        tst.write(it)
-tst.close()
+    outfile = gzip.open(f,"wb")
+    for it in id_tweets:
+        outfile.write(it.encode('utf-8'))
+    outfile.close()

@@ -21,7 +21,7 @@ for f in infiles:
         infile = open(f)
     tweet = infile.readlines()[0]
     #print tweet
-    timeinfo = [tweet.split(" ")[date_column],tweet.split(" ")[time_column]]
+    timeinfo = [tweet.split("\t")[date_column],tweet.split("\t")[time_column]]
     #print timeinfo
     tweet_datetime = time_functions.return_datetime(timeinfo[0],time=timeinfo[1],setting="vs")
     file_hour[tweet_datetime] = f
