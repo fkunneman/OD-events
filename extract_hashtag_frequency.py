@@ -14,14 +14,16 @@ infiles = sys.argv[4:]
 
 file_hour = {}
 #order files in time
-for f in infile:
+for f in infiles:
     if f[-2:] == "gz":
         infile = gzip.open(f,"rb")
     else:
         infile = open(f)
     tweet = infile.readlines()[0]
-    timeinfo = " ".join([tweet.split(" ")[date_column],tweet.split(" ")[time_column]])
-    tweet_datetime = time_functions.return_datetime(time_info,time=True,setting="vs")
+    #print tweet
+    timeinfo = [tweet.split(" ")[date_column],tweet.split(" ")[time_column]]
+    #print timeinfo
+    tweet_datetime = time_functions.return_datetime(timeinfo[0],time=timeinfo[1],setting="vs")
     file_hour[tweet_datetime] = f
     infile.close()
 
