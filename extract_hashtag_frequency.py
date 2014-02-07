@@ -13,43 +13,28 @@ date_column = int(sys.argv[2])
 time_column = int(sys.argv[3])
 infiles = sys.argv[4:]
 
-file_hour = {}
-#order files in time
-print "Ordering files in time..."
-for f in infiles:
-    if f[-2:] == "gz":
-        infile = gzip.open(f,"rb")
-    else:
-        infile = open(f)
-    tweet = infile.readlines()[100]
-    #print tweet
-    timeinfo = [tweet.split("\t")[date_column],tweet.split("\t")[time_column]]
-    #print timeinfo
-    tweet_datetime = time_functions.return_datetime(timeinfo[0],time=timeinfo[1],setting="vs")
-    file_hour[tweet_datetime] = f
-    infile.close()
-
 # make hashtag frequency list
 hashtag_frequency = defaultdict(int)
-hashtag_match = re.compile(r' (#.+) ')
-# for each hour
-for hour in sorted(file_hour.keys()):
-    f = file_hour[hour]
+hashtag_time = defaultdict(lambda : defaultdict(int))
+for f in infiles:
+    print f
     if f[-2:] == "gz":
         infile = gzip.open(f,"rb")
     else:
         infile = open(f)
     # for each tweet
     for tweet in infile.readlines():
-        print tweet
         if re.search(r'#',tweet):
-            hashtags = re.findall(r' ?(#[^ \n]+) ?',tweet)
-           
-            print hashtags
+            timeinfo = [tweet.split("\t")[date_column],tweet.split("\t")[time_column]]
+            tweet_datetime = time_functions.return_datetime(timeinfo[0],time=timeinfo[1],setting="vs")
+            for hashtag in re.findall(r' (#.+) ',tweet):
+                hashtag_time[hashtag][tweet_datetime] += 1
+                hashtag_frequency[hashtag] += 1
+    print hashtag_frequency
+    infile.close()
 
 
 
-# add hashtag to counter
 
 #cluster similar hashtags
 
