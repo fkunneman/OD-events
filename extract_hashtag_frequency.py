@@ -4,6 +4,7 @@ import sys
 import datetime
 from collections import defaultdict
 import gzip
+import re
 
 import time_functions
 
@@ -31,6 +32,8 @@ for f in infiles:
     infile.close()
 
 # make hashtag frequency list
+hashtag_frequency = defaultdict(int)
+hashtag_match = re.compile(r' (#.+) ')
 # for each hour
 for hour in sorted(file_hour.keys()):
     f = file_hour[hour]
@@ -39,6 +42,12 @@ for hour in sorted(file_hour.keys()):
     else:
         infile = open(f)
     # for each tweet
+    for tweet in infile.readlines():
+        if re.search(r'#',tweet):
+            hashtags = re.findall(r' (#.+) ',tweet)
+            print hashtags
+
+
 
 # add hashtag to counter
 
@@ -47,5 +56,5 @@ for hour in sorted(file_hour.keys()):
 # prune hashtags occuring less then 10 times
 
 # for each set of 1000 hashtags in frequency list
-# count the number of occurences per hour
+# count the number of occurrences per hour
 # write hour-frequency lists to file 
