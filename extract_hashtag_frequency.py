@@ -88,7 +88,7 @@ for h in hashtags[:freq_bound]:
     hashtag_peakscore.append((h,str(score),"|".join([str(e) for e in sequence]),str(ma),str(median)))
 
 for y in sorted(hashtag_peakscore,key=lambda x: x[1],reverse=True):
-     outfile.write(" ".join(y))
+     outfile.write(" ".join(y) + "\n")
 outfile.close()
 # for each set of 1000 hashtags in frequency list
 # count the number of occurrences per hour
