@@ -10,7 +10,7 @@ from pynlpl.statistics import levenshtein
 
 import time_functions
 
-outfile = sys.argv[1]
+outfile = open(sys.argv[1],"w","utf-8")
 date_column = int(sys.argv[2])
 time_column = int(sys.argv[3])
 infiles = sys.argv[4:]
@@ -80,16 +80,17 @@ for i,h in enumerate(hashtags):
 #     print h,hashtag_sequence[h]
 
 hashtag_peakscore = []
-for h in hashtags[:1000]:
+for h in hashtags[:freq_bound]:
     sequence = [hashtag_time[h][d] for d in sorted(hashtag_time[h].keys())]
     ma = max(sequence)
     median = numpy.median(sequence)
     score = ma/median
     print h,sequence,ma,median,score
-    hashtag_peakscore.append((h,score))
+    hashtag_peakscore.append((h,score,"|".join(sequence),ma,median))
 
-print sorted(hashtag_peakscore,key=lambda x: x[1])
-
+for y in sorted(hashtag_peakscore,key=lambda x: x[1],reverse=True):
+     outfile.write(" ".join(y))
+outfile.close()
 # for each set of 1000 hashtags in frequency list
 # count the number of occurrences per hour
 # write hour-frequency lists to file 
