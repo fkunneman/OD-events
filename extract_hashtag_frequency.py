@@ -10,7 +10,7 @@ from pynlpl.statistics import levenshtein
 
 import time_functions
 
-outfile = open(sys.argv[1],"w","utf-8")
+outfile = open(sys.argv[1],"w")
 date_column = int(sys.argv[2])
 time_column = int(sys.argv[3])
 infiles = sys.argv[4:]
