@@ -17,39 +17,39 @@ infiles = sys.argv[4:]
 # make hashtag frequency list
 hashtag_frequency = defaultdict(int)
 hashtag_time = defaultdict(list)
-for f in infiles:
-    print f
-    if f[-2:] == "gz":
-        infile = gzip.open(f,"rb")
-    else:
-        infile = open(f)
-    # for each tweet
-    for tweet in infile.readlines():
-        if re.search(r'#',tweet):
-            timeinfo = [tweet.split("\t")[date_column],tweet.split("\t")[time_column]]
-            tweet_datetime = time_functions.return_datetime(timeinfo[0],time=timeinfo[1],setting="vs")
-            for hashtag in re.findall(r' ?(#[^ \n]+) ?',tweet):
-                hashtag = hashtag.lower()
-                hashtag_time[hashtag].append(tweet_datetime)
-                hashtag_frequency[hashtag] += 1
-    infile.close()
+# for f in infiles:
+#     print f
+#     if f[-2:] == "gz":
+#         infile = gzip.open(f,"rb")
+#     else:
+#         infile = open(f)
+#     # for each tweet
+#     for tweet in infile.readlines():
+#         if re.search(r'#',tweet):
+#             timeinfo = [tweet.split("\t")[date_column],tweet.split("\t")[time_column]]
+#             tweet_datetime = time_functions.return_datetime(timeinfo[0],time=timeinfo[1],setting="vs")
+#             for hashtag in re.findall(r' ?(#[^ \n]+) ?',tweet):
+#                 hashtag = hashtag.lower()
+#                 hashtag_time[hashtag].append(tweet_datetime)
+#                 hashtag_frequency[hashtag] += 1
+#     infile.close()
 
-#cluster similar hashtags
-# hashtags = hashtag_frequency.keys()
-# sim_hashtags = []
-# for hashtag1 in hashtags:
-#     print hashtag1
-#     for hashtag2 in hashtags:
-#         dist = levenshtein(hashtag1,hashtag2)
-#         if dist <= 2:
-#             print hashtag1,hashtag2,levenshtein(hashtag1,hashtag2)
+# #cluster similar hashtags
+# # hashtags = hashtag_frequency.keys()
+# # sim_hashtags = []
+# # for hashtag1 in hashtags:
+# #     print hashtag1
+# #     for hashtag2 in hashtags:
+# #         dist = levenshtein(hashtag1,hashtag2)
+# #         if dist <= 2:
+# #             print hashtag1,hashtag2,levenshtein(hashtag1,hashtag2)
 
-hashtags = sorted(hashtag_frequency, key=hashtag_frequency.get, reverse=True)
-# prune hashtags occuring less then 10 times
-for i,h in enumerate(hashtags):
-    if hashtag_frequency[h] == 10:
-        freq_bound = i
-        break
+# hashtags = sorted(hashtag_frequency, key=hashtag_frequency.get, reverse=True)
+# # prune hashtags occuring less then 10 times
+# for i,h in enumerate(hashtags):
+#     if hashtag_frequency[h] == 10:
+#         freq_bound = i
+#         break
 
 # make hashtag time sequences
 start_tweet = gzip.open(infiles[0],"rb").readlines()[0]
