@@ -88,7 +88,7 @@ for h in hashtags[:freq_bound]:
             sequence.append(hashtag_time[h][day])
         else:
             sequence.append(0)
-    print hashtag,sequence
+    print h,sequence
     ma = max(sequence)
     median = numpy.median(sequence)
     mean = numpy.mean(sequence)
