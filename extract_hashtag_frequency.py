@@ -27,7 +27,7 @@ for f in infiles:
         if re.search(r'#',tweet):
             timeinfo = [tweet.split("\t")[date_column],tweet.split("\t")[time_column]]
             tweet_datetime = time_functions.return_datetime(timeinfo[0],time=timeinfo[1],setting="vs")
-            for hashtag in re.findall(r' (#.+) ',tweet):
+            for hashtag in re.findall(r' ?(#[^ \n]+) ?',tweet):
                 hashtag_time[hashtag][tweet_datetime] += 1
                 hashtag_frequency[hashtag] += 1
     print hashtag_frequency
