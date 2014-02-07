@@ -21,7 +21,7 @@ for f in infiles:
         infile = gzip.open(f,"rb")
     else:
         infile = open(f)
-    tweet = infile.readlines()[0]
+    tweet = infile.readlines()[100]
     #print tweet
     timeinfo = [tweet.split("\t")[date_column],tweet.split("\t")[time_column]]
     #print timeinfo
