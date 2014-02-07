@@ -85,8 +85,7 @@ for h in hashtags[:freq_bound]:
     ma = max(sequence)
     median = numpy.median(sequence)
     score = ma/median
-    print h,sequence,ma,median,score
-    hashtag_peakscore.append((h,score,"|".join(sequence),ma,median))
+    hashtag_peakscore.append((h,str(score),"|".join([str(e) for e in sequence]),str(ma),str(median))
 
 for y in sorted(hashtag_peakscore,key=lambda x: x[1],reverse=True):
      outfile.write(" ".join(y))
