@@ -38,8 +38,11 @@ for f in infiles:
 hashtags = hashtag_frequency.keys()
 sim_hashtags = []
 for hashtag1 in hashtags:
-    for hashtag2 in hasthags:
-        print hashtag1,hashtag2,levenshtein(hashtag1,hashtag2)
+    print hashtag1
+    for hashtag2 in hashtags:
+        dist = levenshtein(hashtag1,hashtag2)
+        if dist <= 2:
+            print hashtag1,hashtag2,levenshtein(hashtag1,hashtag2)
 
 exit()
 # prune hashtags occuring less then 10 times
