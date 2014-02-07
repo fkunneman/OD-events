@@ -30,15 +30,14 @@ for f in infiles:
             for hashtag in re.findall(r' ?(#[^ \n]+) ?',tweet):
                 hashtag_time[hashtag][tweet_datetime] += 1
                 hashtag_frequency[hashtag] += 1
-    print hashtag_frequency
     infile.close()
-
-
-
 
 #cluster similar hashtags
 
 # prune hashtags occuring less then 10 times
+for h in sorted(hashtag_frequency, key=hashtag_frequency.get, reverse=True)[:250]:
+    print h, hashtag_frequency[h]
+
 
 # for each set of 1000 hashtags in frequency list
 # count the number of occurrences per hour
