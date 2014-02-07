@@ -73,6 +73,8 @@ for h in hashtags[:10]:
         while timepoints[i] < ts:
             hashtag_sequence[h][j] += 1
             i += 1
+            if i == len(timepoints):
+                break
     print h,hashtag_sequence[h]
 
 
