@@ -14,7 +14,9 @@ infiles = sys.argv[4:]
 
 file_hour = {}
 #order files in time
+print "Ordering files in time..."
 for f in infiles:
+    print f
     if f[-2:] == "gz":
         infile = gzip.open(f,"rb")
     else:
@@ -24,14 +26,20 @@ for f in infiles:
     timeinfo = [tweet.split(" ")[date_column],tweet.split(" ")[time_column]]
     #print timeinfo
     tweet_datetime = time_functions.return_datetime(timeinfo[0],time=timeinfo[1],setting="vs")
+    print tweet_datetime
     file_hour[tweet_datetime] = f
     infile.close()
 
 # make hashtag frequency list
-for hour in sorted(file_hour.keys()):
-    print file_hour[hour]
 # for each hour
-# for each tweet
+for hour in sorted(file_hour.keys()):
+    f = file_hour[hour]
+    if f[-2:] == "gz":
+        infile = gzip.open(f,"rb")
+    else:
+        infile = open(f)
+    # for each tweet
+
 # add hashtag to counter
 
 #cluster similar hashtags
