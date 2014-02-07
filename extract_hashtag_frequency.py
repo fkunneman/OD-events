@@ -5,6 +5,7 @@ import datetime
 from collections import defaultdict
 import gzip
 import re
+import numpy
 from pynlpl.statistics import levenshtein
 
 import time_functions
@@ -78,10 +79,16 @@ for i,h in enumerate(hashtags):
 #                 break
 #     print h,hashtag_sequence[h]
 
+hashtag_peakscore = []
 for h in hashtags[:1000]:
-    days = sorted(hashtag_time[h].keys())
-    print days
-    exit()
+    sequence = [hashtag_time[h][d] for d in sorted(hashtag_time[h].keys())]
+    ma = max(sequence)
+    median = numpy.median(sequence)
+    score = ma/median
+    print h,sequence,ma,median,score
+    hashtag_peakscore.append((h,score))
+
+print sorted(hashtag_peakscore,key=lambda x: x[1])
 
 # for each set of 1000 hashtags in frequency list
 # count the number of occurrences per hour
