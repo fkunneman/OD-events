@@ -61,8 +61,11 @@ end_datetime = time_functions.return_datetime(timeinfo[0],time=timeinfo[1],setti
 timesegments = []
 current_time = start_datetime
 while current_time <= end_time:
-    current_time += datetime.timedelta(hours=1)
+    current_time += datetime.timedelta(days=1)
     timesegments.append(current_time) 
+print timesegments
+
+exit()
 
 hashtag_sequence = defaultdict(list)
 for h in hashtags[:10]:
