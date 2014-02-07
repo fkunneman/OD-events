@@ -60,7 +60,7 @@ end_timeinfo = [end_tweet.split("\t")[date_column],end_tweet.split("\t")[time_co
 end_datetime = time_functions.return_datetime(end_timeinfo[0],time=end_timeinfo[1],setting="vs")
 timesegments = []
 current_time = start_datetime
-while current_time <= end_time:
+while current_time <= end_datetime:
     current_time += datetime.timedelta(days=1)
     timesegments.append(current_time) 
 print timesegments
