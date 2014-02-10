@@ -83,6 +83,7 @@ while current_time <= end_datetime:
 #     print h,hashtag_sequence[h]
 
 hashtag_peakscore = []
+hashtag_peakscore_stripped = []
 for h in hashtags[:freq_bound]:
     sequence = []
     sequence_stripped = []
