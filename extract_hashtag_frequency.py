@@ -89,11 +89,12 @@ for h in hashtags[:freq_bound]:
     sequence_stripped = []
     hashtag_days = sorted(hashtag_time[h].keys())
     for day in timesegments:
-        sequence_stripped.append(hashtag_time[h][day])
         if day in hashtag_days:
             sequence.append(hashtag_time[h][day])
         else:
             sequence.append(0)
+    for day in hashtag_days:
+        sequence_stripped.append(hashtag_time[h][day])
     mas = max(sequence_stripped)
     medians = numpy.median(sequence_stripped)
     means = numpy.mean(sequence_stripped)
