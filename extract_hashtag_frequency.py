@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import division
 import sys
 import datetime
 from collections import defaultdict
@@ -10,16 +11,16 @@ from pynlpl.statistics import levenshtein
 
 import time_functions
 
-outfile1 = open(sys.argv[1],"w")
-outfile2 = open(sys.argv[2],"w")
-date_column = int(sys.argv[3])
-time_column = int(sys.argv[4])
-infiles = sys.argv[5:]
+outfile_frame = sys.argv[1]
+date_column = int(sys.argv[2])
+time_column = int(sys.argv[3])
+infiles = sys.argv[4:]
 
 # make hashtag frequency list
 hashtag_frequency = defaultdict(int)
 hashtag_time = defaultdict(lambda : defaultdict(int))
 for f in infiles:
+    print f
     #print f
     if f[-2:] == "gz":
         infile = gzip.open(f,"rb")
@@ -31,7 +32,7 @@ for f in infiles:
             timeinfo = [tweet.split("\t")[date_column],tweet.split("\t")[time_column]]
             tweet_date = time_functions.return_datetime(timeinfo[0],setting="vs")
             for hashtag in re.findall(r' ?(#[^ \n]+) ?',tweet):
-                if re.search(' ',hashtag):
+                if re.search(r'\s',hashtag):
                     print hashtag,tweet
                 hashtag = hashtag.lower()
                 hashtag_time[hashtag][tweet_date] += 1
@@ -84,26 +85,39 @@ while current_time <= end_datetime:
 hashtag_peakscore = []
 for h in hashtags[:freq_bound]:
     sequence = []
+    sequence_stripped = []
     hashtag_days = sorted(hashtag_time[h].keys())
     for day in timesegments:
+        sequence_stripped.append(hashtag_time[h][day])
         if day in hashtag_days:
             sequence.append(hashtag_time[h][day])
         else:
             sequence.append(0)
+    mas = max(sequence_stripped)
+    medians = numpy.median(sequence_stripped)
+    means = numpy.mean(sequence_stripped)
+    score1s = mas/medians
+    score2s = mas/means
+    hashtag_peakscore_stripped.append((h,score1s,score2s,"|".join([str(e) for e in sequence]),mas,medians))
     ma = max(sequence)
     median = numpy.median(sequence) + 1
     mean = numpy.mean(sequence)
     score1 = ma/median
     score2 = ma/mean
-    hashtag_peakscore.append((h,str(score1),str(score2),"|".join([str(e) for e in sequence]),str(ma),str(median)))
+    hashtag_peakscore.append((h,score1,score2,"|".join([str(e) for e in sequence]),ma,median))
+
 
 for y in sorted(hashtag_peakscore,key=lambda x: x[1],reverse=True):
-     outfile1.write(" ".join(y) + "\n")
+    yl = [str(z) for z in y] 
+    outfile1.write(" ".join(yl) + "\n")
 outfile1.close()
 
 for y in sorted(hashtag_peakscore,key=lambda x: x[2],reverse=True):
-     outfile2.write(" ".join(y) + "\n")
+    yl = [str(z) for z in y]
+    outfile2.write(" ".join(yl) + "\n")
 outfile2.close()
+
+
 
 # for each set of 1000 hashtags in frequency list
 # count the number of occurrences per hour
