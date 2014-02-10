@@ -20,7 +20,7 @@ infiles = sys.argv[5:]
 hashtag_frequency = defaultdict(int)
 hashtag_time = defaultdict(lambda : defaultdict(int))
 for f in infiles:
-    print f
+    #print f
     if f[-2:] == "gz":
         infile = gzip.open(f,"rb")
     else:
