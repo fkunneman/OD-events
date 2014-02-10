@@ -31,6 +31,8 @@ for f in infiles:
             timeinfo = [tweet.split("\t")[date_column],tweet.split("\t")[time_column]]
             tweet_date = time_functions.return_datetime(timeinfo[0],setting="vs")
             for hashtag in re.findall(r' ?(#[^ \n]+) ?',tweet):
+                if re.search(' ',hashtag):
+                    print hashtag,tweet
                 hashtag = hashtag.lower()
                 hashtag_time[hashtag][tweet_date] += 1
                 hashtag_frequency[hashtag] += 1
@@ -90,7 +92,7 @@ for h in hashtags[:freq_bound]:
             sequence.append(0)
     ma = max(sequence)
     median = numpy.median(sequence) + 1
-    mean = numpy.mean(sequence) + 1
+    mean = numpy.mean(sequence)
     score1 = ma/median
     score2 = ma/mean
     hashtag_peakscore.append((h,str(score1),str(score2),"|".join([str(e) for e in sequence]),str(ma),str(median)))
