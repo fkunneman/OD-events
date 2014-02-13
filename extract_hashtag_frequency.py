@@ -15,9 +15,10 @@ import time_functions
 import gen_functions
 
 outfile_frame = sys.argv[1]
-date_column = int(sys.argv[2])
-time_column = int(sys.argv[3])
-infiles = sys.argv[4:]
+retweet_removal = int(sys.argv[2])
+date_column = int(sys.argv[3])
+time_column = int(sys.argv[4])
+infiles = sys.argv[5:]
 
 # make hashtag frequency list
 hashtag_frequency = defaultdict(int)
@@ -30,6 +31,8 @@ for f in infiles:
         infile = open(f)
     # for each tweet
     for tweet in infile.readlines():
+        if retweet_removal and re.search(r'( |^)RT ?',tweet.split("\t")[-1]):
+            continue
         if re.search(r'#',tweet):
             timeinfo = [tweet.split("\t")[date_column],tweet.split("\t")[time_column]]
             tweet_date = time_functions.return_datetime(timeinfo[0],setting="vs")
