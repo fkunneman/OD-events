@@ -129,6 +129,7 @@ for h in hashtags[:freq_bound]:
     while left > 0.1:
         t -= 1
         if t < 0:
+            t = peaktime
             break
         left = sequence[t] / ma
     score3 = peaktime - t
