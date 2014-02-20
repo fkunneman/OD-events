@@ -126,6 +126,8 @@ for h in hashtags[:freq_bound]:
     t = peaktime
     while left > 0.1:
         t -= 1
+        if t < 0:
+            break
         left = sequence[t] / ma
     score3 = peaktime - t
     hashtag_peakscore.append((h,score1,score2,score3,st,"|".join([str(e) for e in sequence]),ma,median))
