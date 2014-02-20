@@ -35,7 +35,7 @@ for f in infiles:
             continue
         if re.search(r'#',tweet):
             timeinfo = [tweet.split("\t")[date_column],tweet.split("\t")[time_column]]
-            tweet_date = time_functions.return_datetime(timeinfo[0],setting="vs")
+            tweet_date = time_functions.return_datetime(timeinfo[0],time = timeinfo[1],minute = False,setting="vs")
             for hashtag in re.findall(r' ?(#[^ \n]+) ?',tweet):
                 # if re.search(r'\s',hashtag):
                 #     print hashtag,tweet
@@ -92,14 +92,16 @@ hashtag_peakscore_stripped = []
 for h in hashtags[:freq_bound]:
     sequence = []
     sequence_stripped = []
-    hashtag_days = sorted(hashtag_time[h].keys())
-    for day in timesegments:
-        if day in hashtag_days:
-            sequence.append(hashtag_time[h][day])
+    hashtag_hours = sorted(hashtag_time[h].keys())
+    for hour in timesegments:
+        if hour in hashtag_days:
+            sequence.append(hashtag_time[h][hour])
         else:
             sequence.append(0)
-    for day in hashtag_days:
-        sequence_stripped.append(hashtag_time[h][day])
+    for hour in hashtag_hours:
+        sequence_stripped.append(hashtag_time[h][hour])
+    print sequence,sequence_stripped
+    continue
     mas = max(sequence_stripped)
     medians = numpy.median(sequence_stripped)
     means = numpy.mean(sequence_stripped)
@@ -143,6 +145,30 @@ for y in sorted(hashtag_peakscore_stripped,key=lambda x: x[2],reverse=True):
     yl = [str(z) for z in y]
     outfile5.write(" ".join(yl) + "\n")
 outfile5.close()
+
+outfile6 = open(outfile_frame + "leftcontext.txt","w")
+for y in sorted(hashtag_peakscore_stripped,key=lambda x: x[2],reverse=True):
+    yl = [str(z) for z in y]
+    outfile6.write(" ".join(yl) + "\n")
+outfile6.close()
+
+outfile7 = open(outfile_frame + "leftcontext_stripped.txt","w")
+for y in sorted(hashtag_peakscore_stripped,key=lambda x: x[2],reverse=True):
+    yl = [str(z) for z in y]
+    outfile7.write(" ".join(yl) + "\n")
+outfile7.close()
+
+outfile8 = open(outfile_frame + "leftcontext_meanr_stripped.txt","w")
+for y in sorted(hashtag_peakscore_stripped,key=lambda x: x[2],reverse=True):
+    yl = [str(z) for z in y]
+    outfile8.write(" ".join(yl) + "\n")
+outfile8.close()
+
+outfile9 = open(outfile_frame + "leftcontext_meanr.txt","w")
+for y in sorted(hashtag_peakscore_stripped,key=lambda x: x[2],reverse=True):
+    yl = [str(z) for z in y]
+    outfile9.write(" ".join(yl) + "\n")
+outfile9.close()
 
 # for each set of 1000 hashtags in frequency list
 # count the number of occurrences per hour
