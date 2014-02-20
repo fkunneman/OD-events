@@ -24,7 +24,7 @@ infiles = sys.argv[5:]
 hashtag_frequency = defaultdict(int)
 hashtag_time = defaultdict(lambda : defaultdict(int))
 for f in infiles:
-    #print f
+    print f
     if f[-2:] == "gz":
         infile = gzip.open(f,"rb")
     else:
@@ -35,7 +35,7 @@ for f in infiles:
             continue
         if re.search(r'#',tweet):
             timeinfo = [tweet.split("\t")[date_column],tweet.split("\t")[time_column]]
-            tweet_date = time_functions.return_datetime(timeinfo[0],time = timeinfo[1],minute = False,setting="vs")
+            tweet_date = time_functions.return_datetime(timeinfo[0],time = timeinfo[1],minute = True,setting="vs")
             for hashtag in re.findall(r' ?(#[^ \n]+) ?',tweet):
                 # if re.search(r'\s',hashtag):
                 #     print hashtag,tweet
@@ -64,14 +64,14 @@ for i,h in enumerate(hashtags):
 # make hashtag time sequences
 start_tweet = gzip.open(infiles[0],"rb").readlines()[0]
 start_timeinfo = [start_tweet.split("\t")[date_column],start_tweet.split("\t")[time_column]]
-start_datetime = time_functions.return_datetime(start_timeinfo[0],time = start_timeinfo[1],minute = False,setting="vs")
+start_datetime = time_functions.return_datetime(start_timeinfo[0],time = start_timeinfo[1],minute = True,setting="vs")
 end_tweet = gzip.open(infiles[-1],"rb").readlines()[-1]
 end_timeinfo = [end_tweet.split("\t")[date_column],end_tweet.split("\t")[time_column]]
-end_datetime = time_functions.return_datetime(end_timeinfo[0],time = end_timeinfo[1],minute = False,setting="vs")
+end_datetime = time_functions.return_datetime(end_timeinfo[0],time = end_timeinfo[1],minute = True,setting="vs")
 timesegments = [start_datetime]
 current_time = start_datetime
 while current_time <= end_datetime:
-    current_time += datetime.timedelta(days=1)
+    current_time += datetime.timedelta(hours=1)
     timesegments.append(current_time) 
 
 # hashtag_sequence = defaultdict(list)
@@ -94,7 +94,7 @@ for h in hashtags[:freq_bound]:
     sequence_stripped = []
     hashtag_hours = sorted(hashtag_time[h].keys())
     for hour in timesegments:
-        if hour in hashtag_days:
+        if hour in hashtag_hours:
             sequence.append(hashtag_time[h][hour])
         else:
             sequence.append(0)
