@@ -104,5 +104,5 @@ hashtags = hashtag_tweets.keys()
 hashtags.remove("less")
 for hashtag in hashtags:
     outfile = codecs.open(outdir + hashtag + ".txt","w","utf-8")
-    outfile.write(" ".join(hashtag_tweets[hashtag]))
+    outfile.write(" ".join([x.encode('utf-8') for x in hashtag_tweets[hashtag]]))
     outfile.close()
