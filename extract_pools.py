@@ -28,7 +28,7 @@ pool_time = defaultdict(lambda : defaultdict(int))
 def collect_data(files,quetime,quetext):
     ht_tweets = defaultdict(int)
     ht_time = defaultdict(lambda : defaultdict(int))
-    for f in infiles:
+    for f in files:
         print f
         if f[-2:] == "gz":
             infile = gzip.open(f,"rb")
@@ -59,8 +59,6 @@ qe = multiprocessing.Queue()
 qi = multiprocessing.Queue()
 chunks = gen_functions.make_chunks(infiles,12)
 for chunk in chunks:
-    print chunk
-    continue
     p = multiprocessing.Process(target=collect_data,args=[chunk,qe,qi])
     p.start()
 
