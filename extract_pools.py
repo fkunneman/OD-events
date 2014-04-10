@@ -74,7 +74,7 @@ while True:
     print len(dse)
     #dsi.append(i)
     if len(dsi) == len(infiles):
-    #     break
+        break
 
 print "join"
 for p in procs:
