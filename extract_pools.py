@@ -3,6 +3,7 @@
 #testcomment
 
 from __future__ import division
+import codecs
 import sys
 import multiprocessing
 import datetime
@@ -16,7 +17,7 @@ from pynlpl.statistics import levenshtein
 import time_functions
 import gen_functions
 
-outfile_frame = sys.argv[1]
+outdir = sys.argv[1]
 retweet_removal = int(sys.argv[2])
 date_column = int(sys.argv[3])
 time_column = int(sys.argv[4])
@@ -33,14 +34,14 @@ def collect_data(files,quetime,quetext):
         if f[-2:] == "gz":
             infile = gzip.open(f,"rb")
         else:
-            infile = open(f)
+            infile = codecs.open(f,"r","utf-8")
         # for each tweet
         for tweet in infile.readlines():
             if retweet_removal and re.search(r'( |^)RT ?',tweet.split("\t")[-1]):
                 continue
             timeinfo = [tweet.split("\t")[date_column],tweet.split("\t")[time_column]]
             tweet_date = time_functions.return_datetime(timeinfo[0],time = timeinfo[1],minute = True,setting="vs")
-            tweet_text = tweet.split("\t")[-1]
+            tweet_text = tweet.strip().split("\t")[-1]
             if re.search(r'#',tweet):
                 for hashtag in re.findall(r' ?(#[^ \n]+) ?',tweet):
                     hashtag = hashtag.lower()
@@ -95,4 +96,9 @@ for d in dse:
 
 
 #write pools
-
+hashtags = hashtag_tweets.keys()
+hashtags.delete("less")
+for hashtag in hashtags:
+    outfile = codecs.open(outdir + hashtag + ".txt","w","utf-8")
+    outfile.write(" ".join(hashtag_tweets[hashtag]))
+    outfile.close()
