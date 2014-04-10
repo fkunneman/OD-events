@@ -73,7 +73,7 @@ while True:
     dse.append(e)
     print len(dse)
     #dsi.append(i)
-    if len(dsi) == len(infiles):
+    if len(dse) == len(infiles):
         break
 
 print "join"
