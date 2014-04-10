@@ -53,7 +53,7 @@ def collect_data(files,quetext):
                 ht_tweets[hashtag].append(tweet_text)
         quetext.put(ht_tweets)
         #quetime.put(ht_time)
-        f.close()
+        infile.close()
 
 qe = multiprocessing.Queue()
 #qi = multiprocessing.Queue()
