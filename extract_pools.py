@@ -26,9 +26,9 @@ infiles = sys.argv[5:]
 pool_tweets = defaultdict(list)
 pool_time = defaultdict(lambda : defaultdict(int))
 
-def collect_data(files,quetime,quetext):
+def collect_data(files,quetext):
     ht_tweets = defaultdict(list)
-    ht_time = defaultdict(lambda : defaultdict(int))
+    #ht_time = defaultdict(lambda : defaultdict(int))
     for f in files:
         print f
         if f[-2:] == "gz":
@@ -45,11 +45,11 @@ def collect_data(files,quetime,quetext):
             if re.search(r'#',tweet):
                 for hashtag in re.findall(r' ?(#[^ \n]+) ?',tweet):
                     hashtag = hashtag.lower()
-                    ht_time[hashtag][tweet_date] += 1
+                    #ht_time[hashtag][tweet_date] += 1
                     ht_tweets[hashtag].append(tweet_text)
             else:
                 hashtag = "less"
-                ht_time[hashtag][tweet_date] += 1
+                #ht_time[hashtag][tweet_date] += 1
                 ht_tweets[hashtag].append(tweet_text)
         quetext.put(ht_tweets)
         #quetime.put(ht_time)
