@@ -39,7 +39,6 @@ def collect_data(files,quetime,quetext):
             if retweet_removal and re.search(r'( |^)RT ?',tweet.split("\t")[-1]):
                 continue
             timeinfo = [tweet.split("\t")[date_column],tweet.split("\t")[time_column]]
-            print timeinfo
             tweet_date = time_functions.return_datetime(timeinfo[0],time = timeinfo[1],minute = True,setting="vs")
             tweet_text = tweet.split("\t")[-1]
             if re.search(r'#',tweet):
