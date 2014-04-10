@@ -67,13 +67,13 @@ for chunk in chunks:
 
 dse = []
 #dst = []
-for _ in procs:
+while True:
     e = qe.get()
     #i = qi.get()
     dse.append(e)
     print len(dse)
     #dsi.append(i)
-    # if len(dsi) == len(chunks):
+    if len(dsi) == len(infiles):
     #     break
 
 print "join"
