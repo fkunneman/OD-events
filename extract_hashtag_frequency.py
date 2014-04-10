@@ -101,7 +101,6 @@ for h in hashtags[:freq_bound]:
             sequence.append(0)
     for hour in hashtag_hours:
         sequence_stripped.append(hashtag_time[h][hour])
-    print sequence,sequence_stripped
     mas = max(sequence_stripped)
     medians = numpy.median(sequence_stripped)
     means = numpy.mean(sequence_stripped)
