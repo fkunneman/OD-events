@@ -58,6 +58,8 @@ qe = multiprocessing.Queue()
 qi = multiprocessing.Queue()
 chunks = gen_functions.make_chunks(infiles,12)
 for chunk in chunks:
+    print chunk
+    continue
     p = multiprocessing.Process(target=collect_data,args=[chunk,qe,qi])
     p.start()
 
