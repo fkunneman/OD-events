@@ -56,20 +56,25 @@ def collect_data(files,quetime,quetext):
 
 qe = multiprocessing.Queue()
 qi = multiprocessing.Queue()
+procs = list()
 chunks = gen_functions.make_chunks(infiles,12)
 for chunk in chunks:
     p = multiprocessing.Process(target=collect_data,args=[chunk,qe,qi])
+    procs.append(p)
     p.start()
 
 dse = []
 dst = []
-while True:
+for _ in procs:
     e = qe.get()
     i = qi.get()
     dse.append(e)
     dsi.append(i)
-    if len(dsi) == len(chunks):
-        break
+    # if len(dsi) == len(chunks):
+    #     break
+
+for p in procs:
+    p.join()
 
 hashtag_tweets = defaultdict(int)
 hashtag_time = defaultdict(lambda : defaultdict(int))
