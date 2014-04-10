@@ -54,6 +54,7 @@ def collect_data(files,quetext):
         quetext.put(ht_tweets)
         #quetime.put(ht_time)
         infile.close()
+        print "done",f
 
 qe = multiprocessing.Queue()
 #qi = multiprocessing.Queue()
@@ -70,13 +71,16 @@ for _ in procs:
     e = qe.get()
     #i = qi.get()
     dse.append(e)
+    print len(dse)
     #dsi.append(i)
     # if len(dsi) == len(chunks):
     #     break
 
+print "join"
 for p in procs:
     p.join()
 
+print "concat"
 hashtag_tweets = defaultdict(int)
 #hashtag_time = defaultdict(lambda : defaultdict(int))
 for d in dse:
