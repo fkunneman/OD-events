@@ -26,7 +26,7 @@ pool_tweets = defaultdict(list)
 pool_time = defaultdict(lambda : defaultdict(int))
 
 def collect_data(files,quetime,quetext):
-    ht_tweets = defaultdict(int)
+    ht_tweets = defaultdict(list)
     ht_time = defaultdict(lambda : defaultdict(int))
     for f in files:
         print f
