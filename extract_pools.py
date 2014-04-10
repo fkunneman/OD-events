@@ -81,7 +81,7 @@ for p in procs:
     p.join()
 
 print "concat"
-hashtag_tweets = defaultdict(int)
+hashtag_tweets = defaultdict(list)
 #hashtag_time = defaultdict(lambda : defaultdict(int))
 for d in dse:
     for k in d:
