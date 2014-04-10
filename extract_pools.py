@@ -50,7 +50,7 @@ def collect_data(files,quetext):
             else:
                 hashtag = "less"
                 #ht_time[hashtag][tweet_date] += 1
-                ht_tweets[hashtag].append(tweet_text)
+                ht_tweets[hashtag].append(tweet_text.decode('utf-8'))
         quetext.put(ht_tweets)
         #quetime.put(ht_time)
         infile.close()
