@@ -51,25 +51,25 @@ def collect_data(files,quetime,quetext):
                 ht_time[hashtag][tweet_date] += 1
                 ht_tweets[hashtag].append(tweet_text)
         quetext.put(ht_tweets)
-        quetime.put(ht_time)
+        #quetime.put(ht_time)
         f.close()
 
 qe = multiprocessing.Queue()
-qi = multiprocessing.Queue()
+#qi = multiprocessing.Queue()
 procs = list()
 chunks = gen_functions.make_chunks(infiles,12)
 for chunk in chunks:
-    p = multiprocessing.Process(target=collect_data,args=[chunk,qe,qi])
+    p = multiprocessing.Process(target=collect_data,args=[chunk,qe])
     procs.append(p)
     p.start()
 
 dse = []
-dst = []
+#dst = []
 for _ in procs:
     e = qe.get()
-    i = qi.get()
+    #i = qi.get()
     dse.append(e)
-    dsi.append(i)
+    #dsi.append(i)
     # if len(dsi) == len(chunks):
     #     break
 
@@ -77,14 +77,14 @@ for p in procs:
     p.join()
 
 hashtag_tweets = defaultdict(int)
-hashtag_time = defaultdict(lambda : defaultdict(int))
+#hashtag_time = defaultdict(lambda : defaultdict(int))
 for d in dse:
     for k in d:
         hashtag_tweets[k].extend(d[k])
-for d in dsi:
-    for k in d:
-        for t in k:
-            hashtag_time[k][t] += d[k][t] 
+#for d in dsi:
+#    for k in d:
+#        for t in k:
+#            hashtag_time[k][t] += d[k][t] 
 
 #make pools
 
