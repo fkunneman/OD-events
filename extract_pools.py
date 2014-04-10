@@ -101,7 +101,7 @@ for d in dse:
 
 #write pools
 hashtags = hashtag_tweets.keys()
-hashtags.delete("less")
+hashtags.remove("less")
 for hashtag in hashtags:
     outfile = codecs.open(outdir + hashtag + ".txt","w","utf-8")
     outfile.write(" ".join(hashtag_tweets[hashtag]))
