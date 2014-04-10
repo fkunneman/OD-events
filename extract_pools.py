@@ -103,7 +103,11 @@ for d in dse:
 hashtags = hashtag_tweets.keys()
 hashtags.remove("less")
 for hashtag in hashtags:
-    ht = re.sub("/","|",hashtag)
-    outfile = codecs.open(outdir + ht + ".txt","w","utf-8")
-    outfile.write(" ".join([x.decode('utf-8') for x in hashtag_tweets[hashtag]]))
-    outfile.close()
+    if len(hashtag_tweets[hashtag]) > 3: 
+        ht = re.sub("/","|",hashtag)
+        try:
+            outfile = codecs.open(outdir + ht + ".txt","w","utf-8")
+            outfile.write(" ".join([x.decode('utf-8') for x in hashtag_tweets[hashtag]]))
+            outfile.close()
+        except:
+            continue
