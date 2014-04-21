@@ -13,7 +13,7 @@ import datetime
 parser = argparse.ArgumentParser(description = "")
 parser.add_argument('-i', action = 'store', required = True, help = "the input file")  
 parser.add_argument('-w', action = 'store', required = True, help = "the output file")
-parser.add_argument('-m', action = 'store', choices = ["minus","divide"], help = "the burstiness metric (choose between \'minus\' and \'divide\'"))
+parser.add_argument('-m', action = 'store', choices = ["minus","divide"], help = "the burstiness metric (choose between \'minus\' and \'divide\'")
 parser.add_argument('-s', action = 'store', type = int, default = 24, help = "the size of the sliding window (in the amount of hours; default = 24)")
 
 args = parser.parse_args()
@@ -34,12 +34,14 @@ def calculate_burstiness(hist,freq,metric):
 
 print "making sliding windows"
 
-for line in inread.readlines():
+for line in inread.readlines()[:100]:
     tokens = line.strip().split("\t")
     term = tokens[0]
     vals = tokens[1].split("|")
-    term_windows[term] = [vals[x:x+args.s] for x in xrange(1, len(vals), 24)]
-    print vals, [vals[x:x+args.s] for x in xrange(1, len(vals), 24)]
+    x = 0
+    while x < len(vals):
+        term_windows[term].append(sum([int(x) for x in vals[x:x+args.s]])) 
+    print vals, term_windows[term]
 
 print "calculating burstiness"
 for term in term_windows.keys():
