@@ -34,14 +34,15 @@ def calculate_burstiness(hist,freq,metric):
 
 print "making sliding windows"
 
-for line in inread.readlines()[:100]:
+for line in inread.readlines():
     tokens = line.strip().split("\t")
     term = tokens[0]
     vals = tokens[1].split("|")
-    x = 0
-    while x < len(vals):
-        term_windows[term].append(sum([int(x) for x in vals[x:x+args.s]])) 
-    print vals, term_windows[term]
+    i = 0
+    while i < len(vals):
+        term_windows[term].append(sum([int(x) for x in vals[i:i+args.s]])) 
+        i += args.s
+    #print vals, term_windows[term]
 
 print "calculating burstiness"
 for term in term_windows.keys():
@@ -55,8 +56,5 @@ ranked_terms = sorted(term_burst.items(), key=lambda e: e[0][0])
 for term,value in ranked_terms:
     outwrite.write(term + "\t")
     for v in value:
-        outwrite.write(" ".join(v) + "|")
+        outwrite.write(" ".join([str(x) for x in v]) + "|")
     outwrite.write("\n")
-
-
-
