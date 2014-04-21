@@ -13,7 +13,7 @@ import datetime
 parser = argparse.ArgumentParser(description = "")
 parser.add_argument('-i', action = 'store', required = True, help = "the input file")  
 parser.add_argument('-w', action = 'store', required = True, help = "the output file")
-parser.add_argument('-m', action = 'store', choices = ["minus","divide"], help = "the burstiness metric (choose between \'minus\' and \'divide\'"))
+parser.add_argument('-m', action = 'store', choices = ["minus","divide"], help = "the burstiness metric (choose between \'minus\' and \'divide\'")
 parser.add_argument('-s', action = 'store', type = int, default = 24, help = "the size of the sliding window (in the amount of hours; default = 24)")
 
 args = parser.parse_args()
