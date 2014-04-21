@@ -1,5 +1,4 @@
 
-
 import sys
 import codecs
 from collections import defaultdict
