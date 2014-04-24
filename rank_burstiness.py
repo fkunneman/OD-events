@@ -20,7 +20,7 @@ args = parser.parse_args()
 
 inread = codecs.open(args.i,"r","utf-8")
 outwrite = codecs.open(args.w,"w","utf-8")
-begin_date = datetime.datetime(2013,6,22,0,0,0)
+begin_date = datetime.date(2013,6,22)
 term_windows = defaultdict(list)
 term_burst = defaultdict(list)
 
@@ -50,10 +50,13 @@ for term in term_windows.keys():
     for i,interval in enumerate(term_windows[term][3:]):
         h = term_windows[term][0:i+3]
         bursts.append((calculate_burstiness(h,interval,args.m),begin_date+datetime.timedelta(days=i+3)))
-    term_burst[term] = sorted(bursts)[:5]
+    #print bursts,sorted(bursts,reverse=True)[:5]
+    term_burst[term] = sorted(bursts,reverse=True)[:5]
 
-ranked_terms = sorted(term_burst.items(), key=lambda e: e[0][0])
-for term,value in ranked_terms:
+ranked_terms = sorted(term_burst.items(), key=lambda x:x[1][0],reverse=True)
+
+#sorted(term_burst.items(), key=lambda e: e[0][0])
+for term,value in ranked_terms:    
     outwrite.write(term + "\t")
     for v in value:
         outwrite.write(" ".join([str(x) for x in v]) + "|")
