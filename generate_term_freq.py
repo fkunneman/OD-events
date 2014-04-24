@@ -35,7 +35,8 @@ for i,infile in enumerate(infiles):
     for line in read.readlines()[1:]:
         tokens = line.split("\t")
         term = tokens[0]
-        wordfreq[term][i] = tokens[1]
+        if include[term]:
+            wordfreq[term][i] = tokens[1]
 
 for term in wordfreq.keys():
     if max(wordfreq[term]) >= 10:

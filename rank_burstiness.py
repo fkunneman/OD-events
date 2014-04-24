@@ -25,6 +25,11 @@ outwrite = codecs.open(args.w,"w","utf-8")
 begin_date = datetime.date(2013,6,22)
 term_windows = defaultdict(list)
 term_burst = defaultdict(list)
+p = defaultdict(lambda : {}) 
+p[0][0] = 0.9
+p[1][1] = 0.6
+p[0][1] = 0.1
+p[1][0] = 0.4
 
 def calculate_burstiness(hist,freq,metric):
     mean = numpy.mean(hist)
@@ -37,16 +42,23 @@ def calculate_burstiness(hist,freq,metric):
 def retrieve_states_hmm(sequence):
     #calculate mean
     mean = numpy.mean(sequence)
-    m0 = mean
-    m1 = mean*3
-    p00 = 0.9
-    p11 = 0.6
-    p01 = 0.1
-    p10 = 0.4
-    p0 = poisson(m0)
-    p1 = poisson(m1)
-    optimal_state()
-    for interval in sequence:
+    #m = [mean,mean*3]
+    po = [poisson(mean),poisson(mean*3)]    
+    optimal_state = [[po[0].pmf(sequence[0]),[0]],[po[1].pmf(sequence[0]),[1]]]
+    print optimal_state
+    for i,interval in enumerate(sequence[1:]):
+        optimal_state_new = [[],[]]
+        for state in [0,1]:
+            opts = []
+            observed = po[state].pmf(interval)
+            opts = [(optimal_state[statem1][0]*p[statem1][state]*observed) for statem1 in [0,1]]
+            best = opts.index(max(opts))
+            optimal_state_new[state].append(max(opts))
+            optimal_state_new[state].append(optimal_state[best][1] + [state])
+        optimal_state = optimal_state_new
+        print i,optimal_state
+
+
 
 
 
