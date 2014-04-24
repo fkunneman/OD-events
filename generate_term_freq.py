@@ -22,7 +22,7 @@ for i,infile in enumerate(infiles):
 
 print "pruning terms"
 for term in wordcount.keys():
-    if wordcount[term] > 7:
+    if wordcount[term] >= 10:
         wordfreq[term] = (i+1) * ['0']
         include[term] = True
     else:
@@ -35,9 +35,8 @@ for i,infile in enumerate(infiles):
     for line in read.readlines()[1:]:
         tokens = line.split("\t")
         term = tokens[0]
-        if include[term]:
-            wordfreq[term][i] = tokens[1]
+        wordfreq[term][i] = tokens[1]
 
 for term in wordfreq.keys():
-    outfile.write(term + "\t" + "|".join(wordfreq[term]) + "\n")
-
+    if max(wordfreq[term]) >= 10:
+        outfile.write(term + "\t" + "|".join(wordfreq[term]) + "\n")

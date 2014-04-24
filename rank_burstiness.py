@@ -5,15 +5,17 @@ import argparse
 import codecs
 from collections import defaultdict
 import numpy
+from scipy.stats import poisson
 import gen_functions
 import datetime
+
 
 """
 """
 parser = argparse.ArgumentParser(description = "")
 parser.add_argument('-i', action = 'store', required = True, help = "the input file")  
 parser.add_argument('-w', action = 'store', required = True, help = "the output file")
-parser.add_argument('-m', action = 'store', choices = ["minus","divide"], help = "the burstiness metric (choose between \'minus\' and \'divide\'")
+parser.add_argument('-m', action = 'store', choices = ["minus","divide","hmm"], help = "the burstiness metric (choose between \'minus\' and \'divide\'")
 parser.add_argument('-s', action = 'store', type = int, default = 24, help = "the size of the sliding window (in the amount of hours; default = 24)")
 
 args = parser.parse_args()
@@ -31,6 +33,22 @@ def calculate_burstiness(hist,freq,metric):
         return (freq-mean-(2*st_dev))
     elif metric == "divide":
         return ((freq-mean)/st_dev)
+
+def retrieve_states_hmm(sequence):
+    #calculate mean
+    mean = numpy.mean(sequence)
+    m0 = mean
+    m1 = mean*3
+    p00 = 0.9
+    p11 = 0.6
+    p01 = 0.1
+    p10 = 0.4
+    p0 = poisson(m0)
+    p1 = poisson(m1)
+    optimal_state()
+    for interval in sequence:
+
+
 
 print "making sliding windows"
 
