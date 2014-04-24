@@ -24,7 +24,7 @@ inread = codecs.open(args.i,"r","utf-8")
 outwrite = codecs.open(args.w,"w","utf-8")
 begin_date = datetime.date(2013,6,22)
 term_windows = defaultdict(list)
-term_burst = defaultdict(list)
+term_burst = []
 p = defaultdict(lambda : {}) 
 p[0][0] = 0.9
 p[1][1] = 0.6
@@ -42,12 +42,12 @@ def calculate_burstiness(hist,freq,metric):
 def retrieve_states_hmm(sequence):
     #calculate mean
     mean = numpy.mean(sequence)
+    st_dev = gen_functions.return_standard_deviation(sequence)
     #m = [mean,mean*3]
     po = [poisson(mean),poisson(mean*3)]    
-    optimal_state = [[po[0].pmf(sequence[0]),[0]],[po[1].pmf(sequence[0]),[1]]]
-    print optimal_state
+    optimal_state = [[po[0].pmf(sequence[0]),[0]],[po[1].pmf(sequence[0]),[1]],0]
     for i,interval in enumerate(sequence[1:]):
-        optimal_state_new = [[],[]]
+        optimal_state_new = [[],[],optimal_state[2]]
         for state in [0,1]:
             opts = []
             observed = po[state].pmf(interval)
@@ -55,12 +55,13 @@ def retrieve_states_hmm(sequence):
             best = opts.index(max(opts))
             optimal_state_new[state].append(max(opts))
             optimal_state_new[state].append(optimal_state[best][1] + [state])
+        bconf = (interval - mean) - (2*st_dev)        
+        if bconf > optimal_state_new[2]:
+            optimal_state_new[2] = bconf
         optimal_state = optimal_state_new
-        print i,optimal_state
-
-
-
-
+    pathprobs = [optimal_state[0][0],optimal_state[1][0]]
+    top_path_index = pathprobs.index(max(pathprobs)) 
+    return [optimal_state[top_path_index][1],optimal_state[2]]
 
 print "making sliding windows"
 
@@ -76,18 +77,33 @@ for line in inread.readlines():
 
 print "calculating burstiness"
 for term in term_windows.keys():
-    bursts = []
-    for i,interval in enumerate(term_windows[term][3:]):
-        h = term_windows[term][0:i+3]
-        bursts.append((calculate_burstiness(h,interval,args.m),begin_date+datetime.timedelta(days=i+3)))
-    #print bursts,sorted(bursts,reverse=True)[:5]
-    term_burst[term] = sorted(bursts,reverse=True)[:5]
+    if args.m == "hmm":
+        path = retrieve_states_hmm(term_windows[term])
+        if 1 in path[0]:
+            term_burst.append([term] + path)
 
-ranked_terms = sorted(term_burst.items(), key=lambda x:x[1][0],reverse=True)
+#sort terms according to burstiness
+term_burst_sorted = term_burst.sort(key=lambda x: x[2])
+#for each term
+for term in term_burst_sorted:
+    #retrieve day/days
+    dates = []
+    for i,day in enumerate(term[1]):
+        if day == 1:
+            dates.append(begin_date+datetime.timedelta(days=i))
+    #output term\tburstiness\tdays
+    outwrite.write("\t".join([term[0],term[2]," ".join(dates)]))
 
-#sorted(term_burst.items(), key=lambda e: e[0][0])
-for term,value in ranked_terms:    
-    outwrite.write(term + "\t")
-    for v in value:
-        outwrite.write(" ".join([str(x) for x in v]) + "|")
-    outwrite.write("\n")
+
+    # bursts = []
+    # for i,interval in enumerate(term_windows[term][3:]):
+    #     h = term_windows[term][0:i+3]
+    #     bursts.append((calculate_burstiness(h,interval,args.m),begin_date+datetime.timedelta(days=i+3)))
+    # term_burst[term] = sorted(bursts)[:5]
+
+# ranked_terms = sorted(term_burst.items(), key=lambda e: e[0][0])
+# for term,value in ranked_terms:
+#     outwrite.write(term + "\t")
+#     for v in value:
+#         outwrite.write(" ".join([str(x) for x in v]) + "|")
+#     outwrite.write("\n")

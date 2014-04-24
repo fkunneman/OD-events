@@ -39,5 +39,5 @@ for i,infile in enumerate(infiles):
             wordfreq[term][i] = tokens[1]
 
 for term in wordfreq.keys():
-    if max(wordfreq[term]) >= 10:
+    if max([int(x) for x in wordfreq[term]]) >= 10:
         outfile.write(term + "\t" + "|".join(wordfreq[term]) + "\n")
