@@ -8,7 +8,8 @@ import numpy
 from scipy.stats import poisson
 import gen_functions
 import datetime
-
+from operator import itemgetter
+import re
 
 """
 """
@@ -68,22 +69,26 @@ print "making sliding windows"
 for line in inread.readlines():
     tokens = line.strip().split("\t")
     term = tokens[0]
-    vals = tokens[1].split("|")
-    i = 0
-    while i < len(vals):
-        term_windows[term].append(sum([int(x) for x in vals[i:i+args.s]])) 
-        i += args.s
+    if not re.search("^@",term):
+        vals = tokens[1].split("|")
+        i = 0
+        while i < len(vals):
+            term_windows[term].append(sum([int(x) for x in vals[i:i+args.s]])) 
+            i += args.s
     #print vals, term_windows[term]
 
 print "calculating burstiness"
 for term in term_windows.keys():
     if args.m == "hmm":
         path = retrieve_states_hmm(term_windows[term])
+#        print term,path
         if 1 in path[0]:
             term_burst.append([term] + path)
 
 #sort terms according to burstiness
-term_burst_sorted = term_burst.sort(key=lambda x: x[2])
+term_burst_sorted = sorted(term_burst, key=itemgetter(2,0,1),reverse=True)
+
+#print term_burst_sorted
 #for each term
 for term in term_burst_sorted:
     #retrieve day/days
@@ -92,7 +97,7 @@ for term in term_burst_sorted:
         if day == 1:
             dates.append(begin_date+datetime.timedelta(days=i))
     #output term\tburstiness\tdays
-    outwrite.write("\t".join([term[0],term[2]," ".join(dates)]))
+    outwrite.write("\t".join([term[0],str(term[2])," ".join([d.strftime('%y/%m/%d') for d in dates])]) + "\n")
 
 
     # bursts = []
