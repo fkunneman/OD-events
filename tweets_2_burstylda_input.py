@@ -17,14 +17,17 @@ print "Reading in data"
 for i,infile in enumerate(infiles):
     print infile
     read = codecs.open(infile,"r","utf-8")
-    for line in read.readlines()[1:]:
+    for line in read.readlines():
         tokens = line.strip().split("\t")
         text = tokens[textcol]
-        if len(text.split(" ")) >= 3 and tokens[0] == "dutch":
-            user = tokens[usercol]
-            date = tokens[datecol]
-            time = tokens[timecol]
-            user_tweets[user].append(date + " " + time + ":" + text) 
+        try:
+            if len(text.split(" ")) >= 3 and tokens[0] == "dutch":
+                user = tokens[usercol]
+                date = tokens[datecol]
+                time = tokens[timecol]
+                user_tweets[user].append(date + " " + time + ":" + text) 
+        except IndexError:
+            continue
     read.close()
 
 for user in user_tweets.keys():
