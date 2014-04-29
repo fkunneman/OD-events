@@ -2,6 +2,7 @@
 import sys
 from collections import defaultdict
 import codecs
+import re
 
 #author-tweets dict
 usercol = int(sys.argv[1])
@@ -20,14 +21,19 @@ for i,infile in enumerate(infiles):
     for line in read.readlines()[1:]:
         tokens = line.strip().split("\t")
         text = tokens[textcol]
-        if len(text.split(" ")) >= 3 and tokens[0] == "dutch":
+        if len(text.split(" ")) >= 3:
             user = tokens[usercol]
             date = tokens[datecol]
             time = tokens[timecol]
             user_tweets[user].append(date + " " + time + ":" + text) 
     read.close()
 
+print "Writing user files"
+users = codecs.open(outdir + "all_users.txt","w","utf-8")
 for user in user_tweets.keys():
-    outfile = codecs.open(outdir + re.sub("@","",user) + ".txt","w","utf-8")
+    userfile = re.sub("@","",user) + ".txt"
+    users.write(userfile + "\n")
+    outfile = codecs.open(outdir + userfile,"w","utf-8")
     outfile.write("\n".join(user_tweets[user]))
     outfile.close()
+users.close()
