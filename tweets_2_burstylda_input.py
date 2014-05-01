@@ -41,7 +41,7 @@ def file_2_usertweets(infiles,q,ch):
                 print "INDEXERROR!",infile,i,ch
                 continue
         read.close()
-        if i in range(5,100,5) or i == enumerate(infiles)[-1][0]:
+        if i in range(5,100,5) or i == len(infiles)-1:
             reserve = []
             for user in user_tweets.keys():
                 q.put(user)
