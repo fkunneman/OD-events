@@ -47,7 +47,7 @@ for j,chunk in enumerate(filechunks):
     p.start()
 
 while True:
-    user_tweet = q.get()
+    user_tweet = qu.get()
     users = list(set(users.append(user_tweet[0])))
     userfile = codecs.open(outdir + re.sub("@","",user_tweet[0]) + ".txt","a","utf-8")
     userfile.write(user_tweet[1])
