@@ -51,7 +51,8 @@ while True:
     try:
         users = list(set(users.append(user_tweet[0])))
     except TypeError:
-        print user_tweet[0]
+        print "ERROR",user_tweet[0]
+
     
     userfile = codecs.open(outdir + re.sub("@","",user_tweet[0]) + ".txt","a","utf-8")
     userfile.write(user_tweet[1])
