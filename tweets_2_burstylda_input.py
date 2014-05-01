@@ -21,47 +21,54 @@ sw = [li.replace('.','\.') for li in stopwords.read().split("\n")] # not to matc
 num_tweets = 0
 users = []
 
-def file_2_usertweets(infiles,q,ch):
+def file_2_usertweets(infiles,l,q,ch):
     print "Reading in data for",ch
     for i,infile in enumerate(infiles):
         read = codecs.open(infile,"r","utf-8")
+        user_tweets = defaultdict(list)
         for line in read.readlines():
             tokens = line.strip().split("\t")
             try:
-                text = tokens[textcol].split(" ")
+                text = tokens[textcol].lower().split(" ")
                 if len(text) >= 3:
                     filtered = " ".join([x for x in text if x not in sw])
                     user = tokens[usercol]
                     date = tokens[datecol]
                     time = tokens[timecol]
-                    q.put([user,date + " " + time + ":" + filtered + "\n"])
+                    user_tweets[user].append(date + " " + time + ":" + filtered)
             except IndexError:
+                print "INDEXERROR!",infile,i,ch
                 continue
         read.close()
+        for user in user_tweets.keys():
+            q.put(user)
+            l.acquire()
+            userfile = codecs.open(outdir + re.sub("@","",user) + ".txt","a","utf-8")
+            userfile.write("\n".join(user_tweets[user]) + "\n")
+            userfile.close()
+            l.release()
         print "done",infile,i,"of",len(infiles),"in",ch
 
 filechunks = gen_functions.make_chunks(infiles)
 qu = multiprocessing.Queue()
+lock = multiprocessing.Lock()
 for j,chunk in enumerate(filechunks):
-    p = multiprocessing.Process(target=file_2_usertweets,args=[chunk,qu,j])
+    p = multiprocessing.Process(target=file_2_usertweets,args=[chunk,lock,qu,j])
     p.start()
 
 while True:
-    user_tweet = qu.get()
-    try:
-        users = list(set(users + [user_tweet[0]]))
-    except TypeError:
-        print "ERROR",user_tweet[0]
+    users.append(qu.get())
 
-    
-    userfile = codecs.open(outdir + re.sub("@","",user_tweet[0]) + ".txt","a","utf-8")
-    userfile.write(user_tweet[1])
-    userfile.close()
-
+users = list(set(users))
 usersfile = codecs.open("userlist.txt","utf-8","w")
 for user in users:
     usersfile.write(user + "\n")
-usersfile.close()    
+usersfile.close()   
+
+
+
+
+ 
 
 
 # print "Writing user files"
