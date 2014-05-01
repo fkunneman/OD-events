@@ -49,7 +49,7 @@ for j,chunk in enumerate(filechunks):
 while True:
     user_tweet = qu.get()
     try:
-        users = list(set(users.append(user_tweet[0])))
+        users = list(set(users + [user_tweet[0]]))
     except TypeError:
         print "ERROR",user_tweet[0]
 
