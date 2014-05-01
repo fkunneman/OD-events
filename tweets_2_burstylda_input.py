@@ -53,7 +53,10 @@ while True:
     userfile.write(user_tweet[1])
     userfile.close()
 
-
+usersfile = codecs.open("userlist.txt","utf-8","w")
+for user in users:
+    usersfile.write(user + "\n")
+usersfile.close()    
 
 
 # print "Writing user files"
