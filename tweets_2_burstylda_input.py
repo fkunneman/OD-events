@@ -43,7 +43,8 @@ def file_2_usertweets(infiles,q,ch):
         read.close()
         if i in range(5,100,5) or i == len(infiles)-1:
             reserve = []
-            for user in user_tweets.keys():
+            for y,user in enumerate(user_tweets.keys()):
+                print ch,y
                 q.put(user)
                 try:
                     userfilename = outdir + re.sub("@","",user) + ".txt"
@@ -58,6 +59,7 @@ def file_2_usertweets(infiles,q,ch):
                 # l.acquire()
             x = 0
             while len(reserve) > 0:
+                print x,len(reserve)
                 try:
                     userfilename = outdir + re.sub("@","",reserve[x]) + ".txt"
                     userfile = codecs.open(userfilename,"a","utf-8")
