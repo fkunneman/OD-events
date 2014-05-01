@@ -3,8 +3,8 @@ import sys
 from collections import defaultdict
 import codecs
 import re
+import multiprocessing
 import gen_functions
-
 
 #author-tweets dict
 usercol = int(sys.argv[1])
