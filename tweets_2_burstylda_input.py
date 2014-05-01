@@ -34,7 +34,7 @@ def file_2_usertweets(infiles,q,ch):
                     user = tokens[usercol]
                     date = tokens[datecol]
                     time = tokens[timecol]
-                    q.put([user,date + " " + time + ":" + filtered] + "\n")
+                    q.put([user,date + " " + time + ":" + filtered + "\n"])
             except IndexError:
                 continue
         read.close()
