@@ -29,7 +29,7 @@ def file_2_usertweets(infiles,q,ch):
             tokens = line.strip().split("\t")
             try:
                 text = tokens[textcol].split(" ")
-                if len(text.split(" ")) >= 3:
+                if len(text) >= 3:
                     filtered = " ".join([x for x in text if x not in sw])
                     user = tokens[usercol]
                     date = tokens[datecol]
