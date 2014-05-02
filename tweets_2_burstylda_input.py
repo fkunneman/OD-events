@@ -44,7 +44,7 @@ def file_2_usertweets(infiles,q,ch):
         if i in range(5,100,5) or i == len(infiles)-1:
             reserve = []
             for y,user in enumerate(user_tweets.keys()):
-                print ch,y
+#                print ch,y
                 q.put(user)
                 try:
                     userfilename = outdir + re.sub("@","",user) + ".txt"
@@ -57,6 +57,8 @@ def file_2_usertweets(infiles,q,ch):
                 except IOError:
                     reserve.append(user)
                 # l.acquire()
+                if y == len(user_tweets.keys())-1:
+                    print "end",i,"of",ch,"users"
             x = 0
             while len(reserve) > 0:
                 print x,len(reserve)
