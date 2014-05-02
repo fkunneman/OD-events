@@ -91,7 +91,7 @@ for i,user_c in enumerate(usertweets_sorted):
         userindex = i
 print "num_authors:",userindex
 filtered_users = [x[0] for x in usertweets_sorted[:userindex]]
-usertweets_sorted.clear()
+del usertweets_sorted[0:len(usertweets_sorted)]
 
 print "Writing clusters to files"
 userchunks = gen_functions.make_chunks(filtered_users)
