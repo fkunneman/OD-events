@@ -74,7 +74,7 @@ ds = []
 while True:
     l = qu.get()
     ds.append(l)
-    if len(ds) == len(chunks):
+    if len(ds) == len(filechunks):
         break
 
 usertweets_total = defaultdict(int)
