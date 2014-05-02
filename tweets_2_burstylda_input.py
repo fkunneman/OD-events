@@ -22,7 +22,7 @@ sw = [li.replace('.','\.') for li in stopwords.read().split("\n")] # not to matc
 num_tweets = 0
 users = []
 
-def file_2_usertweets(infiles,q,ch):
+def file_2_usertweets(infiles,ch):
     print "Reading in data for",ch
     user_tweets = defaultdict(list)
     for i,infile in enumerate(infiles):
@@ -42,58 +42,62 @@ def file_2_usertweets(infiles,q,ch):
                 continue
         read.close()
         if i in range(5,100,5) or i == len(infiles)-1:
-            reserve = []
+            #reserve = []
             for y,user in enumerate(user_tweets.keys()):
 #                print ch,y
-                q.put(user)
+                # q.put(user)
                 try:
                     userfilename = outdir + re.sub("@","",user) + ".txt"
                     userfile = codecs.open(userfilename,"a","utf-8")
-                    lock = lockfile.FileLock(userfilename)
-                    lock.acquire()
+                    #lock = lockfile.FileLock(userfilename)
+                    #lock.acquire()
                     userfile.write("\n".join(user_tweets[user]) + "\n")
                     userfile.close()
-                    lock.release()
+                    #lock.release()
                 except IOError:
-                    reserve.append(user)
+                    #reserve.append(user)
+                    continue
                 # l.acquire()
                 if y == len(user_tweets.keys())-1:
                     print "end",i,"of",ch,"users"
-            x = 0
-            while len(reserve) > 0:
-                print x,len(reserve)
-                try:
-                    userfilename = outdir + re.sub("@","",reserve[x]) + ".txt"
-                    userfile = codecs.open(userfilename,"a","utf-8")
-                    lock = lockfile.FileLock(userfilename)
-                    lock.acquire()
-                    userfile.write("\n".join(user_tweets[user]) + "\n")
-                    userfile.close()
-                    lock.release()
-                    del(reserve[x])
-                except IOError:
-                    if x+1 == len(reserve):
-                        x = 0
-                    else:
-                        x += 1
+            # x = 0
+            # while len(reserve) > 0:
+            #     print x,len(reserve)
+            #     try:
+            #         userfilename = outdir + re.sub("@","",reserve[x]) + ".txt"
+            #         userfile = codecs.open(userfilename,"a","utf-8")
+            #         lock = lockfile.FileLock(userfilename)
+            #         lock.acquire()
+            #         userfile.write("\n".join(user_tweets[user]) + "\n")
+            #         userfile.close()
+            #         lock.release()
+            #         del(reserve[x])
+            #     except IOError:
+            #         if x+1 == len(reserve):
+            #             x = 0
+            #         else:
+            #             x += 1
             user_tweets = defaultdict(list)
             # l.release()
         print "done",infile,i,"of",len(infiles),"in",ch
 
 filechunks = gen_functions.make_chunks(infiles)
-qu = multiprocessing.Queue()
+# qu = multiprocessing.Queue()
 for j,chunk in enumerate(filechunks):
-    p = multiprocessing.Process(target=file_2_usertweets,args=[chunk,qu,j])
+    p = multiprocessing.Process(target=file_2_usertweets,args=[chunk,j])
     p.start()
 
-while True:
-    users.append(qu.get())
+# l = len(users)
+# while True:
+#     users.append(qu.get())
+#     users = list(set(users))
+#     if len(users)
 
-users = list(set(users))
-usersfile = codecs.open("userlist.txt","utf-8","w")
-for user in users:
-    usersfile.write(user + "\n")
-usersfile.close()   
+
+# usersfile = codecs.open("userlist.txt","utf-8","w")
+# for user in users:
+#     usersfile.write(user + "\n")
+# usersfile.close()   
 
 
 
