@@ -4,7 +4,6 @@ from collections import defaultdict
 import codecs
 import re
 import multiprocessing
-import lockfile
 import gen_functions
 
 #author-tweets dict
@@ -16,101 +15,86 @@ outdir = sys.argv[5]
 stopwords = codecs.open(sys.argv[6],"r","utf-8")
 infiles = sys.argv[7:]
 
-user_tweets = defaultdict(list)
-
 sw = [li.replace('.','\.') for li in stopwords.read().split("\n")] # not to match anything with . (dot)
-num_tweets = 0
-users = []
 
-def file_2_usertweets(infiles,ch):
+def count_authortweets(infiles,q,ch):
     print "Reading in data for",ch
+    user_tweets = defaultdict(int)
+    for i,infile in enumerate(infiles):
+        read = codecs.open(infile,"r","utf-8")
+        for line in read.readlines():
+            tokens = line.strip().split("\t")
+            try:
+                user = tokens[usercol]
+                user_tweets[user] += 1
+            except IndexError:
+                print "INDEXERROR!",infile,i,ch
+                continue
+        read.close()
+    q.put(user_tweets)
+
+def write_usertweets(userl,ch):
+    print "Reading in data for",ch,"num_users:",len(userl)
+    # open userfiles
     user_tweets = defaultdict(list)
     for i,infile in enumerate(infiles):
         read = codecs.open(infile,"r","utf-8")
         for line in read.readlines():
             tokens = line.strip().split("\t")
             try:
-                text = tokens[textcol].lower().split(" ")
-                if len(text) >= 3:
-                    filtered = " ".join([x for x in text if x not in sw])
-                    user = tokens[usercol]
-                    date = tokens[datecol]
-                    time = tokens[timecol]
-                    user_tweets[user].append(date + " " + time + ":" + filtered)
+                if tokens[usercol] in userl:
+                    text = tokens[textcol].lower().split(" ")
+                    if len(text) >= 3:
+                        filtered = " ".join([x for x in text if x not in sw])
+                        user = tokens[usercol]
+                        date = tokens[datecol]
+                        time = tokens[timecol]
+                        user_tweets[user].append(date + " " + time + ":" + filtered)
             except IndexError:
                 print "INDEXERROR!",infile,i,ch
                 continue
         read.close()
-        if i in range(5,100,5) or i == len(infiles)-1:
-            #reserve = []
+        if i in range(5,2500,5) or i == len(infiles)-1:
             for y,user in enumerate(user_tweets.keys()):
-#                print ch,y
-                # q.put(user)
-                try:
-                    userfilename = outdir + re.sub("@","",user) + ".txt"
-                    userfile = codecs.open(userfilename,"a","utf-8")
-                    #lock = lockfile.FileLock(userfilename)
-                    #lock.acquire()
-                    userfile.write("\n".join(user_tweets[user]) + "\n")
-                    userfile.close()
-                    #lock.release()
-                except IOError:
-                    #reserve.append(user)
-                    continue
-                # l.acquire()
-                if y == len(user_tweets.keys())-1:
-                    print "end",i,"of",ch,"users"
-            # x = 0
-            # while len(reserve) > 0:
-            #     print x,len(reserve)
-            #     try:
-            #         userfilename = outdir + re.sub("@","",reserve[x]) + ".txt"
-            #         userfile = codecs.open(userfilename,"a","utf-8")
-            #         lock = lockfile.FileLock(userfilename)
-            #         lock.acquire()
-            #         userfile.write("\n".join(user_tweets[user]) + "\n")
-            #         userfile.close()
-            #         lock.release()
-            #         del(reserve[x])
-            #     except IOError:
-            #         if x+1 == len(reserve):
-            #             x = 0
-            #         else:
-            #             x += 1
+                userfilename = outdir + re.sub("@","",user) + ".txt"
+                userfile = codecs.open(userfilename,"a","utf-8")
+                userfile.write("\n".join(user_tweets[user]) + "\n")
+                userfile.close()
             user_tweets = defaultdict(list)
-            # l.release()
         print "done",infile,i,"of",len(infiles),"in",ch
 
+print "Generating author-tweetcount dict"
 filechunks = gen_functions.make_chunks(infiles)
-# qu = multiprocessing.Queue()
+qu = multiprocessing.Queue()
 for j,chunk in enumerate(filechunks):
-    p = multiprocessing.Process(target=file_2_usertweets,args=[chunk,j])
+    p = multiprocessing.Process(target=count_authortweets,args=[chunk,qu,j])
     p.start()
 
-# l = len(users)
-# while True:
-#     users.append(qu.get())
-#     users = list(set(users))
-#     if len(users)
+ds = []
+while True:
+    l = qu.get()
+    ds.append(l)
+    if len(ds) == len(chunks):
+        break
 
+usertweets_total = defaultdict(int)
+for d in ds:
+    for k in d:
+        usertweets_total[k] += d[k]
+    d.clear()
+usertweets_sorted = sorted(usertweets_total.items(), key=lambda x: x[1],reverse=True)
+usertweets_total.clear()
 
-# usersfile = codecs.open("userlist.txt","utf-8","w")
-# for user in users:
-#     usersfile.write(user + "\n")
-# usersfile.close()   
+print "selecting authors"
+for i,user_c in enumerate(usertweets_sorted):
+    if user_c[1] < 10:
+        userindex = i
+print "num_authors:",userindex
+filtered_users = [x[0] for x in usertweets_sorted[:userindex]]
+usertweets_sorted.clear()
 
-
-
-
- 
-
-
-# print "Writing user files"
-# users = codecs.open(outdir + "all_users.txt","w","utf-8")
-# for user in user_tweets.keys():
-#     userfile = re.sub("@","",user) + ".txt"
-#     users.write(userfile + "\n")
-#     outfile = codecs.open(outdir + userfile,"w","utf-8")
-#     outfile.write("\n".join(user_tweets[user]))
-#     outfile.close()
-# users.close()
+print "Writing clusters to files"
+userchunks = gen_functions.make_chunks(filtered_users)
+for j,chunk in enumerate(userchunks):
+    p = multiprocessing.Process(target=write_usertweets,args=[chunk,j])
+    p.start()
