@@ -26,8 +26,11 @@ def count_authortweets(infls,q,ch):
         for line in read.readlines():
             tokens = line.strip().split("\t")
             try:
+#            print tokens, langcol, textcol
+                user = tokens[usercol]
                 if tokens[langcol] == "dutch" and len(tokens[textcol].split(" ")) >= 3:
-                    user = tokens[usercol]
+                    user_tweets[user] = user_tweets[user]
+                else:
                     user_tweets[user] += 1
             except IndexError:
                 print "INDEXERROR!",infile,i,ch
@@ -45,6 +48,7 @@ def write_usertweets(inf,um,userl,ch):
         read = codecs.open(infile,"r","utf-8")
         for line in read.readlines():
             tokens = line.strip().split("\t")
+#            print tokens,usercol,tokens[usercol]
             try:
                 if um[tokens[usercol]]:
                     text = tokens[textcol].lower().split(" ")
@@ -57,6 +61,8 @@ def write_usertweets(inf,um,userl,ch):
             except IndexError:
                 print "INDEXERROR!",infile,i,ch
                 continue
+            except KeyError:
+                print "KEYERROR!",infile,i,ch
         read.close()
         if i in range(5,2500,5) or i == len(infiles)-1:
             for y,user in enumerate(user_tweets.keys()):
@@ -90,8 +96,8 @@ usertweets_sorted = sorted(usertweets_total.items(), key=lambda x: x[1],reverse=
 usertweets_total.clear()
 
 print "selecting authors"
-fivehundred = True
-twohundred = True
+#fivehundred = True
+#twohundred = True
 hundred = True
 #fifty = True
 #twenty = True
@@ -101,33 +107,36 @@ filelist200 = codecs.open(outdir + "filelist200.txt","w","utf-8")
 filelist100 = codecs.open(outdir + "filelist100.txt","w","utf-8")
 user_match = {}
 for i,user_c in enumerate(usertweets_sorted):
-    if user_c[1] < 100:
+    user_match[user_c[0]] = False
+    if user_c[1] < 100 and hundred:
         userindex = i
-        print user_c[1],"<100"
-        break
-    elif user_c[1] < 200 
+#        print user_c[1],"<100"
+    elif user_c[1] < 200: 
         filelist100.write(re.sub("@","",user_c[0]) + "\n")
-        print user_c[1],"<200"
+#        print user_c[1],"<200"
     elif user_c[1] < 500:
         filelist200.write(re.sub("@","",user_c[0]) + "\n")
         filelist100.write(re.sub("@","",user_c[0]) + "\n")
-        print user_c[1],"<500"
+#        print user_c[1],"<500"
     else:
         filelist500.write(re.sub("@","",user_c[0]) + "\n")
         filelist200.write(re.sub("@","",user_c[0]) + "\n")
         filelist100.write(re.sub("@","",user_c[0]) + "\n")
-        print user_c[1],">500"
+#        print user_c[1],">500"
+    user_match
 filelist500.close()
 filelist200.close()
 filelist100.close()
 
+#print user_match
+
 print "num_authors:",userindex
 filtered_users = [x[0] for x in usertweets_sorted[:userindex]]
-del usertweets_sorted[0:len(usertweets_sorted)]
+#del usertweets_sorted[0:len(usertweets_sorted)]
 
 print "Writing clusters to files"
 userchunks = gen_functions.make_chunks(filtered_users)
 for j,chunk in enumerate(userchunks):
-    print chunk
+#    print chunk
     p = multiprocessing.Process(target=write_usertweets,args=[infiles,user_match.copy(),chunk,j])
     p.start()
