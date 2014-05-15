@@ -17,10 +17,10 @@ infiles = sys.argv[7:]
 
 sw = [li.replace('.','\.') for li in stopwords.read().split("\n")] # not to match anything with . (dot)
 
-def count_authortweets(infiles,q,ch):
+def count_authortweets(infls,q,ch):
     print "Reading in data for",ch
     user_tweets = defaultdict(int)
-    for i,infile in enumerate(infiles):
+    for i,infile in enumerate(infls):
         read = codecs.open(infile,"r","utf-8")
         for line in read.readlines():
             tokens = line.strip().split("\t")
@@ -33,16 +33,18 @@ def count_authortweets(infiles,q,ch):
         read.close()
     q.put(user_tweets)
 
-def write_usertweets(userl,ch):
+def write_usertweets(inf,um,userl,ch):
     print "Reading in data for",ch,"num_users:",len(userl)
     # open userfiles
+    for u in userl:
+        um[u] = True
     user_tweets = defaultdict(list)
-    for i,infile in enumerate(infiles):
+    for i,infile in enumerate(inf):
         read = codecs.open(infile,"r","utf-8")
         for line in read.readlines():
             tokens = line.strip().split("\t")
             try:
-                if tokens[usercol] in userl:
+                if um[tokens[usercol]]:
                     text = tokens[textcol].lower().split(" ")
                     if len(text) >= 3:
                         filtered = " ".join([x for x in text if x not in sw])
@@ -86,9 +88,33 @@ usertweets_sorted = sorted(usertweets_total.items(), key=lambda x: x[1],reverse=
 usertweets_total.clear()
 
 print "selecting authors"
+#twohundred = True
+hundred = True
+#fifty = True
+#twenty = True
+
+user_match = {}
 for i,user_c in enumerate(usertweets_sorted):
-    if user_c[1] < 10:
-        userindex = i
+#    if user_c[1] < 10:
+#        userindex = i
+#        break
+#    elif user_c[1] < 20 and twenty:
+#        print "m20:",i,"users"
+#        twenty = False
+#    elif user_c[1] < 50 and fifty:
+#        print "m50:",i,"users"
+#        fifty = False
+    if user_c[1] < 100 and hundred:
+            userindex = i
+            hundred = False
+    user_match[user_c[0]] = False
+    #else:
+    #    user_match[user_c[0]] = True
+#        print "m100:",i,"users"
+#        hundred = False
+#    elif user_c[1] < 200 and twohundred:
+#        print "m200:",i,"users"
+#        twohundred = False
 print "num_authors:",userindex
 filtered_users = [x[0] for x in usertweets_sorted[:userindex]]
 del usertweets_sorted[0:len(usertweets_sorted)]
@@ -96,5 +122,6 @@ del usertweets_sorted[0:len(usertweets_sorted)]
 print "Writing clusters to files"
 userchunks = gen_functions.make_chunks(filtered_users)
 for j,chunk in enumerate(userchunks):
-    p = multiprocessing.Process(target=write_usertweets,args=[chunk,j])
+    print chunk
+    p = multiprocessing.Process(target=write_usertweets,args=[infiles,user_match.copy(),chunk,j])
     p.start()
