@@ -90,33 +90,37 @@ usertweets_sorted = sorted(usertweets_total.items(), key=lambda x: x[1],reverse=
 usertweets_total.clear()
 
 print "selecting authors"
-#twohundred = True
+fivehundred = True
+twohundred = True
 hundred = True
 #fifty = True
 #twenty = True
 
+filelist500 = codecs.open(outdir + "filelist500.txt","w","utf-8")
+filelist200 = codecs.open(outdir + "filelist200.txt","w","utf-8")
+filelist100 = codecs.open(outdir + "filelist100.txt","w","utf-8")
 user_match = {}
 for i,user_c in enumerate(usertweets_sorted):
-#    if user_c[1] < 10:
-#        userindex = i
-#        break
-#    elif user_c[1] < 20 and twenty:
-#        print "m20:",i,"users"
-#        twenty = False
-#    elif user_c[1] < 50 and fifty:
-#        print "m50:",i,"users"
-#        fifty = False
-    if user_c[1] < 100 and hundred:
-            userindex = i
-            hundred = False
-    user_match[user_c[0]] = False
-    #else:
-    #    user_match[user_c[0]] = True
-#        print "m100:",i,"users"
-#        hundred = False
-#    elif user_c[1] < 200 and twohundred:
-#        print "m200:",i,"users"
-#        twohundred = False
+    if user_c[1] < 100:
+        userindex = i
+        print user_c[1],"<100"
+        break
+    elif user_c[1] < 200 
+        filelist100.write(re.sub("@","",user_c[0]) + "\n")
+        print user_c[1],"<200"
+    elif user_c[1] < 500:
+        filelist200.write(re.sub("@","",user_c[0]) + "\n")
+        filelist100.write(re.sub("@","",user_c[0]) + "\n")
+        print user_c[1],"<500"
+    else:
+        filelist500.write(re.sub("@","",user_c[0]) + "\n")
+        filelist200.write(re.sub("@","",user_c[0]) + "\n")
+        filelist100.write(re.sub("@","",user_c[0]) + "\n")
+        print user_c[1],">500"
+filelist500.close()
+filelist200.close()
+filelist100.close()
+
 print "num_authors:",userindex
 filtered_users = [x[0] for x in usertweets_sorted[:userindex]]
 del usertweets_sorted[0:len(usertweets_sorted)]
