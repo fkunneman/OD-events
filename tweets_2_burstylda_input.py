@@ -10,10 +10,11 @@ import gen_functions
 usercol = int(sys.argv[1])
 datecol = int(sys.argv[2])
 timecol = int(sys.argv[3])
-textcol = int(sys.argv[4])
-outdir = sys.argv[5]
-stopwords = codecs.open(sys.argv[6],"r","utf-8")
-infiles = sys.argv[7:]
+langcol = int(sys.argv[4])
+textcol = int(sys.argv[5])
+outdir = sys.argv[6]
+stopwords = codecs.open(sys.argv[7],"r","utf-8")
+infiles = sys.argv[8:]
 
 sw = [li.replace('.','\.') for li in stopwords.read().split("\n")] # not to match anything with . (dot)
 
@@ -25,8 +26,9 @@ def count_authortweets(infiles,q,ch):
         for line in read.readlines():
             tokens = line.strip().split("\t")
             try:
-                user = tokens[usercol]
-                user_tweets[user] += 1
+                if tokens[langcol] == "dutch" and len(tokens[textcol].split(" ")) >= 3:
+                    user = tokens[usercol]
+                    user_tweets[user] += 1
             except IndexError:
                 print "INDEXERROR!",infile,i,ch
                 continue
@@ -44,7 +46,7 @@ def write_usertweets(userl,ch):
             try:
                 if tokens[usercol] in userl:
                     text = tokens[textcol].lower().split(" ")
-                    if len(text) >= 3:
+                    if tokens[langcol] == "dutch" and len(text) >= 3:
                         filtered = " ".join([x for x in text if x not in sw])
                         user = tokens[usercol]
                         date = tokens[datecol]
