@@ -23,18 +23,21 @@ def cleanup_tweets(infls,ch):
         wr = codecs.open(outdir + "/".join(infile.split("/")[-1:]),"w","utf-8")
         for line in read.readlines():
             tokens = line.strip().split("\t")
-            print tokens
+#            print tokens
             try:
 #            print tokens, langcol, textcol
-                if tokens[langcol] == "dutch" and not re.search(r"^rt",tokens[textcol]):
-                    print "ja"
+                #print tokens[textcol]
+                if tokens[langcol] == "dutch":
+                    #print "ja"
                     text = tokens[textcol].lower().split(" ")
-                    filtered = " ".join([x for x in text if x not in sw and not re.search(r"^@",x)])
-                    tokens[textcol] = filtered
-                    print "write","\t".join(tokens + "\n")
-                    wr.write("\t".join(tokens) + "\n")
+                    if not re.search("rt",text[0]):
+                        filtered = " ".join([x for x in text if x not in sw and not re.search(r"^@",x)])
+                        if len(filtered.split(" ")) >= 3:
+                            tokens[textcol] = filtered
+#                    print "write","\t".join(tokens + "\n")
+                            wr.write("\t".join(tokens) + "\n")
             except IndexError:
-                print "INDEXERROR!",infile,i,ch
+                print "INDEXERROR!",tokens,infile,i,ch
                 continue
         read.close()
         wr.close()
