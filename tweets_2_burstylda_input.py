@@ -28,10 +28,10 @@ def count_authortweets(infls,q,ch):
             try:
 #            print tokens, langcol, textcol
                 user = tokens[usercol]
-                if tokens[langcol] == "dutch" and len(tokens[textcol].split(" ")) >= 3:
-                    user_tweets[user] = user_tweets[user]
-                else:
+                if tokens[langcol] == "dutch" and len(tokens[textcol].split(" ")) >= 3 and not re.search(r"^rt",tokens[textcol]):
                     user_tweets[user] += 1
+                else:
+                    user_tweets[user] = user_tweets[user]
             except IndexError:
                 print "INDEXERROR!",infile,i,ch
                 continue
