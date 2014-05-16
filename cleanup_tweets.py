@@ -18,8 +18,9 @@ sw = [li.replace('.','\.') for li in stopwords.read().split("\n")] # not to matc
 def cleanup_tweets(infls,ch):
     print "Reading in data for",ch
     for i,infile in enumerate(infls):
+        print "done",i,"of",len(infls),"in",ch
         read = codecs.open(infile,"r","utf-8")
-        wr = codecs.open(outdir + "/".join(infile.split("/")[-2:]),"w","utf-8")
+        wr = codecs.open(outdir + "/".join(infile.split("/")[-1:]),"w","utf-8")
         for line in read.readlines():
             tokens = line.strip().split("\t")
             try:
@@ -35,9 +36,7 @@ def cleanup_tweets(infls,ch):
         read.close()
         wr.close()
     
-infiles),"in",ch
-
 filechunks = gen_functions.make_chunks(infiles)
 for j,chunk in enumerate(filechunks):
-    p = multiprocessing.Process(target=cleanup_tweets,args=[chunk,qu,j])
+    p = multiprocessing.Process(target=cleanup_tweets,args=[chunk,j])
     p.start()
