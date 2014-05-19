@@ -26,7 +26,7 @@ if cooc:
             tokens = line.split("\t")
             if not tokens[0] == tokens[1]:
                 term = min(tokens[0],tokens[1]) + " " + max(tokens[0],tokens[1])
-                idict(term) = int(tokens[2])
+                idict[term] = int(tokens[2])
         read.close()
         for k in idict:
             wordcount[k] += idict[k]
