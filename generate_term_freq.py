@@ -11,15 +11,34 @@ wordfreq = defaultdict(list)
 wordcount = defaultdict(int)
 include = {}
 
+cooc = False
+if termtype == "cooc":
+    cooc = True
+
 print "counting"
-for i,infile in enumerate(infiles):
-    print infile
-    read = codecs.open(infile,"r","utf-8")
-    for line in read.readlines()[1:]:
-        tokens = line.split("\t")
-        term = tokens[0]
-        wordcount[term] += int(tokens[1])
-    read.close()
+if cooc:
+    for i,infile in enumerate(infiles):
+        print infile
+        idict = defaultdict(int)
+        read = codecs.open(infile,"r","utf-8")
+        for line in read.readlines()[1:]:
+            tokens = line.split("\t")
+            if not tokens[0] == tokens[1]:
+                term = min(tokens[0],tokens[1]) + " " + max(tokens[0],tokens[1])
+                idict(term) = int(tokens[2])
+        read.close()
+        for k in idict:
+            wordcount[k] += idict[k]
+        idict.clear()
+else:
+    for i,infile in enumerate(infiles):
+        print infile
+        read = codecs.open(infile,"r","utf-8")
+        for line in read.readlines()[1:]:
+            tokens = line.split("\t")
+            term = tokens[0]
+            wordcount[term] += int(tokens[1])
+        read.close()
 
 print "pruning terms"
 for term in wordcount.keys():
