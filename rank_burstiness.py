@@ -69,12 +69,12 @@ print "making sliding windows"
 for line in inread.readlines():
     tokens = line.strip().split("\t")
     term = tokens[0]
-    if not re.search("^@",term):
-        vals = tokens[1].split("|")
-        i = 0
-        while i < len(vals):
-            term_windows[term].append(sum([int(x) for x in vals[i:i+args.s]])) 
-            i += args.s
+#    if not re.search("^@",term):
+    vals = tokens[1].split("|")
+    i = 0
+    while i < len(vals):
+        term_windows[term].append(sum([int(x) for x in vals[i:i+args.s]])) 
+        i += args.s
     #print vals, term_windows[term]
 
 print "calculating burstiness"

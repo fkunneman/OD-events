@@ -99,6 +99,7 @@ for d in ds:
         usertweets_total[k] += d[k]
     d.clear()
 usertweets_sorted = sorted(usertweets_total.items(), key=lambda x: x[1],reverse=True)
+#print usertweets_sorted[:2000]
 usertweets_total.clear()
 
 print "selecting authors"
@@ -116,9 +117,9 @@ user_match = {}
 for i,user_c in enumerate(usertweets_sorted):
     user_match[user_c[0]] = False
     if user_c[1] < 50 and fifty:
-        userindex=1
+        userindex=i
         fifty = False
-    if user_c[1] < 100 and hundred:
+    elif user_c[1] < 100:
         fl50.append(re.sub("@","",user_c[0]))
 #        print user_c[1],"<100"
     elif user_c[1] < 200: 
