@@ -4,7 +4,8 @@ import codecs
 from collections import defaultdict
 
 outfile = codecs.open(sys.argv[1],"w","utf-8")
-infiles = sys.argv[2:]
+termtype = sys.argv[2] #either 'uni' or 'cooc'
+infiles = sys.argv[3:]
 
 wordfreq = defaultdict(list)
 wordcount = defaultdict(int)
@@ -17,7 +18,7 @@ for i,infile in enumerate(infiles):
     for line in read.readlines()[1:]:
         tokens = line.split("\t")
         term = tokens[0]
-        wordcount[term] += 1
+        wordcount[term] += int(tokens[1])
     read.close()
 
 print "pruning terms"
