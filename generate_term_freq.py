@@ -17,6 +17,7 @@ if termtype == "cooc":
 
 print "counting"
 if cooc:
+    print "cooc counting"
     for i,infile in enumerate(infiles):
         print infile
         idict = defaultdict(int)
