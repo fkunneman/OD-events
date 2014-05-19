@@ -55,9 +55,15 @@ for i,infile in enumerate(infiles):
     read = codecs.open(infile,"r","utf-8")
     for line in read.readlines()[1:]:
         tokens = line.split("\t")
-        term = tokens[0]
-        if include[term]:
-            wordfreq[term][i] = tokens[1]
+        if cooc:
+            if not tokens[0] == tokens[1]:
+                term = min(tokens[0],tokens[1]) + " " + max(tokens[0],tokens[1])
+                if include[term]:
+                    wordfreq[term][i] = tokens[2]
+        else:
+            term = tokens[0]
+            if include[term]:
+                wordfreq[term][i] = tokens[1]
 
 for term in wordfreq.keys():
     if max([int(x) for x in wordfreq[term]]) >= 10:
