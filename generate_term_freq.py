@@ -54,7 +54,7 @@ for i,infile in enumerate(infiles):
     print infile
     read = codecs.open(infile,"r","utf-8")
     for line in read.readlines()[1:]:
-        tokens = line.split("\t")
+        tokens = line.strip().split("\t")
         if cooc:
             if not tokens[0] == tokens[1]:
                 term = min(tokens[0],tokens[1]) + " " + max(tokens[0],tokens[1])

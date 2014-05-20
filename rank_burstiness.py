@@ -48,6 +48,7 @@ def retrieve_states_hmm(sequence):
     po = [poisson(mean),poisson(mean*3)]    
     optimal_state = [[po[0].pmf(sequence[0]),[0]],[po[1].pmf(sequence[0]),[1]],0]
     for i,interval in enumerate(sequence[1:]):
+        print optimal_state
         optimal_state_new = [[],[],optimal_state[2]]
         for state in [0,1]:
             opts = []
@@ -56,7 +57,7 @@ def retrieve_states_hmm(sequence):
             best = opts.index(max(opts))
             optimal_state_new[state].append(max(opts))
             optimal_state_new[state].append(optimal_state[best][1] + [state])
-        bconf = (interval - mean) - (2*st_dev)        
+        bconf = (interval - mean) - (2*st_dev)       
         if bconf > optimal_state_new[2]:
             optimal_state_new[2] = bconf
         optimal_state = optimal_state_new
