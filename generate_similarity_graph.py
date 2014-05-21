@@ -36,7 +36,7 @@ for line in burstyfile:
     dates = tokens[2].split(" ")
     for t in dates:
         d = date.search(t).groups()
-        print datetime.date(int("20" + d[0]),int(d[1]),int(d[2]),tokens[0]
+        print datetime.date(int("20" + d[0]),int(d[1]),int(d[2])),tokens[0]
         date_burstyterms[datetime.date(int("20" + d[0]),int(d[1]),int(d[2]))].append(tokens[0])
 
 
