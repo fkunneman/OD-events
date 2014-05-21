@@ -31,7 +31,7 @@ def count_terms(lines,queue):
 def extract_tweets(tweets,terms,queue):
     term_words = defaultdict(list)
     for tweet in tweets:
-        words = list(set(tweet.split(" "))):
+        words = list(set(tweet.split(" ")))
         for term in terms:
             if term in words:
                 term_words.extend(words)
