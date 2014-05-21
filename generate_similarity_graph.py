@@ -92,15 +92,15 @@ for date in sorted(date_files.keys())[:1]:
         for k in d:
             term_frequency[k] += d[k]
     term_index = {}
-    term_bool = {}
+    term_b = {}
     i = 0
     for term in term_frequency.keys():
         if term_frequency[term] > 1:
             term_index[term] = i
-            term_bool[term] = True
+            term_b[term] = True
             i += 1
         else:
-            term_bool = False
+            term_b = False
 
     #make burstyterm-tweet vectors
     burstyterms = date_burstyterms[date]
