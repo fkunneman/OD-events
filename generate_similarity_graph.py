@@ -171,9 +171,10 @@ for j,date in enumerate(sorted(date_files.keys())[:1]):
         tfidf_matrix = tfidf_vectorizer.fit_transform([x[1] for x in pseudodocs])
         cosim = cosine_similarity(tfidf_matrix, tfidf_matrix)
         print "calculating feature-pair subwindow-scores"
-        for comb in combis:
-            if not bt_weight[comb[0]] == 0.0 or bt_weight[comb[1]] == 0.0:
-                term_sims[comb[0]][comb[1]] += (bt_weight[comb[0]] * bt_weight[comb[1]] * cosim[index_term[comb[0]],index_term[comb[1]]])
+        for c,term1 in enumerate(sorted(index_term.keys()[:-1])):
+            for term2 in enumerate(sorted(index_term.keys()[c:])):
+                # if not bt_weight[term1] == 0.0 or bt_weight[term2] == 0.0:
+                term_sims[term1]][term2] += (bt_weight[term1] * bt_weight[term2] * cosim[index_term[term1],index_term[term2]])
 
     #print sims
     outfile = codecs.open(args.o + str(date.month) + "-" + str(date.day) + ".txt","w","utf-8")
