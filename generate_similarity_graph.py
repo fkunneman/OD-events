@@ -67,66 +67,68 @@ for line in burstyfile:
 
 #for each date
 for date in sorted(date_files.keys())[:1]:
-    tweets = []
-    #extract all tweets
-    files = date_files[date]
-    for f in files:
-        tweets.extend([l.strip() for l in codecs.open(f,"r","utf-8").readlines()])
+    for s in range(0,24,2):
+        tweets = []
+        #extract all tweets
+        files = [date_files[date][s],date_files[date][s+1]]
+        for f in files:
+            print f
+            tweets.extend([l.strip() for l in codecs.open(f,"r","utf-8").readlines()])
 
-    #make vocabulary
-    print "making vocabulary"
-    q = multiprocessing.Queue()
-    tweet_chunks = gen_functions.make_chunks(tweets,dist=True)
-    for i in range(len(tweet_chunks)):
-        p = multiprocessing.Process(target=count_terms,args=[tweet_chunks[i],q])
-        p.start()
+        #make vocabulary
+        print "making vocabulary"
+        q = multiprocessing.Queue()
+        tweet_chunks = gen_functions.make_chunks(tweets,dist=True)
+        for i in range(len(tweet_chunks)):
+            p = multiprocessing.Process(target=count_terms,args=[tweet_chunks[i],q])
+            p.start()
 
-    ds = []
-    while True:
-        l = q.get()
-        ds.append(l)
-        if len(ds) == len(tweet_chunks):
-            break
-    term_frequency = defaultdict(int)
-    for d in ds:
-        for k in d:
-            term_frequency[k] += d[k]
-    term_index = {}
-    term_b = {}
-    i = 0
-    for term in term_frequency.keys():
-        if term_frequency[term] > 1:
-            term_index[term] = i
-            term_b[term] = True
-            i += 1
-        else:
-            term_b[term] = False
+        ds = []
+        while True:
+            l = q.get()
+            ds.append(l)
+            if len(ds) == len(tweet_chunks):
+                break
+        term_frequency = defaultdict(int)
+        for d in ds:
+            for k in d:
+                term_frequency[k] += d[k]
+        term_index = {}
+        term_b = {}
+        i = 0
+        for term in term_frequency.keys():
+            if term_frequency[term] > 1:
+                term_index[term] = i
+                term_b[term] = True
+                i += 1
+            else:
+                term_b[term] = False
 
-    #make burstyterm-tweet vectors
-    burstyterms = date_burstyterms[date]
-    print "making psuedo-docs"    
-    #extract tweets containing term and generate vector
-    q = multiprocessing.Queue()
-    term_chunks = gen_functions.make_chunks(burstyterms,dist=True)
-    for i in range(len(term_chunks)):
-        p = multiprocessing.Process(target=extract_tweets,args=[tweets,term_chunks[i],term_index,term_b,q])
-        p.start()
+        #make burstyterm-tweet vectors
+        burstyterms = date_burstyterms[date]
+        print "making psuedo-docs"    
+        #extract tweets containing term and generate vector
+        q = multiprocessing.Queue()
+        term_chunks = gen_functions.make_chunks(burstyterms,dist=True)
+        for i in range(len(term_chunks)):
+            p = multiprocessing.Process(target=extract_tweets,args=[tweets,term_chunks[i],term_index,term_b,q])
+            p.start()
 
-    ds = []
-    while True:
-        l = q.get()
-        ds.append(l)
-        if len(ds) == len(term_chunks):
-            break
-    pseudodocs = []
-    for d in ds:
-        for k in d:
-            pseudodocs.append((k,d[k]))
-    #compute similarities
-    print "calculating similarities"
-    pseudomatrix = numpy.array([x[1] for x in pseudodocs])
-    similarities = 1-pairwise_distances(pseudomatrix, metric="cosine")
-    print similarities
+        ds = []
+        while True:
+            l = q.get()
+            ds.append(l)
+            if len(ds) == len(term_chunks):
+                break
+        pseudodocs = []
+        for d in ds:
+            for k in d:
+                pseudodocs.append((k,d[k]))
+        #compute similarities
+        print "calculating similarities"
+        pseudomatrix = numpy.array([x[1] for x in pseudodocs])
+        similarities = 1-pairwise_distances(pseudomatrix, metric="cosine")
+        print similarities
 
 
 
