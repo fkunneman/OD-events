@@ -162,7 +162,7 @@ for j,date in enumerate(sorted(date_files.keys())[:1]):
         y = 0
         for d in ds:
             for k in d:
-                index_term[y] = k
+                index_term[k] = y
                 y += 1
                 pseudodocs.append((k," ".join(d[k])))
         #compute similarities
@@ -172,8 +172,8 @@ for j,date in enumerate(sorted(date_files.keys())[:1]):
         cosim = cosine_similarity(tfidf_matrix, tfidf_matrix)
         print "calculating feature-pair subwindow-scores"
         for comb in combis:
-            if not bt_weight[comb[0]] = 0.0 or bt_weight[comb[1]] = 0.0:
-                print "cosim",cosim[index_term[comb[0]],index_term[comb[1]]])
+            if not bt_weight[comb[0]] == 0.0 or bt_weight[comb[1]] == 0.0:
+                print "cosim",cosim[index_term[comb[0]],index_term[comb[1]]]
                 term_sims[comb[0]][comb[1]] += (bt_weight[comb[0]] * bt_weight[comb[1]] * cosim[index_term[comb[0]],index_term[comb[1]]])
         
         
