@@ -187,4 +187,5 @@ for j,date in enumerate(sorted(date_files.keys())):
             outfile.write(term1 + " " + " ".join([str(term_sims[termpre][term1]) for termpre in burstyterms[:c]]))
         outfile.write(" 1.0 ")
         outfile.write(" ".join([str(term_sims[term1][term2]) for term2 in burstyterms[c+1:]]) + "\n")
+    outfile.write(burstyterms[-1] + " " + " ".join([str(term_sims[termpre][burstyterms[-1]]) for termpre in burstyterms[:-1]]) + " 1.0\n")
     outfile.close()
