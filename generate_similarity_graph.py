@@ -165,7 +165,7 @@ for j,date in enumerate(sorted(date_files.keys())[:1]):
                 index_term[y] = k
                 y += 1
                 pseudodocs.append((k," ".join(d[k])))
-        print pseudodocs
+        print [[x[0],bursty_seqs[x[0]][s],bursty_seqs[x[0]][s+1],x[1]] for x in pseudodocs[:50]]
         #compute similarities
         print "tfidf vectorizing"
         tfidf_vectorizer = TfidfVectorizer()
