@@ -44,17 +44,13 @@ def extract_tweets(tweets,terms,queue):
     termss = set(terms)
     for tweet in tweets:
         words = list(set(tweet.split(" ")))
-        print set(words),termss
         if bool(set(words) & termss):
-            print "yes"
             for term in terms:
                 if term in words:
                     appended_docs[term].extend(words)
                     # for word in words:
                     #     if tboo[word]:
                     #         standard_vectors[term][tind[word]] += 1
-        else:
-            print "no"
     queue.put(appended_docs)
 
 #cluster files by date
@@ -169,7 +165,7 @@ for j,date in enumerate(sorted(date_files.keys())[:1]):
                 index_term[y] = k
                 y += 1
                 pseudodocs.append((k," ".join(d[k])))
-        print pseudodocs[0]
+        print pseudodocs
         #compute similarities
         print "tfidf vectorizing"
         tfidf_vectorizer = TfidfVectorizer()
