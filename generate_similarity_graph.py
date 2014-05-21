@@ -122,9 +122,11 @@ for date in sorted(date_files.keys())[:1]:
     for d in ds:
         for k in d:
             pseudodocs.append((k,d[k]))
-    print pseudodocs
-    
     #compute similarities
+    print "calculating similarities"
+    pseudomatrix = numpy.array([x[1] for x in pseudodocs])
+    similarities = 1-pairwise_distances(pseudomatrix, metric="cosine")
+    print similarities
 
 
 
