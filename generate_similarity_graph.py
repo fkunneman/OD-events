@@ -48,7 +48,7 @@ for line in burstyfile:
         date_burstyterms[datetime.date(int("20" + d[0]),int(d[1]),int(d[2]))].append(tokens[0])
 
 #for each date
-for date in sorted(date_files.keys())[0]:
+for date in sorted(date_files.keys())[:1]:
     tweets = []
     #extract all tweets
     files = date_files[date]
@@ -67,17 +67,20 @@ for date in sorted(date_files.keys())[0]:
     while True:
         l = q.get()
         ds.append(l)
-        if len(ds) == len(chunks):
+        if len(ds) == len(tweet_chunks):
             break
     term_frequency = defaultdict(int)
     for d in ds:
         for k in d:
             term_frequency[k] += d[k]
-    vocabulary = term_frequency.keys()
     term_index = {}
-    for i,term in enumerate(vocabulary):
-        term_index[term] = i
+    i = 0
+    for term in term_frequency.keys():
+        if term_frequency[term] > 1:
+        	term_index[term] = i
+                i += 1
     print term_index
+    print len(term_index.keys())
 
 #make term-tweet vectors
         #extract tweets containing term
