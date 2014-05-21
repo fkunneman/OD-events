@@ -70,16 +70,14 @@ for line in burstyfile:
         d = date.search(t).groups()
         date_burstyterms[datetime.date(int("20" + d[0]),int(d[1]),int(d[2]))].append(tokens[0])
 burstyfile.close()
-bursties = set(bursties)
 
 #make date-termsequence-graph
 term_seqs = defaultdict(list)
-sequencefile = codecs.open(args.t,"r","utf-8")
+seqfile = codecs.open(args.t,"r","utf-8")
 for line in seqfile.readlines():
-    tokens = line.strip().split("\t")
-    if bool(set(tokens[0]) & bursties): 
-        term_seqs[tokens[0]] = tokens[1].split("|")
-sequencefile.close()
+    tokens = line.strip().split("\t") 
+    term_seqs[tokens[0]] = [int(x) for x in tokens[1].split("|")]
+seqfile.close()
 
 #for each date
 for j,date in enumerate(sorted(date_files.keys())[:1]):
@@ -87,14 +85,19 @@ for j,date in enumerate(sorted(date_files.keys())[:1]):
     burstyterms = date_burstyterms[date]
     bursty_seqs = defaultdict(list)
     seqstart = j*24
+    seqend = seqstart+24
+    print len(term_seqs.keys())
     for bt in burstyterms:
-        bursty_seqs[bt] = term_seqs[bt][seqstart:seqstart+24]
+        #print term_seqs[bt],term_seqs[bt][seqstart:(seqstart+24)]
+        bursty_seqs[bt] = term_seqs[bt][seqstart:seqend]
+    #print bursty_seqs
     
     for s in range(0,24,2):
         bt_weight = {}
         #calculate weight for each bursty term
         for bt in burstyterms:
             win = bursty_seqs[bt]
+            print win,s
             subwin = [win[s],win[s+1]]
             bt_weight[bt] = sum(subwin)/sum(win)
             print win,subwin,sum(subwin)/sum(win)
