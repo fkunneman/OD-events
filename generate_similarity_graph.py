@@ -28,6 +28,16 @@ def count_terms(lines,queue):
             term_frequency[term] += 1
     queue.put(term_frequency)
 
+def extract_tweets(tweets,terms,queue):
+    term_words = defaultdict(list)
+    for tweet in tweets:
+        words = list(set(tweet.split(" "))):
+        for term in terms:
+            if term in words:
+                term_words.extend(words)
+    queue.put(term_words)
+
+
 date_files = defaultdict(list)
 date_burstyterms = defaultdict(list)
 
@@ -37,7 +47,7 @@ for f in args.i:
     dates = date.search(f).groups()
     date_files[datetime.date(int(dates[0]),int(dates[1]),int(dates[2]))].append(f)
 
-#make date-term-graph
+#make date-burstyterm-graph
 burstyfile = codecs.open(args.b,"r","utf-8")
 date = re.compile(r"(\d{2})/(\d{2})/(\d{2})")
 for line in burstyfile:
@@ -79,12 +89,29 @@ for date in sorted(date_files.keys())[:1]:
         if term_frequency[term] > 1:
         	term_index[term] = i
                 i += 1
-    print term_index
-    print len(term_index.keys())
 
-#make term-tweet vectors
-        #extract tweets containing term
-        #generate vector
+    #make burstyterm-tweet vectors
+    burstyterms = date_burstyterms[date]
+    print "making psuedo-docs"    
+    #extract tweets containing term
+    q = multiprocessing.Queue()
+    term_chunks = gen_functions.make_chunks(burstyterms,dist=True)
+    for i in range(len(term_chunks)):
+        p = multiprocessing.Process(target=extract_tweets,args=[tweets,term_chunks[i],q])
+        p.start()
+
+    ds = []
+    while True:
+        l = q.get()
+        ds.append(l)
+        if len(ds) == len(term_chunks):
+            break
+    term_words = defaultdict(int)
+    for d in ds:
+        for k in d:
+            term_words[k].extend(d[k])
+    print term_words
+    #generate vector
 
 #generate combinations of vectors
 #for each combination:
