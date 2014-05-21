@@ -31,17 +31,20 @@ def count_terms(lines,queue):
             term_frequency[term] += 1
     queue.put(term_frequency)
 
-def extract_tweets(tweets,terms,queue):
-    term_words = defaultdict(list)
+def extract_tweets(tweets,terms,tind,tboo,queue):
+    standard_vectors = defaultdict(list)
+    for term in terms:
+        standard_vector[term] = [0] * len(tind.keys())
     termss = set(terms)
     for tweet in tweets:
         words = list(set(tweet.split(" ")))
         if bool(set(words) & termss):
             for term in terms:
                 if term in words:
-                    term_words[term].extend(words)
-    queue.put(term_words)
-
+                    for word in words:
+                        if tboo[word]:
+                            standard_vectors[term][tind[word]] += 1
+    queue.put(standard_vectors)
 
 date_files = defaultdict(list)
 date_burstyterms = defaultdict(list)
@@ -89,20 +92,24 @@ for date in sorted(date_files.keys())[:1]:
         for k in d:
             term_frequency[k] += d[k]
     term_index = {}
+    term_bool = {}
     i = 0
     for term in term_frequency.keys():
         if term_frequency[term] > 1:
         	term_index[term] = i
-                i += 1
+            term_bool = True
+            i += 1
+        else:
+            term_bool = False
 
     #make burstyterm-tweet vectors
     burstyterms = date_burstyterms[date]
     print "making psuedo-docs"    
-    #extract tweets containing term
+    #extract tweets containing term and generate vector
     q = multiprocessing.Queue()
     term_chunks = gen_functions.make_chunks(burstyterms,dist=True)
     for i in range(len(term_chunks)):
-        p = multiprocessing.Process(target=extract_tweets,args=[tweets,term_chunks[i],q])
+        p = multiprocessing.Process(target=extract_tweets,args=[tweets,term_chunks[i],term_index,term_bool,q])
         p.start()
 
     ds = []
@@ -111,13 +118,12 @@ for date in sorted(date_files.keys())[:1]:
         ds.append(l)
         if len(ds) == len(term_chunks):
             break
-    term_words = defaultdict(list)
+    pseudodocs = []
     for d in ds:
         for k in d:
-            term_words[k].extend(d[k])
-    print term_words
-    #generate vector
-    standard_vector = [0] * len(term_index).keys()
+            pseudodocs.append(k,d[k])
+    print pseudodocs
+    
     #compute similarities
 
 
