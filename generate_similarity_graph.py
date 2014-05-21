@@ -67,6 +67,8 @@ for line in burstyfile:
 
 #for each date
 for date in sorted(date_files.keys())[:1]:
+    print date_files[date]
+    quit()
     tweets = []
     #extract all tweets
     files = date_files[date]
