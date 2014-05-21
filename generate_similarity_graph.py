@@ -89,7 +89,7 @@ for j,date in enumerate(sorted(date_files.keys())[:1]):
     term_sims = defaultdict(lambda : defaultdict(float))
     burstyterms = date_burstyterms[date]
     print date,"num terms:",len(burstyterms)
-    combis = [(map(str,comb)) for comb in combinations(burstyterms, 2)]
+    combis = [comb for comb in combinations(burstyterms, 2)]
     bursty_seqs = defaultdict(list)
     seqstart = j*24
     seqend = seqstart+24
