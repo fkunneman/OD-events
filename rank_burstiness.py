@@ -55,12 +55,9 @@ def retrieve_states_hmm(sequence):
             observed = po[state].pmf(interval)
             opts = [(optimal_state[statem1][0]*p[statem1][state]*observed) for statem1 in [0,1]]
             best = opts.index(max(opts))
-            bconfs.append(opts[1]-opts[0])
             optimal_state_new[state].append(max(opts))
             optimal_state_new[state].append(optimal_state[best][1] + [state])
-        #bconf = (interval - mean) - (2*st_dev)       
-        print i,max(bconfs)
-        bconf = max(bconfs)
+        bconf = (interval - mean) - (2*st_dev)       
         if bconf > optimal_state_new[2]:
             optimal_state_new[2] = bconf
         optimal_state = optimal_state_new
