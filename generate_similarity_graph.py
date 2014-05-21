@@ -34,7 +34,7 @@ def extract_tweets(tweets,terms,queue):
         words = list(set(tweet.split(" ")))
         for term in terms:
             if term in words:
-                term_words.extend(words)
+                term_words[term].extend(words)
     queue.put(term_words)
 
 
