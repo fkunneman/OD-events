@@ -96,8 +96,8 @@ for date in sorted(date_files.keys())[:1]:
     i = 0
     for term in term_frequency.keys():
         if term_frequency[term] > 1:
-        	term_index[term] = i
-            term_bool = True
+            term_index[term] = i
+            term_bool[term] = True
             i += 1
         else:
             term_bool = False
