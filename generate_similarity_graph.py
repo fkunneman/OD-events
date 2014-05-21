@@ -8,7 +8,8 @@ import re
 import multiprocessing
 import numpy
 from sklearn.metrics import pairwise_distances
-from scipy.spatial.distance import cosine
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 import gen_functions
 
@@ -31,8 +32,8 @@ def count_terms(lines,queue):
             term_frequency[term] += 1
     queue.put(term_frequency)
 
-def extract_tweets(tweets,terms,tind,tboo,queue):
-    standard_vectors = defaultdict(list)
+def extract_tweets(tweets,terms,queue):
+    appended_docs = defaultdict(list)
     for term in terms:
         standard_vectors[term] = [0] * len(tind.keys())
     termss = set(terms)
@@ -41,9 +42,10 @@ def extract_tweets(tweets,terms,tind,tboo,queue):
         if bool(set(words) & termss):
             for term in terms:
                 if term in words:
-                    for word in words:
-                        if tboo[word]:
-                            standard_vectors[term][tind[word]] += 1
+                    appended_docs[term].extend(words)
+                    # for word in words:
+                    #     if tboo[word]:
+                    #         standard_vectors[term][tind[word]] += 1
     queue.put(standard_vectors)
 
 date_files = defaultdict(list)
@@ -94,24 +96,24 @@ for date in sorted(date_files.keys())[:1]:
             for k in d:
                 term_frequency[k] += d[k]
         term_index = {}
-        term_b = {}
+        # term_b = {}
         i = 0
         for term in term_frequency.keys():
             if term_frequency[term] > 1:
                 term_index[term] = i
-                term_b[term] = True
+                # term_b[term] = True
                 i += 1
-            else:
-                term_b[term] = False
+            # else:
+            #     term_b[term] = False
 
         #make burstyterm-tweet vectors
         burstyterms = date_burstyterms[date]
-        print "making psuedo-docs"    
+        print "making pseudo-docs"    
         #extract tweets containing term and generate vector
         q = multiprocessing.Queue()
         term_chunks = gen_functions.make_chunks(burstyterms,dist=True)
         for i in range(len(term_chunks)):
-            p = multiprocessing.Process(target=extract_tweets,args=[tweets,term_chunks[i],term_index,term_b,q])
+            p = multiprocessing.Process(target=extract_tweets,args=[tweets,term_chunks[i],q])
             p.start()
 
         ds = []
@@ -125,10 +127,15 @@ for date in sorted(date_files.keys())[:1]:
             for k in d:
                 pseudodocs.append((k,d[k]))
         #compute similarities
+        print "tfidf vectorizing"
+        tfidf_vectorizer = TfidfVectorizer()
+        tfidf_matrix = tfidf_vectorizer.fit_transform([x[1] for x in pseudodocs])
         print "calculating similarities"
-        pseudomatrix = numpy.array([x[1] for x in pseudodocs])
-        similarities = 1-pairwise_distances(pseudomatrix, metric="cosine")
-        print similarities
+        cosim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+        # pseudomatrix = numpy.array([x[1] for x in pseudodocs])
+        # similarities = 1-pairwise_distances(pseudomatrix, metric="cosine")
+        # print similarities
+        print cosim
 
 
 #extract term sub-window freq
