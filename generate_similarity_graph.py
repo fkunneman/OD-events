@@ -22,7 +22,7 @@ parser = argparse.ArgumentParser(description = "Script to generate similarity gr
 parser.add_argument('-i', action = 'store', nargs='+',required = True, help = "The files with tweets per hour")  
 parser.add_argument('-b', action = 'store', required = True, help = "the file with bursty unigrams")
 parser.add_argument('-t', action = 'store', required = True, help = "the file with term frequencies over time")
-# parser.add_argument('-o', action = 'store', required = True, help = "the file to write the per-date similarity graph to")
+parser.add_argument('-o', action = 'store', required = True, help = "the directory to write similarity files to")
 
 args = parser.parse_args()
 
@@ -173,11 +173,14 @@ for j,date in enumerate(sorted(date_files.keys())[:1]):
         print "calculating feature-pair subwindow-scores"
         for comb in combis:
             if not bt_weight[comb[0]] == 0.0 or bt_weight[comb[1]] == 0.0:
-                print "cosim",cosim[index_term[comb[0]],index_term[comb[1]]]
                 term_sims[comb[0]][comb[1]] += (bt_weight[comb[0]] * bt_weight[comb[1]] * cosim[index_term[comb[0]],index_term[comb[1]]])
-        
-        
 
-
-#extract term sub-window freq
-
+    #print sims
+    outfile = codecs.open(args.o + str(date.month) + "-" + str(date.day) + ".txt","w","utf-8")
+    print "printing similarities"
+    #print header
+    outfile.write(" ".join(burstyterms) + "\n")
+    #print vals
+    for c,term1 in enumerate(burstyterms[:-1]):
+        outfile.write(term1 + " " + " ".join([str(term_sims[term1][term2]) for term2 in burstyterms[c+1:]]) + "\n")
+    outfile.close()
