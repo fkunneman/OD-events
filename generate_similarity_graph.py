@@ -11,6 +11,7 @@ import numpy
 from sklearn.metrics import pairwise_distances
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from itertools import combinations
 
 import gen_functions
 
@@ -43,13 +44,17 @@ def extract_tweets(tweets,terms,queue):
     termss = set(terms)
     for tweet in tweets:
         words = list(set(tweet.split(" ")))
+        print set(words),termss
         if bool(set(words) & termss):
+            print "yes"
             for term in terms:
                 if term in words:
                     appended_docs[term].extend(words)
                     # for word in words:
                     #     if tboo[word]:
                     #         standard_vectors[term][tind[word]] += 1
+        else:
+            print "no"
     queue.put(appended_docs)
 
 #cluster files by date
@@ -83,25 +88,24 @@ seqfile.close()
 for j,date in enumerate(sorted(date_files.keys())[:1]):
     term_sims = defaultdict(lambda : defaultdict(float))
     burstyterms = date_burstyterms[date]
+    print date,"num terms:",len(burstyterms)
+    combis = [(map(str,comb)) for comb in combinations(burstyterms, 2)]
     bursty_seqs = defaultdict(list)
     seqstart = j*24
     seqend = seqstart+24
-    print len(term_seqs.keys())
     for bt in burstyterms:
-        #print term_seqs[bt],term_seqs[bt][seqstart:(seqstart+24)]
         bursty_seqs[bt] = term_seqs[bt][seqstart:seqend]
-    #print bursty_seqs
     
     for s in range(0,24,2):
         bt_weight = {}
         #calculate weight for each bursty term
         for bt in burstyterms:
             win = bursty_seqs[bt]
-            print win,s
             subwin = [win[s],win[s+1]]
-            bt_weight[bt] = sum(subwin)/sum(win)
-            print win,subwin,sum(subwin)/sum(win)
-        quit()
+            try:
+                bt_weight[bt] = sum(subwin)/sum(win)
+            except ZeroDivisionError:
+                bt_weight[bt] = 0.0
 
         #calculate similarity between bursty terms
         tweets = []
@@ -172,9 +176,9 @@ for j,date in enumerate(sorted(date_files.keys())[:1]):
         tfidf_matrix = tfidf_vectorizer.fit_transform([x[1] for x in pseudodocs])
         print "calculating similarities"
         cosim = cosine_similarity(tfidf_matrix, tfidf_matrix)
-        # pseudomatrix = numpy.array([x[1] for x in pseudodocs])
-        # similarities = 1-pairwise_distances(pseudomatrix, metric="cosine")
-        # print similarities
+
+        #calculate subwindow-score
+
         
 
 
