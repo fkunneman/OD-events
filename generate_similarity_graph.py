@@ -6,6 +6,9 @@ from collections import defaultdict
 import datetime
 import re
 import multiprocessing
+import numpy
+from sklearn.metrics import pairwise_distances
+from scipy.spatial.distance import cosine
 
 import gen_functions
 
@@ -30,11 +33,13 @@ def count_terms(lines,queue):
 
 def extract_tweets(tweets,terms,queue):
     term_words = defaultdict(list)
+    termss = set(terms)
     for tweet in tweets:
         words = list(set(tweet.split(" ")))
-        for term in terms:
-            if term in words:
-                term_words[term].extend(words)
+        if bool(set(words) & termss):
+            for term in terms:
+                if term in words:
+                    term_words[term].extend(words)
     queue.put(term_words)
 
 
@@ -106,16 +111,15 @@ for date in sorted(date_files.keys())[:1]:
         ds.append(l)
         if len(ds) == len(term_chunks):
             break
-    term_words = defaultdict(int)
+    term_words = defaultdict(list)
     for d in ds:
         for k in d:
             term_words[k].extend(d[k])
     print term_words
     #generate vector
+    standard_vector = [0] * len(term_index).keys()
+    #compute similarities
 
-#generate combinations of vectors
-#for each combination:
-    #compute similarity
 
 
 #extract term sub-window freq
