@@ -5,6 +5,7 @@ import codecs
 from collections import defaultdict
 import datetime
 import re
+import multiprocessing
 
 import gen_functions
 
@@ -18,6 +19,14 @@ parser.add_argument('-b', action = 'store', required = True, help = "the file wi
 # parser.add_argument('-o', action = 'store', required = True, help = "the file to write the per-date similarity graph to")
 
 args = parser.parse_args()
+
+
+def count_terms(lines,queue):
+    term_frequency = defaultdict(int)
+    for line in lines:
+        for term in line.split(" "):
+            term_frequency[term] += 1
+    queue.put(term_frequency)
 
 date_files = defaultdict(list)
 date_burstyterms = defaultdict(list)
@@ -36,16 +45,39 @@ for line in burstyfile:
     dates = tokens[2].split(" ")
     for t in dates:
         d = date.search(t).groups()
-        print datetime.date(int("20" + d[0]),int(d[1]),int(d[2])),tokens[0]
         date_burstyterms[datetime.date(int("20" + d[0]),int(d[1]),int(d[2]))].append(tokens[0])
 
-
-
-
 #for each date
+for date in sorted(date_files.keys())[0]:
+    tweets = []
+    #extract all tweets
+    files = date_files[date]
+    for f in files:
+        tweets.extend([l.strip() for l in codecs.open(f,"r","utf-8").readlines()])
 
-#extract all tweets
-#make vocabulary
+    #make vocabulary
+    print "making vocabulary"
+    q = multiprocessing.Queue()
+    tweet_chunks = gen_functions.make_chunks(tweets,dist=True)
+    for i in range(len(tweet_chunks)):
+        p = multiprocessing.Process(target=count_terms,args=[tweet_chunks[i],q])
+        p.start()
+
+    ds = []
+    while True:
+        l = q.get()
+        ds.append(l)
+        if len(ds) == len(chunks):
+            break
+    term_frequency = defaultdict(int)
+    for d in ds:
+        for k in d:
+            term_frequency[k] += d[k]
+    vocabulary = term_frequency.keys()
+    term_index = {}
+    for i,term in enumerate(vocabulary):
+        term_index[term] = i
+    print term_index
 
 #make term-tweet vectors
         #extract tweets containing term
