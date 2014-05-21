@@ -34,8 +34,8 @@ def count_terms(lines,queue):
 
 def extract_tweets(tweets,terms,queue):
     appended_docs = defaultdict(list)
-    for term in terms:
-        standard_vectors[term] = [0] * len(tind.keys())
+#    for term in terms:
+#        standard_vectors[term] = [0] * len(tind.keys())
     termss = set(terms)
     for tweet in tweets:
         words = list(set(tweet.split(" ")))
@@ -46,7 +46,7 @@ def extract_tweets(tweets,terms,queue):
                     # for word in words:
                     #     if tboo[word]:
                     #         standard_vectors[term][tind[word]] += 1
-    queue.put(standard_vectors)
+    queue.put(appended_docs)
 
 date_files = defaultdict(list)
 date_burstyterms = defaultdict(list)
@@ -125,7 +125,8 @@ for date in sorted(date_files.keys())[:1]:
         pseudodocs = []
         for d in ds:
             for k in d:
-                pseudodocs.append((k,d[k]))
+                pseudodocs.append((k," ".join(d[k])))
+        print pseudodocs[0]
         #compute similarities
         print "tfidf vectorizing"
         tfidf_vectorizer = TfidfVectorizer()
