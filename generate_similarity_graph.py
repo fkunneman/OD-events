@@ -81,7 +81,7 @@ for line in seqfile.readlines():
 seqfile.close()
 
 #for each date
-for j,date in enumerate(sorted(date_files.keys())[:1]):
+for j,date in enumerate(sorted(date_files.keys())):
     term_sims = defaultdict(lambda : defaultdict(float))
     burstyterms = date_burstyterms[date]
     print date,"num terms:",len(burstyterms)
@@ -183,5 +183,8 @@ for j,date in enumerate(sorted(date_files.keys())[:1]):
     outfile.write(" ".join(burstyterms) + "\n")
     #print vals
     for c,term1 in enumerate(burstyterms[:-1]):
-        outfile.write(term1 + " " + " ".join([str(term_sims[term1][term2]) for term2 in burstyterms[c+1:]]) + "\n")
+        if c > 0:
+            outfile.write(term1 + " " + " ".join([str(term_sims[termpre][term1]) for termpre in burstyterms[:c]]))
+        outfile.write(" 1.0 ")
+        outfile.write(" ".join([str(term_sims[term1][term2]) for term2 in burstyterms[c+1:]]) + "\n")
     outfile.close()
