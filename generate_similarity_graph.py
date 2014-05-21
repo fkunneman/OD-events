@@ -34,7 +34,7 @@ def count_terms(lines,queue):
 def extract_tweets(tweets,terms,tind,tboo,queue):
     standard_vectors = defaultdict(list)
     for term in terms:
-        standard_vector[term] = [0] * len(tind.keys())
+        standard_vectors[term] = [0] * len(tind.keys())
     termss = set(terms)
     for tweet in tweets:
         words = list(set(tweet.split(" ")))
@@ -100,7 +100,7 @@ for date in sorted(date_files.keys())[:1]:
             term_b[term] = True
             i += 1
         else:
-            term_b = False
+            term_b[term] = False
 
     #make burstyterm-tweet vectors
     burstyterms = date_burstyterms[date]
@@ -109,7 +109,7 @@ for date in sorted(date_files.keys())[:1]:
     q = multiprocessing.Queue()
     term_chunks = gen_functions.make_chunks(burstyterms,dist=True)
     for i in range(len(term_chunks)):
-        p = multiprocessing.Process(target=extract_tweets,args=[tweets,term_chunks[i],term_index,term_bool,q])
+        p = multiprocessing.Process(target=extract_tweets,args=[tweets,term_chunks[i],term_index,term_b,q])
         p.start()
 
     ds = []
@@ -121,7 +121,7 @@ for date in sorted(date_files.keys())[:1]:
     pseudodocs = []
     for d in ds:
         for k in d:
-            pseudodocs.append(k,d[k])
+            pseudodocs.append((k,d[k]))
     print pseudodocs
     
     #compute similarities
