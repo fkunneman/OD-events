@@ -49,7 +49,7 @@ for term in bursty_terms:
 print "making clusters"
 clust_index = 0
 for term in term_links.keys()[:50]:
-    print term,term_links[term]
+    #print term,term_links[term]
     if term in term_clust.keys():
         clust = term_clust[term]
         clust_content = clust_terms[clust]
@@ -60,6 +60,7 @@ for term in term_links.keys()[:50]:
                 clust_terms[clust][index][1] += 1
             else:
                 clust_terms[clust].append([term2,1])
+                term_clust[term2] = clust
     else:
         candidates = [term2 for term2 in term_links[term] if term2 in term_clust.keys()]
         not_candidates = [term2 for term2 in term_links[term] if term2 not in term_clust.keys()]
@@ -90,11 +91,12 @@ for term in term_links.keys()[:50]:
                 clust_terms[clust][index][1] += 1
             for ncand in not_candidates:
                 clust_terms[clust].append([ncand,1])
-    print clust_terms
+                term_clust = clust
+    #print clust_terms
 
-#for i,clust in enumerate(clust_terms):
-#    print "cluster",i
-#    for t in sorted(clust,key=lambda x: x[1]):
-#        print x[0],x[1]
-#    print "\n"
+for i,clust in enumerate(clust_terms):
+   print "cluster",i
+   for t in sorted(clust,key=lambda x: x[1]):
+       print x[0],x[1]
+   print "\n"
 
