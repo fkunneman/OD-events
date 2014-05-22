@@ -21,10 +21,11 @@ infile = codecs.open(args.i,"r","utf-8")
 lines = infile.readlines()
 infile.close()
 bursty_terms = lines[0].strip().split(" ")
-for line in lines[1:2]:
-    similarities = [float(x) for x in line.strip().split(" ")[1:]]
-    nns = sorted(similarities,reverse=True)
-    print nns
+
+#for line in lines[1:2]:
+similarities = [float(x) for x in lines[1].strip().split(" ")]
+nns = sorted(similarities,reverse=True)
+print bursty_terms[0],nns
 
 
 
