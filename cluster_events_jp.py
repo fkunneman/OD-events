@@ -69,20 +69,30 @@ for term in term_links.keys():
         else:
             cclusts = list(set([term_clust[x] for x in candidates]))
             #print candidates,cclusts,len(cclusts)
+            term_clust[term] = term_clust[candidates[0]]
+            clust = term_clust[term]
             if len(cclusts) == 1: # all candidates are in same cluster 
                 #print cclusts,cclusts[0],term_clust[cclusts[0]]
-                term_clust[term] = term_clust[candidates[0]]
-                clust = term_clust[term]
                 clust_terms[clust].append([term,1])
                 clust_words = [x[0] for x in clust_terms[clust]]
                 #print clust_terms,clust_words
-                for cand in candidates:
-                    #print cand
-                    index = clust_words.index(cand)
-                    clust_terms[clust][index][1] += 1
-                for ncand in candidates:
-                    clust_terms[clust].append([ncand,1])
             else:
-                print "more cluster candidates",candidates,cclusts
+                for c in candidates[1:]:
+                    term_clust[c] = term_clust[term]
+                clust_terms[clust].append([term,1])
+                for c in cclusts:
+                    clust_terms[clust].extend(clust_terms[c])
+                clust_words = [x[0] for x in clust_terms[clust]]
+            for cand in candidates:
+                #print cand
+                index = clust_words.index(cand)
+                clust_terms[clust][index][1] += 1
+            for ncand in candidates:
+                clust_terms[clust].append([ncand,1])
 
-print clust_terms
+for i,clust in enumerate(clust_terms):
+    print "cluster",i
+    for t in sorted(clust,key=lambda x: x[1]):
+        print x[0],x[1]
+    print "\n"
+
