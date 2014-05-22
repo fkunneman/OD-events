@@ -64,14 +64,17 @@ for term in term_links.keys()[:50]:
                 term_clust[term2] = clust
     else:
         candidates = list(set(term_links[term]) & set(term_clust.keys()))
-        print term_clust.keys(),term_links[term],candidates
-        not_candidates = [term2 for term2 in term_links[term] if term2 not in term_clust.keys()]
+        #print term_clust.keys(),term_links[term],candidates
         if len(candidates) == 0: #total new cluster
             term_clust[term] = clust_index
+            for new in term_links[term]:
+                term_clust[new] = clust_index
             clust_index += 1
             clust_terms.append([[term,1]] + [[x,1] for x in term_links[term]])
         else:
             cclusts = list(set([term_clust[x] for x in candidates]))
+            not_candidates = [term2 for term2 in term_links[term] if term2 not in term_clust.keys()]
+            print not_candidates
             #print candidates,cclusts,len(cclusts)
             term_clust[term] = term_clust[candidates[0]]
             clust = term_clust[term]
