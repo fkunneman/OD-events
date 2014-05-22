@@ -60,7 +60,7 @@ for term in term_links.keys():
                 clust_terms[clust].append((term2,1))
     else:
         candidates = [term2 for term2 in term_links[term] if term2 in term_clust.keys()]
-        if len(candidates) = 1:
+        if len(candidates) == 1:
             term_clust[term] = term_clust[term2]
             clust_terms[term_clust[term2]].append((term,1))
         else:
