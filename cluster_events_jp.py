@@ -24,8 +24,8 @@ bursty_terms = lines[0].strip().split(" ")
 
 #for line in lines[1:2]:
 similarities = [float(x) for x in lines[1].strip().split(" ")]
-nns = sorted(similarities,reverse=True)
-print bursty_terms[0],nns
+nns = sorted(range(len(similarities)), key=lambda k: similarities[k],reverse=True)
+print bursty_terms[0],nns,nns[:5],[bursty_terms[x] for x in nns[:5]]
 
 
 
