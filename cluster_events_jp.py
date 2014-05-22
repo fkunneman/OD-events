@@ -17,6 +17,10 @@ parser.add_argument('-o', action = 'store', required = True, help = "the file to
 args = parser.parse_args()
 
 term_nearest_neighbours = defaultdict(list)
+term_links = defaultdict(list)
+
+term_clust = defaultdict(list)
+clust_terms = []
 
 #make term nearest neighbor dict
 infile = codecs.open(args.i,"r","utf-8")
@@ -30,15 +34,18 @@ term_nearest_neighbours[bursty_terms[0]] = [bursty_terms[x] for x in nns[1:(1+ar
 for line in lines[2:]:
     similarities = [float(x) for x in line.strip().split(" ")[1:]]
     nns = sorted(range(len(similarities)), key=lambda ke: similarities[ke],reverse=True)
-    print nns[0]
     term_nearest_neighbours[line.split(" ")[0]] = [bursty_terms[x] for x in nns[1:(1+args.k)]]
 
-print term_nearest_neighbours
+for term in bursty_terms:
+    for neighbor in term_nearest_neighbours[term]
+        if term in term_nearest_neighbours[neighbour]:
+            term_nearest_neighbours[neighbour].remove(term)
+            term_links[term].append(neighbour)
+            term_links[neighbour].append(term)
+
+print term_links
 
 
-
-#for each term:
-    #for each nearest neighbor
         #check if term in NN's of nearest neighbor
         #if so: add to cluster
 
