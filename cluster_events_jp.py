@@ -47,6 +47,7 @@ for term in bursty_terms:
             term_links[neighbour].append(term)
 
 print "making clusters"
+clust_index = 0
 for term in term_links.keys():
     if term in term_clust.keys():
         clust = term_clust[term]
@@ -60,10 +61,23 @@ for term in term_links.keys():
                 clust_terms[clust].append((term2,1))
     else:
         candidates = [term2 for term2 in term_links[term] if term2 in term_clust.keys()]
-        if len(candidates) == 1:
-            term_clust[term] = term_clust[term2]
-            clust_terms[term_clust[term2]].append((term,1))
+        not_candidates = [term2 for term2 in term_links[term] if term2 not in term_clust.keys()]
+        if len(candidates) == 0: #total new cluster
+            term_clust[term] = clust_index
+            clust_terms.append([(term,1)] + [(x,1) for x in term_links[term]])
         else:
-            print candidates
+            cclusts = list(set([term_clust[x] for x in candidates]))
+            if len(cclusts) == 1: # all candidates are in same cluster 
+                term_clust[term] = term_clust[cclusts[0]]
+                clust = term_clust[cclusts[0]]
+                clust_terms[term_clust[term]].append((term,1))
+                clust_words = [x[0] for x in clust_terms[clust]
+                for cand in candidates:
+                    index = clust_words.index(cand)
+                    clust_terms[clust][index][1] += 1
+                for ncand in candidates:
+                    clust_terms[clust].append((ncand,1))
+            else:
+                print candidates,cclusts
 
     print clust_terms
