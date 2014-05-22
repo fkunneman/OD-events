@@ -24,14 +24,14 @@ lines = infile.readlines()
 infile.close()
 bursty_terms = lines[0].strip().split(" ")
 similarities = [float(x) for x in lines[1].strip().split(" ")]
-nns = sorted(range(len(similarities)), key=lambda k: similarities[k],reverse=True)
-term_nearest_neighbours[bursty_terms[0]] = [bursty_terms[x] for x in nns[1:(1+k)]]
+nns = sorted(range(len(similarities)), key=lambda ke: similarities[ke],reverse=True)
+term_nearest_neighbours[bursty_terms[0]] = [bursty_terms[x] for x in nns[1:(1+args.k)]]
 #print bursty_terms[0],nns,nns[:5],[bursty_terms[x] for x in nns[:5]]
 for line in lines[2:]:
     similarities = [float(x) for x in line.strip().split(" ")[1:]]
-    nns = sorted(range(len(similarities)), key=lambda k: similarities[k],reverse=True)
+    nns = sorted(range(len(similarities)), key=lambda ke: similarities[ke],reverse=True)
     print nns[0]
-    term_nearest_neighbours[line.split(" ")[0]] = [bursty_terms[x] for x in nns[1:(1+k)]]
+    term_nearest_neighbours[line.split(" ")[0]] = [bursty_terms[x] for x in nns[1:(1+args.k)]]
 
 print term_nearest_neighbours
 
