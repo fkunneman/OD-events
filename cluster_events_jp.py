@@ -37,7 +37,7 @@ for line in lines[2:]:
     term_nearest_neighbours[line.split(" ")[0]] = [bursty_terms[x] for x in nns[1:(1+args.k)]]
 
 for term in bursty_terms:
-    for neighbor in term_nearest_neighbours[term]
+    for neighbor in term_nearest_neighbours[term]:
         if term in term_nearest_neighbours[neighbour]:
             term_nearest_neighbours[neighbour].remove(term)
             term_links[term].append(neighbour)
