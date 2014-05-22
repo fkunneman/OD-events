@@ -53,12 +53,11 @@ for term in term_links.keys():
     #print term,term_links[term]
     if term in term_clust.keys():
         clust = term_clust[term]
-        clust_terms[clust][index][1] += 1
         clust_content = clust_terms[clust]
         clust_words = [x[0] for x in clust_content]
         index = clust_words.index(term)
         clust_terms[clust][index][1] += 1
-        print term_links[term],clust_words
+#        print term_links[term],clust_words
         for term2 in term_links[term]:
             if term2 in clust_words:
                 index = clust_words.index(term2)
@@ -66,7 +65,7 @@ for term in term_links.keys():
             else:
                 clust_terms[clust].append([term2,1])
                 term_clust[term2] = clust
-        print clust_terms[clust]
+#        print clust_terms[clust]
     else:
         candidates = list(set(term_links[term]) & set(term_clust.keys()))
         #print term_clust.keys(),term_links[term],candidates
@@ -104,9 +103,9 @@ for term in term_links.keys():
                 term_clust[ncand] = clust
     #print clust_terms
 
-#for i,clust in enumerate(clust_terms):
-#   print "cluster",i
-#   for t in sorted(clust,key=itemgetter(1)):
-#       print t[0],t[1]
-#   print "\n"
+for i,clust in enumerate(clust_terms):
+   print "cluster",i
+   for t in sorted(clust,key=itemgetter(1)):
+       print t[0],t[1]
+   print "\n"
 
