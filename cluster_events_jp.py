@@ -96,7 +96,7 @@ for term in term_links.keys()[:50]:
                 clust_terms[clust][index][1] += 1
             for ncand in not_candidates:
                 clust_terms[clust].append([ncand,1])
-                term_clust = clust
+                term_clust[ncand] = clust
     #print clust_terms
 
 for i,clust in enumerate(clust_terms):
