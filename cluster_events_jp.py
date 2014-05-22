@@ -58,14 +58,14 @@ for term in term_links.keys():
                 index = clust_words.index(term2)
                 clust_terms[clust][index][1] += 1
             else:
-                clust_terms[clust].append((term2,1))
+                clust_terms[clust].append([term2,1])
     else:
         candidates = [term2 for term2 in term_links[term] if term2 in term_clust.keys()]
         not_candidates = [term2 for term2 in term_links[term] if term2 not in term_clust.keys()]
         if len(candidates) == 0: #total new cluster
             term_clust[term] = clust_index
             clust_index += 1
-            clust_terms.append([(term,1)] + [(x,1) for x in term_links[term]])
+            clust_terms.append([[term,1]] + [[x,1] for x in term_links[term]])
         else:
             cclusts = list(set([term_clust[x] for x in candidates]))
             #print candidates,cclusts,len(cclusts)
@@ -73,7 +73,7 @@ for term in term_links.keys():
                 #print cclusts,cclusts[0],term_clust[cclusts[0]]
                 term_clust[term] = term_clust[candidates[0]]
                 clust = term_clust[term]
-                clust_terms[clust].append((term,1))
+                clust_terms[clust].append([term,1])
                 clust_words = [x[0] for x in clust_terms[clust]]
                 #print clust_terms,clust_words
                 for cand in candidates:
@@ -81,8 +81,8 @@ for term in term_links.keys():
                     index = clust_words.index(cand)
                     clust_terms[clust][index][1] += 1
                 for ncand in candidates:
-                    clust_terms[clust].append((ncand,1))
+                    clust_terms[clust].append([ncand,1])
             else:
-                print candidates,cclusts
+                print "more cluster candidates",candidates,cclusts
 
 print clust_terms
