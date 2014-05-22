@@ -46,9 +46,25 @@ for term in bursty_terms:
             term_links[term].append(neighbour)
             term_links[neighbour].append(term)
 
-print term_links
+print "making clusters"
+for term in term_links.keys():
+    if term in term_clust.keys():
+        clust = term_clust[term]
+        clust_content = clust_terms[clust]
+        clust_words = [x[0] for x in clust_content]
+        for term2 in term_links[term]:
+            if term2 in clust_words:
+                index = clust_words.index(term2)
+                clust_terms[clust][index][1] += 1
+            else:
+                clust_terms[clust].append((term2,1))
 
+    else:
+        candidates = [term2 in term_links[term] if term2 in term_clust.keys()]
+        if len(candidates) = 1:
+            term_clust[term] = term_clust[term2]
+            clust_terms[term_clust[term2]].append((term,1))
+        else:
+            print candidates
 
-        #check if term in NN's of nearest neighbor
-        #if so: add to cluster
-
+    print clust_terms
