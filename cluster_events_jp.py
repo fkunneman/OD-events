@@ -53,8 +53,12 @@ for term in term_links.keys()[:50]:
     #print term,term_links[term]
     if term in term_clust.keys():
         clust = term_clust[term]
+        clust_terms[clust][index][1] += 1
         clust_content = clust_terms[clust]
         clust_words = [x[0] for x in clust_content]
+        index = clust_words.index(term)
+        clust_terms[clust][index][1] += 1
+        print term_links[term],clust_words
         for term2 in term_links[term]:
             if term2 in clust_words:
                 index = clust_words.index(term2)
@@ -62,6 +66,7 @@ for term in term_links.keys()[:50]:
             else:
                 clust_terms[clust].append([term2,1])
                 term_clust[term2] = clust
+        print clust_terms[clust]
     else:
         candidates = list(set(term_links[term]) & set(term_clust.keys()))
         #print term_clust.keys(),term_links[term],candidates
