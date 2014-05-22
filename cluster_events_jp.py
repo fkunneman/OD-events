@@ -22,6 +22,7 @@ term_links = defaultdict(list)
 term_clust = defaultdict(list)
 clust_terms = []
 
+print args.i
 #make term nearest neighbor dict
 infile = codecs.open(args.i,"r","utf-8")
 lines = infile.readlines()
@@ -31,13 +32,15 @@ similarities = [float(x) for x in lines[1].strip().split(" ")]
 nns = sorted(range(len(similarities)), key=lambda ke: similarities[ke],reverse=True)
 term_nearest_neighbours[bursty_terms[0]] = [bursty_terms[x] for x in nns[1:(1+args.k)]]
 #print bursty_terms[0],nns,nns[:5],[bursty_terms[x] for x in nns[:5]]
+print "extracting nearest neighbours for",len(bursty_terms),"bursty terms"
 for line in lines[2:]:
     similarities = [float(x) for x in line.strip().split(" ")[1:]]
     nns = sorted(range(len(similarities)), key=lambda ke: similarities[ke],reverse=True)
     term_nearest_neighbours[line.split(" ")[0]] = [bursty_terms[x] for x in nns[1:(1+args.k)]]
 
+print "extracting term links"
 for term in bursty_terms:
-    for neighbor in term_nearest_neighbours[term]:
+    for neighbour in term_nearest_neighbours[term]:
         if term in term_nearest_neighbours[neighbour]:
             term_nearest_neighbours[neighbour].remove(term)
             term_links[term].append(neighbour)
