@@ -5,6 +5,7 @@ import codecs
 from collections import defaultdict
 import re
 import numpy
+from operator import itemgetter
 
 """
 Script to cluster event terms out of a similarity graph
@@ -96,7 +97,7 @@ for term in term_links.keys()[:50]:
 
 for i,clust in enumerate(clust_terms):
    print "cluster",i
-   for t in sorted(clust,key=lambda x: x[1]):
-       print x[0],x[1]
+   for t in sorted(cluster,key=itemgetter(1))
+       print t[0],t[1]
    print "\n"
 
