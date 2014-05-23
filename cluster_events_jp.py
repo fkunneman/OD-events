@@ -69,6 +69,8 @@ for term in term_links.keys():
                 clust_terms[clust_num].extend(clust_terms[cn])
             for cn in sorted(candidate_nums[1:],reverse=True):
                 clust_terms.pop(cn)
+                for c in [x for x in term_clust.keys() if term_clust[x] > cn]:
+                    term_clust[c] -= 1
                 if cn < clust_num:
                     for c in [x for x in candidates if term_clust[x] == clust_num]:
                         term_clust[c] -= 1
