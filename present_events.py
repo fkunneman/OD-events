@@ -20,20 +20,19 @@ Script to rank and summarize the extracted events on a day
 """
 parser = argparse.ArgumentParser(description = "Script to rank and summarize the extracted events on a day")
 parser.add_argument('-i', action = 'store', nargs='+',required = True, help = "The files with tweets per hour")  
-parser.add_argument('-c', action = 'store', required = True, help = "the file with event clusters")
-parser.add_argument('-t', action = 'store', required = True, help = "the file with term frequencies over time")
-parser.add_argument('-o', action = 'store', required = True, help = "the directory to write similarity files to")
+parser.add_argument('-c', action = 'store', nargs='+',required = True, help = "the file with event clusters")
+#parser.add_argument('-t', action = 'store', required = True, help = "the file with term frequencies over time")
+#parser.add_argument('-o', action = 'store', required = True, help = "the directory to write similarity files to")
 
 args = parser.parse_args()
 
-date_tweets = defaultdict(list)
+date_files = defaultdict(list)
 date_clusters = defaultdict(list)
 
 def extract_tweets(tweets,clusters,queue):
     cluster_tweets = defaultdict(list)
     for tweet in tweets:
         words = list(set(tweet.split("\t")[-1].split(" ")))
-        print words
         for cluster in clusters:
             if bool(set(words) & set(cluster[1])):
                 cluster_tweets[cluster[0]].append(tweet)
@@ -78,9 +77,10 @@ for j,date in enumerate(sorted(date_files.keys())):
     ds = []
     while True:
         l = q.get()
+        ds.append(l)
         for clustind in l.keys():
             clusters[clustind].append(l[clustind])
-        if len(ds) == len(term_chunks):
+        if len(ds) == len(cluster_chunks):
             break
 
     print clusters
