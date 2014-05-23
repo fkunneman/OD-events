@@ -84,5 +84,5 @@ for term in term_links.keys():
 #write clusters
 outfile = codecs.open(args.o,"w","utf-8")
 for i,clust in enumerate(clust_terms):
-   outfile.write("\t".join([" ".join([t[0],str(t[1])]) for t in sorted(clust,key=itemgetter(1))]) + "\n")
+   outfile.write("\t".join([" ".join([t[0],str(t[1])]) for t in sorted(clust,key=itemgetter(1),reverse=True)]) + "\n")
 outfile.close()
