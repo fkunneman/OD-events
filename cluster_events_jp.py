@@ -52,14 +52,18 @@ for term in term_links.keys():
     #print term,term_links[term]
     cluster = term_links[term]
     if len(cluster) > 1:
+        print cluster
+        print term_clust
+        print [[i,l] for i,l in enumerate(clust_terms)]
     # print "cluster size",len(cluster)
         candidates = list(set(cluster) & set(term_clust.keys()))
         #print term_clust.keys(),term_links[term],candidates
         if len(candidates) == 0: #total new cluster
             for cterm in cluster:
                 term_clust[cterm] = clust_index
-            clust_index += 1
             clust_terms.append([[x,1] for x in cluster])
+            print candidates,clust_index,len(clust_terms)
+            clust_index += 1
         else:
             candidate_nums = list(set([term_clust[x] for x in candidates]))
             clust_num = candidate_nums[0]
@@ -67,20 +71,25 @@ for term in term_links.keys():
             other = list(set(term_links[term]) - set(term_clust.keys()))
             if len(list(set(candidate_nums))) > 1: #different clusters
                 #combine clusters
-                # print "before",candidate_nums,clust_terms[clust_num],[[x,term_clust[x]] for x in candidates]
+                #print "before",candidate_nums,clust_terms[clust_num],[[x,term_clust[x]] for x in candidates]
                 for cn in candidate_nums[1:]:
                     clust_terms[clust_num].extend(clust_terms[cn])
                 for cn in sorted(candidate_nums[1:],reverse=True):
                     clust_terms.pop(cn)
+                    clust_index -= 1
                     for c in [x for x in term_clust.keys() if term_clust[x] > cn]:
                         term_clust[c] -= 1
+     #                   try:
+     #                       print unicode(c),term_clust[c]+1,"minus 1"
+     #                   except:
+     #                       print term_clust[c]+1,"minus 1"
                     if cn < clust_num:
-                        for c in [x for x in candidates if term_clust[x] == clust_num]:
-                            term_clust[c] -= 1
+                    #    for c in [x for x in candidates if term_clust[x] == clust_num]:
+                    #        term_clust[c] -= 1
                         clust_num -= 1
-                for c in [x for x in candidates if term_clust[x] in candidate_nums[1:]]:
-                    term_clust[c] = clust_num
-                # print "after",candidate_nums,clust_terms[clust_num],[[x,term_clust[x]] for x in candidates]
+                #for c in [x for x in candidates if term_clust[x] in candidate_nums[1:]]:
+                #    term_clust[c] = clust_num
+                #print "after",candidate_nums,clust_terms[clust_num],[[x,term_clust[x]] for x in candidates]
             for cterm in candidates:
                 index = [x[0] for x in clust_terms[clust_num]].index(cterm)
                 clust_terms[clust_num][index][1] += 1
