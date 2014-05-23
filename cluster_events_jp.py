@@ -56,12 +56,10 @@ for term in term_links.keys():
             for cterm in cluster:
                 term_clust[cterm] = clust_index
             clust_terms.append([[x,1] for x in cluster])
-            print candidates,clust_index,len(clust_terms)
             clust_index += 1
         else:
             candidate_nums = list(set([term_clust[x] for x in candidates]))
             clust_num = candidate_nums[0]
-            print candidates, candidate_nums,clust_terms[clust_num]
             other = list(set(term_links[term]) - set(term_clust.keys()))
             if len(list(set(candidate_nums))) > 1: #different clusters
                 #combine clusters
@@ -86,5 +84,5 @@ for term in term_links.keys():
 #write clusters
 outfile = codecs.open(args.o,"w","utf-8")
 for i,clust in enumerate(clust_terms):
-   outfile.write("\t".join([" ".join[t[0],str(t[1])] for t in sorted(clust,key=itemgetter(1))]) + "\n")
+   outfile.write("\t".join([" ".join([t[0],str(t[1])]) for t in sorted(clust,key=itemgetter(1))]) + "\n")
 outfile.close()
