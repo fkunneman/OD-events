@@ -87,8 +87,10 @@ for term in term_links.keys():
                     #    for c in [x for x in candidates if term_clust[x] == clust_num]:
                     #        term_clust[c] -= 1
                         clust_num -= 1
+                print "before",candidate_nums[1:],[term_clust[x] for x in candidates]
                 for c in [x for x in candidates if term_clust[x] in candidate_nums[1:]]:
                    term_clust[c] = clust_num
+                print "after",candidate_nums[1:],[term_clust[x] for x in candidates]
                 #print "after",candidate_nums,clust_terms[clust_num],[[x,term_clust[x]] for x in candidates]
             for cterm in candidates:
                 index = [x[0] for x in clust_terms[clust_num]].index(cterm)
