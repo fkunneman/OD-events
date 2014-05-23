@@ -75,7 +75,7 @@ for term in term_links.keys():
                 for cn in candidate_nums[1:]:
                     clust_terms[clust_num].extend(clust_terms[cn])
                     for ct in clust_terms[cn]:
-                        term_clust[ct] = clust_num
+                        term_clust[ct[0]] = clust_num
                 for cn in sorted(candidate_nums[1:],reverse=True):
                     clust_terms.pop(cn)
                     clust_index -= 1
