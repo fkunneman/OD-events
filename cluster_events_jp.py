@@ -60,16 +60,17 @@ for term in term_links.keys():
         clust_terms.append([[x,1] for x in cluster])
     else:
         candidate_nums = ([term_clust[x] for x in candidates])
+        clust_num = candidate_nums[0]
         other = list(set(term_links[term]) - set(term_clust.keys()))
-        if len(list(set(candidate_nums))) == 1:
-            clust_num = candidate_nums[0]
-        else: #different clusters
-            #take cluster of first term
+        if len(list(set(candidate_nums))) > 1: #different clusters
+            #combine clusters
             clust_num = candidate_nums[0]
             for cn in candidate_nums[1:]:
                 clust_terms[clust_num].extend(clust_terms[cn])
             for cn in sorted(candidate_nums[1:],reverse=True):
                 clust_terms.pop(cn)
+                if cn < clust_num:
+                    clust_num -= 1
         for cterm in candidates:
             index = clust_terms[clust_num].index(cterm)
             clust_terms[clust_num][index][1] += 1
