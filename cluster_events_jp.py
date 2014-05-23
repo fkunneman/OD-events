@@ -51,6 +51,7 @@ clust_terms = []
 for term in term_links.keys():
     #print term,term_links[term]
     cluster = term_links[term]
+    print "cluster size",len(cluster)
     candidates = list(set(cluster) & set(term_clust.keys()))
     #print term_clust.keys(),term_links[term],candidates
     if len(candidates) == 0: #total new cluster
