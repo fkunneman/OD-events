@@ -65,6 +65,7 @@ for term in term_links.keys():
         other = list(set(term_links[term]) - set(term_clust.keys()))
         if len(list(set(candidate_nums))) > 1: #different clusters
             #combine clusters
+            print "before",candidate_nums,clust_terms[clust_num],[[x,term_clust[x]] for x in candidates]
             for cn in candidate_nums[1:]:
                 clust_terms[clust_num].extend(clust_terms[cn])
             for cn in sorted(candidate_nums[1:],reverse=True):
@@ -75,6 +76,7 @@ for term in term_links.keys():
                     clust_num -= 1
             for c in [x for x in candidates if term_clust[x] in candidate_nums[1:]]:
                 term_clust[c] = clust_num
+            print "after",candidate_nums,clust_terms[clust_num],[[x,term_clust[x]] for x in candidates]
         for cterm in candidates:
             index = [x[0] for x in clust_terms[clust_num]].index(cterm)
             clust_terms[clust_num][index][1] += 1
