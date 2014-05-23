@@ -52,9 +52,9 @@ for term in term_links.keys():
     #print term,term_links[term]
     cluster = term_links[term]
     if len(cluster) > 1:
-        print cluster
-        print term_clust
-        print [[i,l] for i,l in enumerate(clust_terms)]
+        # print cluster
+        # print term_clust
+        # print [[i,l] for i,l in enumerate(clust_terms)]
     # print "cluster size",len(cluster)
         candidates = list(set(cluster) & set(term_clust.keys()))
         #print term_clust.keys(),term_links[term],candidates
@@ -87,8 +87,8 @@ for term in term_links.keys():
                     #    for c in [x for x in candidates if term_clust[x] == clust_num]:
                     #        term_clust[c] -= 1
                         clust_num -= 1
-                #for c in [x for x in candidates if term_clust[x] in candidate_nums[1:]]:
-                #    term_clust[c] = clust_num
+                for c in [x for x in candidates if term_clust[x] in candidate_nums[1:]]:
+                   term_clust[c] = clust_num
                 #print "after",candidate_nums,clust_terms[clust_num],[[x,term_clust[x]] for x in candidates]
             for cterm in candidates:
                 index = [x[0] for x in clust_terms[clust_num]].index(cterm)
