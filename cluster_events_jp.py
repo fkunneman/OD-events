@@ -70,7 +70,7 @@ for term in term_links.keys():
                 clust_terms[clust_num].extend(clust_terms[cn])
             for cn in sorted(candidate_nums[1:],reverse=True):
                 clust_terms.pop(cn)
-        for cterm in candidate_nums:
+        for cterm in candidates:
             index = clust_terms[clust_num].index(cterm)
             clust_terms[clust_num][index][1] += 1
         for cterm in other:
