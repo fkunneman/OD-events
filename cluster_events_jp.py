@@ -74,6 +74,8 @@ for term in term_links.keys():
                 #print "before",candidate_nums,clust_terms[clust_num],[[x,term_clust[x]] for x in candidates]
                 for cn in candidate_nums[1:]:
                     clust_terms[clust_num].extend(clust_terms[cn])
+                    for ct in clust_terms[cn]:
+                        term_clust[ct] = clust_num
                 for cn in sorted(candidate_nums[1:],reverse=True):
                     clust_terms.pop(cn)
                     clust_index -= 1
@@ -87,10 +89,10 @@ for term in term_links.keys():
                     #    for c in [x for x in candidates if term_clust[x] == clust_num]:
                     #        term_clust[c] -= 1
                         clust_num -= 1
-                print "before",candidate_nums[1:],[term_clust[x] for x in candidates]
-                for c in [x for x in candidates if term_clust[x] in candidate_nums[1:]]:
-                   term_clust[c] = clust_num
-                print "after",candidate_nums[1:],[term_clust[x] for x in candidates]
+                # print "before",candidate_nums[1:],[term_clust[x] for x in candidates]
+                # for c in [x for x in candidates if term_clust[x] in candidate_nums[1:]]:
+                #    term_clust[c] = clust_num
+                # print "after",candidate_nums[1:],[term_clust[x] for x in candidates]
                 #print "after",candidate_nums,clust_terms[clust_num],[[x,term_clust[x]] for x in candidates]
             for cterm in candidates:
                 index = [x[0] for x in clust_terms[clust_num]].index(cterm)
