@@ -62,10 +62,10 @@ for term in term_links.keys():
         candidate_nums = ([term_clust[x] for x in candidates])
         other = list(set(term_links[term]) - set(term_clust.keys()))
         if len(list(set(candidate_nums))) == 1:
-            clust_num = term_clust[candidates[0]]
+            clust_num = candidate_nums[0]
         else: #different clusters
             #take cluster of first term
-            clust_num = term_clust[candidate_nums[0]]
+            clust_num = candidate_nums[0]
             for cn in candidate_nums[1:]:
                 clust_terms[clust_num].extend(clust_terms[cn])
             for cn in sorted(candidate_nums[1:],reverse=True):
