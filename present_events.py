@@ -22,7 +22,7 @@ parser = argparse.ArgumentParser(description = "Script to rank and summarize the
 parser.add_argument('-i', action = 'store', nargs='+',required = True, help = "The files with tweets per hour")  
 parser.add_argument('-c', action = 'store', nargs='+',required = True, help = "the file with event clusters")
 #parser.add_argument('-t', action = 'store', required = True, help = "the file with term frequencies over time")
-parser.add_argument('-o', action = 'store', required = True, help = "the directory to write similarity files to")
+#parser.add_argument('-o', action = 'store', required = True, help = "the directory to write similarity files to")
 
 args = parser.parse_args()
 
@@ -99,7 +99,7 @@ for j,date in enumerate(sorted(date_files.keys())):
 
     #rank scores and print to file
     ranked_clusters = sorted(d.items(), key=lambda x: x[1],reverse = True)
-    for cluster in ranked_clusters:
+    for cluster in ranked_clusters[:15]:
         print ranked_clusters[cluster],clusters[cluster][1],clusters[cluster][2][:10]
 
     
