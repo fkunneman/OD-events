@@ -22,7 +22,7 @@ parser = argparse.ArgumentParser(description = "Script to rank and summarize the
 parser.add_argument('-i', action = 'store', nargs='+',required = True, help = "The files with tweets per hour")  
 parser.add_argument('-c', action = 'store', nargs='+',required = True, help = "the file with event clusters")
 #parser.add_argument('-t', action = 'store', required = True, help = "the file with term frequencies over time")
-#parser.add_argument('-o', action = 'store', required = True, help = "the directory to write similarity files to")
+parser.add_argument('-o', action = 'store', required = True, help = "the directory to write similarity files to")
 
 args = parser.parse_args()
 
@@ -83,37 +83,27 @@ for j,date in enumerate(sorted(date_files.keys())):
         if len(ds) == len(cluster_chunks):
             break
 
-    print clusters
+    #calculate scores
+    cluster_scores = {}
+    for i,cluster in enumerate(clusters):
+        clustertweets = cluster[2]
+        popularity = len(clustertweets)
+        user_frequency = len(list(set([ct.split("\t")[2] for ct in clustertweets])))
+        tweets_text = [ct.split("\t")[5].split(" ") for ct in clustertweets]
+        words = []
+        for tt in tweets_text:
+            words.extend(tt)
+        informativeness = len(list(set(words))) / len(words)
+        cluster_score = popularity * user_frequency * tweets_text
+        cluster_scores[i] = cluster_score
 
-    # clustertweets = [0] * len()
-    # index_cluster = {}
-    # y = 0
-    # for d in ds:
-    #     for k in d:
-    #         index_cluster[k] = y
-    #         y += 1
-    #         cluster_tweets.append(d[k])))
-    # #compute similarities
-    # print "calculating similarities"
-    # tfidf_vectorizer = TfidfVectorizer()
-    # tfidf_matrix = tfidf_vectorizer.fit_transform([x[1] for x in pseudodocs])
-    # cosim = cosine_similarity(tfidf_matrix, tfidf_matrix)
-    # print "calculating feature-pair subwindow-scores"
-    # for c,term1 in enumerate(sorted(index_term.keys()[:-1])):
-    #     for term2 in sorted(index_term.keys()[c:]):
-    #         # if not bt_weight[term1] == 0.0 or bt_weight[term2] == 0.0:
-    #         term_sims[term1][term2] += (bt_weight[term1] * bt_weight[term2] * cosim[index_term[term1],index_term[term2]])
+    #rank scores and print to file
+    ranked_clusters = sorted(d.items(), key=lambda x: x[1],reverse = True)
+    for cluster in ranked_clusters:
+        print ranked_clusters[cluster],clusters[cluster][1],clusters[cluster][2][:10]
 
-    # #print sims
-    # outfile = codecs.open(args.o + str(date.month) + "-" + str(date.day) + ".txt","w","utf-8")
-    # print "printing similarities"
-    # #print header
-    # outfile.write(" ".join(burstyterms) + "\n")
-    # #print vals
-    # for c,term1 in enumerate(burstyterms[:-1]):
-    #     if c > 0:
-    #         outfile.write(term1 + " " + " ".join([str(term_sims[termpre][term1]) for termpre in burstyterms[:c]]))
-    #     outfile.write(" 1.0 ")
-    #     outfile.write(" ".join([str(term_sims[term1][term2]) for term2 in burstyterms[c+1:]]) + "\n")
-    # outfile.write(burstyterms[-1] + " " + " ".join([str(term_sims[termpre][burstyterms[-1]]) for termpre in burstyterms[:-1]]) + " 1.0\n")
-    # outfile.close()
+    
+
+
+
+
