@@ -38,7 +38,7 @@ for line in lines[2:]:
     tnn = [bursty_terms[x] for x in nns[1:(1+args.k)]]
     term = line.split(" ")[0]
     term_nearest_neighbours[term] = tnn
-    for neign in nns[1:(1+args.k)]:
+    for neigh in nns[1:(1+args.k)]:
         neighterm = bursty_terms[neigh]
         term_termsims[term][neighterm] = similarities[neigh]
 
