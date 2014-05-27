@@ -41,6 +41,7 @@ for line in lines[2:]:
     for neigh in nns[1:(1+args.k)]:
         neighterm = bursty_terms[neigh]
         term_termsims[term][neighterm] = similarities[neigh]
+        term_termsims[neighterm][term] = similarities[neigh]
 
 print "extracting term links"
 for term in bursty_terms:
@@ -90,6 +91,19 @@ for term in term_links.keys():
 #write clusters
 outfile = codecs.open(args.o,"w","utf-8")
 for i,clust in enumerate(clust_terms):
-    print [" ".join([t[0],str(t[1])]) for t in sorted(clust,key=itemgetter(1),reverse=True)]
-    outfile.write("\t".join([" ".join([t[0],str(t[1])]) for t in sorted(clust,key=itemgetter(1),reverse=True)]) + "\n")
+    all_sims = []
+    for j,term in enumerate(clust):
+        sims = []
+        neighs = term_links[term[0]]
+        print neighs
+        print clust
+        print list(set(neighs) & set([x[0] for x in clust]))
+        for neigh in list(set(neighs) & set([x[0] for x in clust])):
+            sims.append(term_termsims[term[0]][neigh])
+            all_sims.append(term_termsims[term[0]][neigh])
+        sim = sum(sims)/len(sims)
+        clust[j].append(sim)
+    mean_sim = sum(all_sims)/len(all_sims)
+    clust.sort(key=lambda k: (k[1],k[2]), reverse=True)
+    outfile.write(str(mean_sim) + "\t" + "\t".join([" ".join([t[0],str(t[1]),str(t[2])]) for t in clust]) + "\n")
 outfile.close()
