@@ -35,15 +35,15 @@ print "extracting nearest neighbours for",len(bursty_terms),"bursty terms"
 for line in lines[2:]:
     similarities = [float(x) for x in line.strip().split(" ")[1:]]
     nns = sorted(range(len(similarities)), key=lambda ke: similarities[ke],reverse=True)
-    print similarities
-    print nns
-    quit()
     tnn = [bursty_terms[x] for x in nns[1:(1+args.k)]]
     term = line.split(" ")[0]
     term_nearest_neighbours[term] = tnn
-#    for neign in tnn:
-#        print neigh
-#        term_termsims[term][neigh] = 
+    for neign in nns[1:(1+args.k)]:
+        neighterm = bursty_terms[neigh]
+        term_termsims[term][neighterm] = similarities[neigh]
+
+print term_termsims
+quit()
 
 print "extracting term links"
 for term in bursty_terms:
