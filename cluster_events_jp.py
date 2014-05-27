@@ -41,6 +41,7 @@ for line in lines[2:]:
     for neigh in nns[1:(1+args.k)]:
         neighterm = bursty_terms[neigh]
         term_termsims[term][neighterm] = similarities[neigh]
+        term_termsims[neighterm][term] = similarities[neigh]
 
 print "extracting term links"
 for term in bursty_terms:
