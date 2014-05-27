@@ -41,9 +41,9 @@ for line in lines[2:]:
     tnn = [bursty_terms[x] for x in nns[1:(1+args.k)]]
     term = line.split(" ")[0]
     term_nearest_neighbours[term] = tnn
-    for neign in tnn:
-        print neigh
-        term_termsims[term][neigh] = 
+#    for neign in tnn:
+#        print neigh
+#        term_termsims[term][neigh] = 
 
 print "extracting term links"
 for term in bursty_terms:
