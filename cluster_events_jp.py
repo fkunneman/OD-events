@@ -56,8 +56,8 @@ clust_index = 0
 term_clust = {}
 clust_terms = []
 for term in term_links.keys():
-    cluster = term_links[term]
-    if len(cluster) > 0:
+    cluster = term_links[term] + [term]
+    if len(cluster) > 1:
         candidates = list(set(cluster) & set(term_clust.keys()))
         if len(candidates) == 0: #total new cluster
             for cterm in cluster:
