@@ -19,6 +19,7 @@ args = parser.parse_args()
 
 term_nearest_neighbours = defaultdict(list)
 term_links = defaultdict(list)
+term_termsims = defaultdict(lambda : defaultdict(float))
 
 print args.i
 #make term nearest neighbor dict
@@ -33,9 +34,16 @@ term_nearest_neighbours[bursty_terms[0]] = [bursty_terms[x] for x in nns[1:(1+ar
 print "extracting nearest neighbours for",len(bursty_terms),"bursty terms"
 for line in lines[2:]:
     similarities = [float(x) for x in line.strip().split(" ")[1:]]
-    print similarities
     nns = sorted(range(len(similarities)), key=lambda ke: similarities[ke],reverse=True)
-    term_nearest_neighbours[line.split(" ")[0]] = [bursty_terms[x] for x in nns[1:(1+args.k)]]
+    print similarities
+    print nns
+    quit()
+    tnn = [bursty_terms[x] for x in nns[1:(1+args.k)]]
+    term = line.split(" ")[0]
+    term_nearest_neighbours[term] = tnn
+    for neign in tnn:
+        print neigh
+        term_termsims[term][neigh] = 
 
 print "extracting term links"
 for term in bursty_terms:
