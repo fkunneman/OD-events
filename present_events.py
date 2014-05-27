@@ -3,6 +3,7 @@
 from __future__ import division
 import argparse
 import codecs
+import os
 from collections import defaultdict
 import datetime
 import re
@@ -34,8 +35,8 @@ def extract_tweets(tweets,clusters,queue):
     for tweet in tweets:
         words = list(set(tweet.split("\t")[-1].split(" ")))
         for cluster in clusters:
-            if bool(set(words) & set(cluster[1])):
-                cluster_tweets[cluster[0]].append(tweet)
+            if len(set(words) & set(cluster[1])) >= 1:
+                cluster_tweets[cluster[0]].append([len(set(words) & set(cluster[1])),tweet])                
     queue.put(cluster_tweets)
 
 #cluster files by date
@@ -56,10 +57,10 @@ for f in args.f:
 print "making bursty term graph"
 #make date-burstyterm-graph
 burstyfile = codecs.open(args.b,"r","utf-8")
-bursties = defaultdict(float)
+bursties = {}
 for line in burstyfile.readlines():
     tokens = line.strip().split("\t")
-    bursties[tokens[0]] = tokens[1]
+    bursties[tokens[0]] = float(tokens[1])
 burstyfile.close()
 
 #for each date
@@ -88,38 +89,55 @@ for j,date in enumerate(sorted(date_files.keys())):
         l = q.get()
         ds.append(l)
         for clustind in l.keys():
+            l[clustind].sort(key=lambda x : x[0],reverse=True)
+            #print l[clustind]
             clusters[clustind].append(l[clustind])
         if len(ds) == len(cluster_chunks):
             break
 
+#    print clusters
     print "calculating scores"
     #calculate scores
     cluster_scores = {}
     cluster_scores2 = {}
     cluster_scores3 = {}
+    cluster_scores4 = {}
+    cluster_scores5 = {}
     for i,cluster in enumerate(clusters):
         clustertweets = cluster[2]
-        print clustertweets
-        print cluster[1]
+        #print clustertweets
+        #print cluster[1]
         popularity = len(clustertweets)
-        user_frequency = len(list(set([ct.split("\t")[2] for ct in clustertweets])))
-        tweets_text = [ct.split("\t")[5].split(" ") for ct in clustertweets]
+        user_frequency = len(list(set([ct[1].split("\t")[2] for ct in clustertweets])))
+        tweets_text = [ct[1].split("\t")[5].split(" ") for ct in clustertweets]
         words = []
         for tt in tweets_text:
             words.extend(tt)
         informativeness = len(list(set(words))) / len(words)
         burstiness = sum(bursties[x] for x in cluster[1])
-        cluster_scores[i] = popularity * user_frequency * tweets_text * burstiness
-        cluster_scores2[i] = popularity * tweets_text * burstiness
-        cluster_scores3[i] = tweets_text * user_frequency * burstiness
+        #print "popularity",popularity
+        #print "u_freq",user_frequency
+        #print "tweets_text",tweets_text
+        #print "burstiness",burstiness
+        cluster_scores[i] = popularity * user_frequency * informativeness * burstiness
+        cluster_scores2[i] = popularity * informativeness * burstiness
+        cluster_scores3[i] = informativeness * user_frequency * burstiness
+        cluster_scores4[i] = user_frequency * burstiness
+        cluster_scores5[i] = burstiness
 
     #rank scores and print to file
-    dicts = [cluster_scores,cluster_scores2,cluster_scores3]
-    for i in range(3):
+    dicts = [cluster_scores,cluster_scores2,cluster_scores3,cluster_scores4,cluster_scores5]
+    #datename = args.f.split("/")[-1]
+    try:
+        os.mkdir(args.o + str(date) + "/")
+    except OSError:
+        print "exists"
+    for i in range(5):
         ranked_clusters = sorted(dicts[i].items(), key=lambda x: x[1],reverse = True)
-        outfile = codecs.open(args.o + "ranked_clusters_" + str(i) + ".txt","w","utf-8")
+        outfile = codecs.open(args.o + str(date) + "/ranked_clusters_" + str(i) + ".txt","w","utf-8")
         for cluster in ranked_clusters:
-            outfile.write(str(cluster[0]) + " " + str(cluster[1]) + " " + " ".join(clusters[cluster[0]][1]) + "\n" + "\n".join(clusters[cluster[0]][2][:10]) + "\n\n")
+#            print cluster
+            outfile.write(str(cluster[0]) + " " + str(cluster[1]) + " " + " ".join(clusters[cluster[0]][1]) + "\n" + "\n".join([x[1].split("\t")[-1] for x in clusters[cluster[0]][2][:10]]) + "\n\n")
 
 
 
