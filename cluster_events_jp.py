@@ -42,9 +42,6 @@ for line in lines[2:]:
         neighterm = bursty_terms[neigh]
         term_termsims[term][neighterm] = similarities[neigh]
 
-print term_termsims
-quit()
-
 print "extracting term links"
 for term in bursty_terms:
     for neighbour in term_nearest_neighbours[term]:
@@ -93,5 +90,6 @@ for term in term_links.keys():
 #write clusters
 outfile = codecs.open(args.o,"w","utf-8")
 for i,clust in enumerate(clust_terms):
-   outfile.write("\t".join([" ".join([t[0],str(t[1])]) for t in sorted(clust,key=itemgetter(1),reverse=True)]) + "\n")
+    print clust
+    outfile.write("\t".join([" ".join([t[0],str(t[1])]) for t in sorted(clust,key=itemgetter(1),reverse=True)]) + "\n")
 outfile.close()
