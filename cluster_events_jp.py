@@ -38,7 +38,7 @@ for line in lines[2:]:
     tnn = [bursty_terms[x] for x in nns[1:(1+args.k)]]
     term = line.split(" ")[0]
     term_nearest_neighbours[term] = tnn
-    for neign in nns[1:(1+args.k)]:
+    for neigh in nns[1:(1+args.k)]:
         neighterm = bursty_terms[neigh]
         term_termsims[term][neighterm] = similarities[neigh]
 
@@ -101,5 +101,5 @@ for i,clust in enumerate(clust_terms):
         clust[j].append(sim)
     mean_sim = sum(all_sims)/len(all_sims)
     clust.sort(key=lambda k: (k[1],k[2]), reverse=True)
-    outfile.write(str(mean_sim) + "\t" + "\t".join([" ".join([t[0],str(t[1]),str(t[2])]) for t in clust),reverse=True)]) + "\n")
+    outfile.write(str(mean_sim) + "\t" + "\t".join(" ".join([t[0],str(t[1]),str(t[2])]) for t in clust) + "\n")
 outfile.close()
