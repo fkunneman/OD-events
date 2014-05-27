@@ -38,10 +38,9 @@ for line in lines[2:]:
     tnn = [bursty_terms[x] for x in nns[1:(1+args.k)]]
     term = line.split(" ")[0]
     term_nearest_neighbours[term] = tnn
-    for neigh in nns[1:(1+args.k)]:
+    for neign in nns[1:(1+args.k)]:
         neighterm = bursty_terms[neigh]
         term_termsims[term][neighterm] = similarities[neigh]
-        term_termsims[neighterm][term] = similarities[neigh]
 
 print "extracting term links"
 for term in bursty_terms:
@@ -57,7 +56,7 @@ term_clust = {}
 clust_terms = []
 for term in term_links.keys():
     cluster = term_links[term]
-    if len(cluster) > 1:
+    if len(cluster) > 0:
         candidates = list(set(cluster) & set(term_clust.keys()))
         if len(candidates) == 0: #total new cluster
             for cterm in cluster:
@@ -94,10 +93,7 @@ for i,clust in enumerate(clust_terms):
     all_sims = []
     for j,term in enumerate(clust):
         sims = []
-        neighs = term_links[term[0]]
-        print neighs
-        print clust
-        print list(set(neighs) & set([x[0] for x in clust]))
+        neighs = term_termsims[term[0]].keys()
         for neigh in list(set(neighs) & set([x[0] for x in clust])):
             sims.append(term_termsims[term[0]][neigh])
             all_sims.append(term_termsims[term[0]][neigh])
@@ -105,5 +101,5 @@ for i,clust in enumerate(clust_terms):
         clust[j].append(sim)
     mean_sim = sum(all_sims)/len(all_sims)
     clust.sort(key=lambda k: (k[1],k[2]), reverse=True)
-    outfile.write(str(mean_sim) + "\t" + "\t".join([" ".join([t[0],str(t[1]),str(t[2])]) for t in clust]) + "\n")
+    outfile.write(str(mean_sim) + "\t" + "\t".join([" ".join([t[0],str(t[1]),str(t[2])]) for t in clust),reverse=True)]) + "\n")
 outfile.close()
