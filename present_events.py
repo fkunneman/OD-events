@@ -35,7 +35,7 @@ def extract_tweets(tweets,clusters,queue):
     for tweet in tweets:
         words = list(set(tweet.split("\t")[-1].split(" ")))
         for cluster in clusters:
-            terms = [x.split(" ")[0] for x in cluster[2:]]
+            terms = [x[0] for x in cluster[2]]
             if len(set(words) & set(terms)) >= 1:
                 cluster_tweets[cluster[0]].append([len(set(words) & set(terms)),tweet])                
     queue.put(cluster_tweets)
