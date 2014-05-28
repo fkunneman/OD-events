@@ -35,7 +35,7 @@ def extract_tweets(tweets,clusters,queue):
     for tweet in tweets:
         words = list(set(tweet.split("\t")[-1].split(" ")))
         for cluster in clusters:
-            terms = [x.split(" ")[0] for x in cluster[2:]]
+            terms = [x[0] for x in cluster[2]]
             if len(set(words) & set(terms)) > 1:
                 tokens = tweet.split("\t")
                 if tokens[0] == "dutch":
@@ -47,7 +47,7 @@ def extract_tweets(tweets,clusters,queue):
                     else:
                         reply = 0
                     mentions = len([x for x in words[1:] if re.search("^@",x)])
-                    cluster_tweets[cluster[0]].append([len(set(words) & set(terms)),hashtags,urls,reply,mentions,tokens[2],tokens[-1]])                
+                    cluster_tweets[cluster[0]].append([len(set(words) & set(terms)),hashtags,urls,reply,mentions,tokens[2],tokens[-1]])                             
     queue.put(cluster_tweets)
 
 #cluster files by date
