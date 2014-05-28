@@ -36,8 +36,18 @@ def extract_tweets(tweets,clusters,queue):
         words = list(set(tweet.split("\t")[-1].split(" ")))
         for cluster in clusters:
             terms = [x.split(" ")[0] for x in cluster[2:]]
-            if len(set(words) & set(terms)) >= 1:
-                cluster_tweets[cluster[0]].append([len(set(words) & set(terms)),tweet])                
+            if len(set(words) & set(terms)) > 1:
+                tokens = tweet.split("\t")
+                if tokens[0] == "dutch":
+                    words = tokens[-1].split(" ")
+                    hashtags = len([x for x in words if re.search("^#",x)])
+                    urls = len([x for x in words if re.search("^http://",x)])
+                    if re.search("^@",words[0]):
+                        reply = 1
+                    else:
+                        reply = 0
+                    mentions = len([x for x in words[1:] if re.search("^@",x)])
+                    cluster_tweets[cluster[0]].append([len(set(words) & set(terms)),hashtags,urls,reply,mentions,tokens[2],tokens[-1]])                
     queue.put(cluster_tweets)
 
 #cluster files by date
@@ -78,7 +88,7 @@ for j,date in enumerate(sorted(date_files.keys())):
     for i,line in enumerate(date_clusters[date]):
         units = line.split("\t")
         mean_sim = units[0]
-        terms = [x.split(" ") for x in units[1]]
+        terms = [x.split(" ") for x in units[1:]]
         clusters.append([i,mean_sim,terms])
     #link clusters to tweets
     print "extracting tweets"    
@@ -102,29 +112,26 @@ for j,date in enumerate(sorted(date_files.keys())):
 #    print clusters
     print "calculating scores"
     #calculate scores
+    outstats = codecs.open(args.o + str(date) + "/clusterstats_tweets.txt","w","utf-8")
+    outtweets = codecs.open(args.o + str(date) + "/clustertweets_ranked.txt","w","utf-8")
     for i,cluster in enumerate(clusters):
+        print "cluster",i
         clusterterms = cluster[2]
         clustertweets = cluster[3]
-        print "tweets", clustertweets
-        print "terms", clusterterms
-        quit()
-        popularity = len(clustertweets)
-        user_frequency = len(list(set([ct[1].split("\t")[2] for ct in clustertweets])))
+        avg_links = sum([int(x[1]) for x in clusterterms]) / len(clusterterms)
+        avg_sim = float(cluster[1])
+        popularity = len(clustertweets) / len(tweets)
         tweets_text = [ct[1].split("\t")[5].split(" ") for ct in clustertweets]
         words = []
         for tt in tweets_text:
             words.extend(tt)
         informativeness = len(list(set(words))) / len(words)
-        burstiness = sum(bursties[x] for x in cluster[1])
-        #print "popularity",popularity
-        #print "u_freq",user_frequency
-        #print "tweets_text",tweets_text
-        #print "burstiness",burstiness
-        cluster_scores[i] = popularity * user_frequency * informativeness * burstiness
-        cluster_scores2[i] = popularity * informativeness * burstiness
-        cluster_scores3[i] = informativeness * user_frequency * burstiness
-        cluster_scores4[i] = user_frequency * burstiness
-        cluster_scores5[i] = burstiness
+        users = [ct[5] for ct in clustertweets]
+        user_frequency = len(list(set(users))) / len(users)
+        hashtags = sum([ct[1] for ct in clustertweets]) / len(clustertweets)
+        urls = sum([ct[2] for ct in clustertweets]) / len(clustertweets)
+        replies = sum([ct[3] for ct in clustertweets]) / len(clustertweets)
+        mentions = sum([ct[4] for ct in clustertweets]) / len(clustertweets)
 
     #rank scores and print to file
     dicts = [cluster_scores,cluster_scores2,cluster_scores3,cluster_scores4,cluster_scores5]
