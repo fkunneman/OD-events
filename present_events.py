@@ -35,7 +35,7 @@ def extract_tweets(tweets,clusters,queue):
     for tweet in tweets:
         words = list(set(tweet.split("\t")[-1].split(" ")))
         for cluster in clusters:
-            terms = [x[0] for x in cluster[2]]
+            terms = [x[0] for x in cluster[2:]]
             if len(set(words) & set(terms)) > 1:
                 tokens = tweet.split("\t")
                 if tokens[0] == "dutch":
@@ -47,7 +47,7 @@ def extract_tweets(tweets,clusters,queue):
                     else:
                         reply = 0
                     mentions = len([x for x in words[1:] if re.search("^@",x)])
-                    cluster_tweets[cluster[0]].append([len(set(words) & set(terms)),hashtags,urls,reply,mentions,tokens[2],tokens[-1]])                             
+                    cluster_tweets[cluster[0]].append([len(set(words) & set(terms)),hashtags,urls,reply,mentions,tokens[2],tokens[-1]])                
     queue.put(cluster_tweets)
 
 #cluster files by date
@@ -132,20 +132,23 @@ for j,date in enumerate(sorted(date_files.keys())):
         urls = sum([ct[2] for ct in clustertweets]) / len(clustertweets)
         replies = sum([ct[3] for ct in clustertweets]) / len(clustertweets)
         mentions = sum([ct[4] for ct in clustertweets]) / len(clustertweets)
+        avg_terms = sum([ct[0] for ct in clustertweets]) / len(clustertweets)
+        outstats.write(str(i) + "\t" + " ".join([x[0] for x in clusterterms]) + "\t" + ",".join([str(x) for x in [avg_links,avg_sim,popularity,informativeness,user_frequency,hashtags,urls,replies,mentions,avg_terms]]) + "\n")
+        outtweets.write("\n".join([str(i),clustertweets[5],clustertweets[6]]) + "\n")
 
-    #rank scores and print to file
-    dicts = [cluster_scores,cluster_scores2,cluster_scores3,cluster_scores4,cluster_scores5]
-    #datename = args.f.split("/")[-1]
-    try:
-        os.mkdir(args.o + str(date) + "/")
-    except OSError:
-        print "exists"
-    for i in range(5):
-        ranked_clusters = sorted(dicts[i].items(), key=lambda x: x[1],reverse = True)
-        outfile = codecs.open(args.o + str(date) + "/ranked_clusters_" + str(i) + ".txt","w","utf-8")
-        for cluster in ranked_clusters:
-#            print cluster
-            outfile.write(str(cluster[0]) + " " + str(cluster[1]) + " " + " ".join(clusters[cluster[0]][1]) + "\n" + "\n".join([x[1].split("\t")[-1] for x in clusters[cluster[0]][2][:10]]) + "\n\n")
+#     #rank scores and print to file
+#     dicts = [cluster_scores,cluster_scores2,cluster_scores3,cluster_scores4,cluster_scores5]
+#     #datename = args.f.split("/")[-1]
+#     try:
+#         os.mkdir(args.o + str(date) + "/")
+#     except OSError:
+#         print "exists"
+#     for i in range(5):
+#         ranked_clusters = sorted(dicts[i].items(), key=lambda x: x[1],reverse = True)
+#         outfile = codecs.open(args.o + str(date) + "/ranked_clusters_" + str(i) + ".txt","w","utf-8")
+#         for cluster in ranked_clusters:
+# #            print cluster
+#             outfile.write(str(cluster[0]) + " " + str(cluster[1]) + " " + " ".join(clusters[cluster[0]][1]) + "\n" + "\n".join([x[1].split("\t")[-1] for x in clusters[cluster[0]][2][:10]]) + "\n\n")
 
 
 
