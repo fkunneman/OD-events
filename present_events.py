@@ -35,8 +35,9 @@ def extract_tweets(tweets,clusters,queue):
     for tweet in tweets:
         words = list(set(tweet.split("\t")[-1].split(" ")))
         for cluster in clusters:
-            if len(set(words) & set(cluster[1])) >= 1:
-                cluster_tweets[cluster[0]].append([len(set(words) & set(cluster[1])),tweet])                
+            terms = [x.split(" ")[0] for x in cluster[2:]]
+            if len(set(words) & set(terms)) >= 1:
+                cluster_tweets[cluster[0]].append([len(set(words) & set(terms)),tweet])                
     queue.put(cluster_tweets)
 
 #cluster files by date
@@ -75,7 +76,10 @@ for j,date in enumerate(sorted(date_files.keys())):
     #extract clusters
     clusters = []
     for i,line in enumerate(date_clusters[date]):
-        clusters.append([i,[x.split(" ")[0] for x in line.split("\t")]])
+        units = line.split("\t")
+        mean_sim = units[0]
+        terms = [x.split(" ") for x in units[1]]
+        clusters.append([i,mean_sim,terms])
     #link clusters to tweets
     print "extracting tweets"    
     q = multiprocessing.Queue()
@@ -98,15 +102,12 @@ for j,date in enumerate(sorted(date_files.keys())):
 #    print clusters
     print "calculating scores"
     #calculate scores
-    cluster_scores = {}
-    cluster_scores2 = {}
-    cluster_scores3 = {}
-    cluster_scores4 = {}
-    cluster_scores5 = {}
     for i,cluster in enumerate(clusters):
-        clustertweets = cluster[2]
-        #print clustertweets
-        #print cluster[1]
+        clusterterms = cluster[2]
+        clustertweets = cluster[3]
+        print "tweets", clustertweets
+        print "terms", clusterterms
+        quit()
         popularity = len(clustertweets)
         user_frequency = len(list(set([ct[1].split("\t")[2] for ct in clustertweets])))
         tweets_text = [ct[1].split("\t")[5].split(" ") for ct in clustertweets]
