@@ -35,8 +35,8 @@ def extract_tweets(tweets,clusters,queue):
     for tweet in tweets:
         words = list(set(tweet.split("\t")[-1].split(" ")))
         for cluster in clusters:
-            terms = [x[0] for x in cluster[2:]]
-            if len(set(words) & set(terms)) > 1:
+            terms = [x[0] for x in cluster[2]]
+            if len(set(words) & set(terms)) >= 1:
                 tokens = tweet.split("\t")
                 if tokens[0] == "dutch":
                     words = tokens[-1].split(" ")
@@ -112,16 +112,21 @@ for j,date in enumerate(sorted(date_files.keys())):
 #    print clusters
     print "calculating scores"
     #calculate scores
+    if not os.path.isdir(args.o + str(date) + "/"):
+        os.mkdir(args.o + str(date) + "/")
     outstats = codecs.open(args.o + str(date) + "/clusterstats_tweets.txt","w","utf-8")
     outtweets = codecs.open(args.o + str(date) + "/clustertweets_ranked.txt","w","utf-8")
     for i,cluster in enumerate(clusters):
         print "cluster",i
-        clusterterms = cluster[2]
-        clustertweets = cluster[3]
+        try:
+            clusterterms = cluster[2]
+            clustertweets = cluster[3]
+        except:
+            continue
         avg_links = sum([int(x[1]) for x in clusterterms]) / len(clusterterms)
         avg_sim = float(cluster[1])
         popularity = len(clustertweets) / len(tweets)
-        tweets_text = [ct[1].split("\t")[5].split(" ") for ct in clustertweets]
+        tweets_text = [ct[-1].split("\t")[-1].split(" ") for ct in clustertweets]
         words = []
         for tt in tweets_text:
             words.extend(tt)
@@ -134,7 +139,7 @@ for j,date in enumerate(sorted(date_files.keys())):
         mentions = sum([ct[4] for ct in clustertweets]) / len(clustertweets)
         avg_terms = sum([ct[0] for ct in clustertweets]) / len(clustertweets)
         outstats.write(str(i) + "\t" + " ".join([x[0] for x in clusterterms]) + "\t" + ",".join([str(x) for x in [avg_links,avg_sim,popularity,informativeness,user_frequency,hashtags,urls,replies,mentions,avg_terms]]) + "\n")
-        outtweets.write("\n".join([str(i),clustertweets[5],clustertweets[6]]) + "\n")
+        outtweets.write("\n".join([str(i) + "\t" + " ".join(x) for x in tweets_text]) + "\n")
 
 #     #rank scores and print to file
 #     dicts = [cluster_scores,cluster_scores2,cluster_scores3,cluster_scores4,cluster_scores5]
