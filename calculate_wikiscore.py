@@ -30,6 +30,8 @@ for line in burstyfile.readlines():
 burstyfile.close()
 bursties_set = set(bursties)
 bursties_anchor = ["[[" + x + "]]" for x in bursties]
+bursties_anchor.extend(["[[" + x for x in bursties])
+bursties_anchor.extend([x + "]]" for x in bursties])
 bursties_anchor_set = set(bursties_anchor)
 
 print "loading in wikipedia dump"
@@ -51,7 +53,8 @@ for i,page in enumerate(pages):
     if bool(bursties_anchor_set & set(words)):
         matches = list(bursties_ancher_set & set(words))
         for match in matches:
-            bursty_matches[match]["anchor"] += 1
+            stripped_match = re.sub("[\[\]]","",match)
+            bursty_matches[stripped_match]["anchor"] += 1
 
 #calculate newsworthiness
 print "writing newsworthiness to file"
