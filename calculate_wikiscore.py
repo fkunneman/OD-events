@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import division
 import argparse
 import codecs
 from collections import defaultdict
@@ -16,6 +17,7 @@ parser.add_argument('-o', action = 'store', required = True, help = "the output 
 
 args = parser.parse_args()
 
+outfile = codecs.open(args.o,"utf-8","w")
 bursty_matches = defaultdict(lambda : defaultdict(int))
 
 #load in bursty terms 
@@ -47,7 +49,7 @@ for page in pages:
         for match in matches:
             bursty_matches[match]["anchor"] += 1
 
-#calculate informativeness
+#calculate newsworthiness
 for b in bursty_matches.keys():
-    
-
+    newsworthiness = bursty_matches[b]["anchor"] / bursty_matches[b]["word"]
+    outfile.write(b + "\t" + str(newsworthiness) + "\n")
