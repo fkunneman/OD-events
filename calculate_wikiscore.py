@@ -4,7 +4,7 @@ from __future__ import division
 import argparse
 import codecs
 from collections import defaultdict
-from xml.dom import minidom
+import xml.etree.ElementTree as etree
 
 
 """
@@ -41,20 +41,25 @@ pages = xmldoc.getElementsByTagName('page')
 
 #for each page
 print "matching terms to pages"
-for i,page in enumerate(pages):
-    print i,"of",len(pages),"pages"
-    text = page.getElementsByTagName('text')[0]
-    words = text.toprettyxml().split(" ")
+for event, elem in etree.iterparse(args.w, events=('start', 'end', 'start-ns', 'end-ns')):
+    if event == 'end':
+        if elem.tag == '{http://www.mediawiki.org/xml/export-0.8/}text':
+            words = elem.text.split(" ")
+
+# for i,page in enumerate(pages):
+#     print i,"of",len(pages),"pages"
+#     text = page.getElementsByTagName('text')[0]
+    
     #check if one of the bursty terms is present
-    if bool(bursties_set & set(words)):
-        matches = list(bursties_set & set(words))
-        for match in matches:
-            bursty_matches[match]["word"] += 1
-    if bool(bursties_anchor_set & set(words)):
-        matches = list(bursties_ancher_set & set(words))
-        for match in matches:
-            stripped_match = re.sub("[\[\]]","",match)
-            bursty_matches[stripped_match]["anchor"] += 1
+            if bool(bursties_set & set(words)):
+                matches = list(bursties_set & set(words))
+                for match in matches:
+                    bursty_matches[match]["word"] += 1
+            if bool(bursties_anchor_set & set(words)):
+                matches = list(bursties_ancher_set & set(words))
+                for match in matches:
+                    stripped_match = re.sub("[\[\]]","",match)
+                    bursty_matches[stripped_match]["anchor"] += 1
 
 #calculate newsworthiness
 print "writing newsworthiness to file"
