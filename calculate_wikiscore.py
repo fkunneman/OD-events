@@ -56,7 +56,7 @@ for event, elem in etree.iterparse(args.w, events=('start', 'end', 'start-ns', '
                 for match in matches:
                     bursty_matches[match]["word"] += 1
             if bool(bursties_anchor_set & set(words)):
-                matches = list(bursties_ancher_set & set(words))
+                matches = list(bursties_anchor_set & set(words))
                 for match in matches:
                     stripped_match = re.sub("[\[\]]","",match)
                     bursty_matches[stripped_match]["anchor"] += 1
