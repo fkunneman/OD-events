@@ -16,7 +16,7 @@ import re
 parser = argparse.ArgumentParser(description = "")
 parser.add_argument('-i', action = 'store', required = True, help = "the input file")  
 parser.add_argument('-w', action = 'store', required = True, help = "the output file")
-parser.add_argument('-m', action = 'store', choices = ["minus","divide","hmm"], help = "the burstiness metric (choose between \'minus\' and \'divide\'")
+parser.add_argument('-m', action = 'store', choices = ["minus","divide","hmm"], help = "the burstiness metric")
 parser.add_argument('-s', action = 'store', type = int, default = 24, help = "the size of the sliding window (in the amount of hours; default = 24)")
 
 args = parser.parse_args()
@@ -67,7 +67,7 @@ def retrieve_states_hmm(sequence):
 
 print "making sliding windows"
 
-for line in inread.readlines()[:25]:
+for line in inread.readlines():
     tokens = line.strip().split("\t")
     term = tokens[0]
 #    if not re.search("^@",term):
