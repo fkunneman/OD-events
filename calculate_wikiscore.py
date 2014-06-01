@@ -4,7 +4,9 @@ from __future__ import division
 import argparse
 import codecs
 from collections import defaultdict
+import re
 import xml.etree.ElementTree as etree
+
 
 
 """
@@ -44,7 +46,11 @@ print "matching terms to pages"
 for event, elem in etree.iterparse(args.w, events=('start', 'end', 'start-ns', 'end-ns')):
     if event == 'end':
         if elem.tag == '{http://www.mediawiki.org/xml/export-0.8/}text':
-            words = elem.text.split(" ")
+            try:
+                words = elem.text.split(" ")
+            except:
+                print "error text splitting"
+                continue
 
 # for i,page in enumerate(pages):
 #     print i,"of",len(pages),"pages"
@@ -64,5 +70,8 @@ for event, elem in etree.iterparse(args.w, events=('start', 'end', 'start-ns', '
 #calculate newsworthiness
 print "writing newsworthiness to file"
 for b in bursty_matches.keys():
-    newsworthiness = bursty_matches[b]["anchor"] / bursty_matches[b]["word"]
+    try:
+        newsworthiness = bursty_matches[b]["anchor"] / (bursty_matches[b]["word"] + bursty_matches[b]["anchor"])
+    except:
+        newsworthiness = 0
     outfile.write(b + "\t" + str(newsworthiness) + "\n")
