@@ -34,10 +34,10 @@ bursties_anchor.extend(["[[" + x for x in bursties])
 bursties_anchor.extend([x + "]]" for x in bursties])
 bursties_anchor_set = set(bursties_anchor)
 
-print "loading in wikipedia dump"
-#load in Wikipedia dump
-xmldoc = minidom.parse(args.w)
-pages = xmldoc.getElementsByTagName('page')
+# print "loading in wikipedia dump"
+# #load in Wikipedia dump
+# xmldoc = minidom.parse(args.w)
+# pages = xmldoc.getElementsByTagName('page')
 
 #for each page
 print "matching terms to pages"
