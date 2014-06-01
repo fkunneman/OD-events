@@ -93,4 +93,5 @@ for i,date in enumerate(sorted(date_burst.keys())):
         Est = Ps * Nt
         stdev_Est = math.sqrt(Est * (1-Ps))
         Pbst = sigmoid(10 * ((term_windows[term][i] - (Est + stdev_Est)) / (stdev_Est)))
+        print term,"Est",Est,"Ps",Ps,"Nt",Nt,"stdev_Est",stdev_Est,"Pbst",Pbst
         outfile.write(term + "\t" + str(Pbst) + "\n")
