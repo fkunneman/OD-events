@@ -18,11 +18,11 @@ import gen_functions
 """
 Script to generate similarity graphs of bursty features
 """
-parser = argparse.ArgumentParser(description = "Script to generate similarity graphs of bursty features")
-parser.add_argument('-i', action = 'store', nargs='+',required = True, help = "The files with tweets per hour")  
+parser = argparse.ArgumentParser(description = "Script to generate similarity graphs of bursty features")  
 parser.add_argument('-b', action = 'store', required = True, help = "the file with bursty unigrams")
 parser.add_argument('-t', action = 'store', required = True, help = "the file with term frequencies over time")
 parser.add_argument('-a', action = 'store', choices = ['twevent','tags'], default = 'twevent', help = "choose the similarity metric")
+parser.add_argument('-i', action = 'store', nargs='+',required = False, help = "The files with tweets per hour (only needed for \'twevent\' metric)")
 parser.add_argument('-d', action = 'store', required = False, help = "the file with co-occuring term frequencies over time (only needed for \'tags\'' metric)")
 parser.add_argument('-o', action = 'store', required = True, help = "the directory to write similarity files to")
 
