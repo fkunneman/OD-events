@@ -47,7 +47,7 @@ for event, elem in etree.iterparse(args.w, events=('start', 'end', 'start-ns', '
     if event == 'end':
         if elem.tag == '{http://www.mediawiki.org/xml/export-0.8/}text':
             try:
-                words = elem.text.split(" ")
+                words = [w.lower() for w in elem.text.split(" ")]
             except:
                 print "error text splitting"
                 continue

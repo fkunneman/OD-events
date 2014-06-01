@@ -19,10 +19,11 @@ parser.add_argument('-o', action = 'store', required = True, help = "the output 
 
 args = parser.parse_args()
 
-outfile = codecs.open(args.o,"w","utf-8")
 date_num_tweets = []
+date_files = defaultdict(list)
 date_burst = defaultdict(list)
 term_Ps = defaultdict(list)
+
 
 def sigmoid(x):
     return 1 / (1 + math.exp(-x))
@@ -49,8 +50,9 @@ burstyfile = codecs.open(args.b,"r","utf-8")
 bursties = []
 for line in burstyfile.readlines():
     tokens = line.strip().split("\t")
-    datestring = [int(x) for x in tokens[2].split("/")]
-    date_burst[datetime.date((datestring[0]+2000),datestring[1],datestring[2])].append(tokens[0])
+    for dateunit in tokens[2].split(" "):
+        datestring = [int(x) for x in dateunit.split("/")]
+        date_burst[datetime.date((datestring[0]+2000),datestring[1],datestring[2])].append(tokens[0])
     bursties.append(tokens[0])
 burstyfile.close()
 bursties_set = set(bursties)
@@ -67,7 +69,7 @@ for line in infile.readlines():
         i = 0
         while i < len(vals):
             term_windows[term].append(sum([int(x) for x in vals[i:i+24]])) 
-            i += args.s
+            i += 24
 
 print "dates",len(date_num_tweets),"windows",len(term_windows[term_windows.keys()[0]]),"bursties",len(date_burst.keys())
 
@@ -91,4 +93,4 @@ for i,date in enumerate(sorted(date_burst.keys())):
         Est = Ps * Nt
         stdev_Est = math.sqrt(Est * (1-Ps))
         Pbst = sigmoid(10 * ((term_windows[term][i] - (Est + stdev_Est)) / (stdev_Est)))
-        outfile.write(term + "\t" + Pbst + "\n")
+        outfile.write(term + "\t" + str(Pbst) + "\n")
