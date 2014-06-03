@@ -195,7 +195,8 @@ for j,date in enumerate(sorted(date_burstyterms.keys())):
         term_freq = {}
         seqstart = j*24
         seqend = seqstart+24
-        for bt in burstyterms:
+        for i,bt in enumerate(burstyterms):
+            print "burstscore",i,"of",len(burstyterms)
             seq = [x for x in term_seqs[bt] if x > 0]
             mean = sum(seq)/len(seq)
             st_dev = gen_functions.return_standard_deviation(seq)
@@ -205,28 +206,35 @@ for j,date in enumerate(sorted(date_burstyterms.keys())):
 
         burstscore_coocs = defaultdict(lambda : defaultdict(list))
         cooc_freq = defaultdict(lambda : {})
-        for c in combis:
-            cooc = sorted(combis)
+        for i,c in enumerate(combis):
+            print "cooc burstscore",i,"of",len(combis)
+            cooc = sorted(c)
             seq = [x for x in cooc_seqs[cooc[0]][cooc[1]] if x > 0]
             if len(seq) > 0:
-                mean = sum(seq)/len(seq)
-                st_dev = gen_functions.return_standard_deviation(seq)
                 freq = sum(cooc_seqs[cooc[0]][cooc[1]][seqstart:seqend])
-                burstscore_coocs[cooc[0]][cooc[1]] = freq-mean-(2*st_dev)
-                cooc_freq[cooc[0]][cooc[1]] = freq
+                if freq > 0:
+                    mean = sum(seq)/len(seq)
+                    st_dev = gen_functions.return_standard_deviation(seq)
+                    burstscore_coocs = freq-mean-(2*st_dev)
+                #cooc_freq[cooc[0]][cooc[1]] = freq
+                    term_sims[cooc[0]][cooc[1]] = burstscore_coocs + (burstscore_terms[cooc[0]]*freq) + (burstscore_terms[cooc[1]]*freq)
+                    print cooc[0],cooc[1],"a",burstscore_coocs,"b1",burstscore_terms[cooc[0]],"b2",freq,"c1",burstscore_terms[cooc[1]],"c2",freq,"sim",burstscore_coocs + (burstscore_terms[cooc[0]]*freq) + (burstscore_terms[cooc[1]]*freq)
+                else:
+                    term_sims[cooc[0]][cooc[1]] = 0
             else:
-                burstscore_coocs[cooc[0]][cooc[1]] = 0
-                cooc_freq[cooc[0]][cooc[1]] = freq
+                term_sims[cooc[0]][cooc[1]] = 0
+                #burstscore_coocs[cooc[0]][cooc[1]] = 0
+                #cooc_freq[cooc[0]][cooc[1]] = freq
 
-        for bt in sorted(burstyterms):
-            for bt2 in sorted(burstyterms)[1:]:
-                a = burstscore_coocs[bt][bt2]
-                b1 = burstscore_terms[bt]
-                b2 = cooc_freq[bt][bt2] / term_freq[bt]
-                c1 = burstscore_terms[bt2]
-                c2 = cooc_freq[bt][bt2] / term_freq[bt2]
-                term_sims[bt][bt2] = a + (b1*b2) + (c1*c2)
-                print "a",a,"b1",b1,"b2",b2,"c2",c2,"sim",a+(b1*b2)+(c1*c2)
+        #for i,bt in enumerate(sorted(burstyterms)):
+        #    for bt2 in sorted(burstyterms)[1:]:
+        #        a = burstscore_coocs[bt][bt2]
+        #        b1 = burstscore_terms[bt]
+        #        b2 = cooc_freq[bt][bt2] / term_freq[bt]
+        #        c1 = burstscore_terms[bt2]
+        #        c2 = cooc_freq[bt][bt2] / term_freq[bt2]
+                #term_sims[bt][bt2] = a + (b1*b2) + (c1*c2)
+                #print "a",a,"b1",b1,"b2",b2,"c2",c2,"sim",a+(b1*b2)+(c1*c2)
 
     #     bursty_cooc_seqs = defaultdict(list)
     #     seqstart = j*24
