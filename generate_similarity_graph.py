@@ -190,7 +190,7 @@ for j,date in enumerate(sorted(date_burstyterms.keys())):
                     # if not bt_weight[term1] == 0.0 or bt_weight[term2] == 0.0:
                     term_sims[term1][term2] += (bt_weight[term1] * bt_weight[term2] * cosim[index_term[term1],index_term[term2]])
 
-    elif args.a == "tag":
+    elif args.a == "tags":
         burstscore_terms = defaultdict(list)
         term_freq = {}
         seqstart = j*24
@@ -208,11 +208,15 @@ for j,date in enumerate(sorted(date_burstyterms.keys())):
         for c in combis:
             cooc = sorted(combis)
             seq = [x for x in cooc_seqs[cooc[0]][cooc[1]] if x > 0]
-            mean = sum(seq)/len(seq)
-            st_dev = gen_functions.return_standard_deviation(seq)
-            freq = sum(cooc_seqs[cooc[0]][cooc[1]][seqstart:seqend])
-            burstscore_coocs[cooc[0]][cooc[1]] = freq-mean-(2*st_dev)
-            cooc_freq[cooc[0]][cooc[1]] = freq
+            if len(seq) > 0:
+                mean = sum(seq)/len(seq)
+                st_dev = gen_functions.return_standard_deviation(seq)
+                freq = sum(cooc_seqs[cooc[0]][cooc[1]][seqstart:seqend])
+                burstscore_coocs[cooc[0]][cooc[1]] = freq-mean-(2*st_dev)
+                cooc_freq[cooc[0]][cooc[1]] = freq
+            else:
+                burstscore_coocs[cooc[0]][cooc[1]] = 0
+                cooc_freq[cooc[0]][cooc[1]] = freq
 
         for bt in sorted(burstyterms):
             for bt2 in sorted(burstyterms)[1:]:
@@ -222,6 +226,7 @@ for j,date in enumerate(sorted(date_burstyterms.keys())):
                 c1 = burstscore_terms[bt2]
                 c2 = cooc_freq[bt][bt2] / term_freq[bt2]
                 term_sims[bt][bt2] = a + (b1*b2) + (c1*c2)
+                print "a",a,"b1",b1,"b2",b2,"c2",c2,"sim",a+(b1*b2)+(c1*c2)
 
     #     bursty_cooc_seqs = defaultdict(list)
     #     seqstart = j*24

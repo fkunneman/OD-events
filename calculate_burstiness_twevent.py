@@ -83,13 +83,14 @@ for term in bursties:
             Nt = date_num_tweets[i]
             vals.append(Fst/Nt)
     Ps = sum(vals) / len(vals)
+    #print term,vals,Fst,Nt,Ps
     term_Ps[term] = Ps
 
 for i,date in enumerate(sorted(date_burst.keys())):
     outfile = codecs.open(args.o + str(date) + ".txt","w","utf-8")
     Nt = date_num_tweets[i]
-    Ps = term_Ps[term]
     for term in date_burst[date]:
+        Ps = term_Ps[term]
         Est = Ps * Nt
         stdev_Est = math.sqrt(Est * (1-Ps))
         Pbst = sigmoid(10 * ((term_windows[term][i] - (Est + stdev_Est)) / (stdev_Est)))
