@@ -20,17 +20,17 @@ term_newsworthiness = {}
 #collect wiki-scores
 wikifile = codecs.open(args.w,"r","utf-8")
 for line in wikifile.readlines():
-    tokens is line.strip().split("\t")
-    term_newsworthiness[tokens[0]] = tokens[1]
+    tokens = line.strip().split("\t")
+    term_newsworthiness[tokens[0]] = float(tokens[1])
 wikifile.close()
 
 #collect weights
-for f in args.w:
+for f in args.b:
     weightfile = codecs.open(f,"r","utf-8")
-    date = re.sub(r"\'txt","",f.split("/")[-1])
+    date = re.sub(r"\.txt","",f.split("/")[-1])
     for line in weightfile.readlines():
-        tokens = line.strip("\t")
-        date_term_burstiness[date][tokens[0]] = tokens[1]
+        tokens = line.strip().split("\t")
+        date_term_burstiness[date][tokens[0]] = float(tokens[1])
     weightfile.close()
 
 #add to featurefiles
@@ -45,7 +45,14 @@ for f in args.i:
         num_u = len(tokens[1].split(" "))
         features = tokens[2].split(",")
         features.append(str(num_u))
-        features.extend([term_newsworthiness[x] for x in tokens[1].split(" ")])
-        features.extend([date_term_burstiness[date][x] for x in tokens[1].split(" ")])
+        nw = []
+        for x in tokens[1].split(" "):
+            try:
+                nw.append(term_newsworthiness[x])
+            except:
+                nw.append(0)
+        features.append(str(sum(nw) / len(nw)))
+        burstscores = [date_term_burstiness[date][x] for x in tokens[1].split(" ")]
+        features.append(str(sum(burstscores) / len(burstscores)))
         print "features",features
-        fwrite.write("\t".join(tokens[:-1] + "\t" + ",".join(features) + "\n"))
+        fwrite.write("\t".join(tokens[:-1]) + "\t" + ",".join([str(x) for x in features]) + "\n")

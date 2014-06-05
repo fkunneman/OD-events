@@ -27,13 +27,13 @@ infile = codecs.open(args.i,"r","utf-8")
 lines = infile.readlines()
 infile.close()
 bursty_terms = lines[0].strip().split(" ")
-similarities = [float(x) for x in lines[1].strip().split(" ")]
+similarities = [float(x) for x in lines[1].strip().split(" ") if float(x) != 1.0]
 nns = sorted(range(len(similarities)), key=lambda ke: similarities[ke],reverse=True)
 term_nearest_neighbours[bursty_terms[0]] = [bursty_terms[x] for x in nns[1:(1+args.k)]]
 #print bursty_terms[0],nns,nns[:5],[bursty_terms[x] for x in nns[:5]]
 print "extracting nearest neighbours for",len(bursty_terms),"bursty terms"
 for line in lines[2:]:
-    similarities = [float(x) for x in line.strip().split(" ")[1:]]
+    similarities = [float(x) for x in line.strip().split(" ")[1:] if float(x) != 1.0]
     nns = sorted(range(len(similarities)), key=lambda ke: similarities[ke],reverse=True)
     tnn = [bursty_terms[x] for x in nns[1:(1+args.k)]]
     term = line.split(" ")[0]

@@ -37,11 +37,10 @@ for f in args.f:
         tokens = line.strip().split("\t")
         cluster = date + "_" + tokens[0]
         features = tokens[2].split(",")
-        cluster_features[cluster] = ",".join([str(i) + "(" + x + ")" for i,x in enumerate(features)])
+        cluster_features[cluster] = ",".join([str(i+2) + "(" + x + ")" for i,x in enumerate(features)])
 
 trainfile = codecs.open(args.t,"w","utf-8")
 for cluster in cluster_label.keys():
-
     trainfile.write(cluster_label[cluster] + "," + cluster_features[cluster] + ":" + "\n")
 trainfile.close()
 trainclusters = set(cluster_label.keys())
