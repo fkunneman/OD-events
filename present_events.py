@@ -36,14 +36,16 @@ def extract_tweets(tweets,clusters,queue):
     for cluster in clusters:
         all_cterms.extend([x[0] for x in cluster[2]])
     act = set(all_cterms)
-    print act
     for tweet in tweets:
         if tweet.split("\t")[0] == "dutch":
-            words = list(set(tweet.split("\t")[-1].lower().split(" ")))
-            if bool(act & set(words)):
+            words = tweet.strip().split("\t")[-1].lower().split(" ")
+            swords = set(words)
+            if bool(act & swords):
                 for cluster in clusters:
                     terms = [x[0] for x in cluster[2]]
-                    if len(set(words) & set(terms)) > (len(terms) / 3) * 2:
+#                    print swords,set(terms)
+                    if bool(swords & set(terms)):
+      #                  print "yes"
                         tokens = tweet.strip().split("\t")
                         hashtags = len([x for x in words if re.search("^#",x)])
                         urls = len([x for x in words if re.search("^http://",x)])
@@ -52,7 +54,7 @@ def extract_tweets(tweets,clusters,queue):
                         else:
                             reply = 0
                         mentions = len([x for x in words[1:] if re.search("^@",x)])
-                        cluster_tweets[cluster[0]].append([len(set(words) & set(terms)),hashtags,urls,reply,mentions,tokens[2],tokens[-1]])                
+                        cluster_tweets[cluster[0]].append([len(swords & set(terms)),hashtags,urls,reply,mentions,tokens[2],tokens[-1]])                
     queue.put(cluster_tweets)
 
 #cluster files by date
@@ -84,6 +86,17 @@ for j,date in enumerate(sorted(date_files.keys())):
     print date
     #collect tweets
     tweets = []
+    try:
+        for f in date_files[date - datetime.timedelta(days=1)]:
+            infile = codecs.open(f,"r","utf-8")
+            tweets.extend([l.strip() for l in infile.readlines()])
+            infile.close()
+        for f in date_files[date + datetime.timedelta(days=1)]:
+           infile = codecs.open(f,"r","utf-8")
+           tweets.extend([l.strip() for l in infile.readlines()])
+           infile.close()
+    except:
+        print date
     for f in date_files[date]:
         infile = codecs.open(f,"r","utf-8")
         tweets.extend([l.strip() for l in infile.readlines()])
@@ -98,7 +111,7 @@ for j,date in enumerate(sorted(date_files.keys())):
     #link clusters to tweets
     print "extracting tweets"    
     q = multiprocessing.Queue()
-    tweet_chunks = gen_functions.make_chunks(tweets,dist=True)
+    tweet_chunks = gen_functions.make_chunks(tweets,nc=20,dist=True)
     for i in range(len(tweet_chunks)):
         p = multiprocessing.Process(target=extract_tweets,args=[tweet_chunks[i],clusters,q])
         p.start()

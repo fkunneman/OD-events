@@ -21,11 +21,12 @@ def extract_tweets(tweets,clusters,queue):
     print len(tweets)
     cluster_tweets = defaultdict(list)
     for tweet in tweets:
-        words = list(set(tweet.strip().split("\t")[-1].lower().split(" ")))
+        words = tweet.strip().split("\t")[-1].lower().split(" ")
+        swords = set(words)
         for cluster in clusters:
             terms = cluster[1].split(" ")
             #print words,terms,set(words) & set(terms)
-            if len(set(words) & set(terms)) == len(terms): 
+            if bool(swords & set(terms)): 
                 cluster_tweets[cluster[0]].append(tweet.strip().split("\t")[-1])                
     queue.put(cluster_tweets)
 
