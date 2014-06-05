@@ -18,21 +18,11 @@ ic = open(args.ic)
 def extract_tweets(tweets,clusters,queue):
     cluster_tweets = defaultdict(list)
     for tweet in tweets:
-        words = list(set(tweet.split("\t")[-1].split(" ")))
+        words = list(set(tweet.strip().split("\t")[-1].split(" ")))
         for cluster in clusters:
-            terms = [x[0] for x in cluster[2]]
-            if len(set(words) & set(terms)) >= 1:
-                tokens = tweet.split("\t")
-                if tokens[0] == "dutch":
-                    words = tokens[-1].split(" ")
-                    hashtags = len([x for x in words if re.search("^#",x)])
-                    urls = len([x for x in words if re.search("^http://",x)])
-                    if re.search("^@",words[0]):
-                        reply = 1
-                    else:
-                        reply = 0
-                    mentions = len([x for x in words[1:] if re.search("^@",x)])
-                    cluster_tweets[cluster[0]].append([len(set(words) & set(terms)),hashtags,urls,reply,mentions,tokens[2],tokens[-1]])                
+            terms = cluster[1].split(" ")
+            if len(set(words) & set(terms)) == len(terms): 
+                cluster_tweets[cluster[0]].append(tweet.strip().split("\t")[-1])                
     queue.put(cluster_tweets)
 
 classifications = []
@@ -56,6 +46,13 @@ for i in ic.readlines():
     index_cluster[tokens[0]] = tokens[1]
 ic.close()    
 
+cluster_rank = {}
+clusters_ranked = []
+for c in classifications[:1000]:
+    c.append(index_cluster[c[0]])
+    cluster_rank[index_cluster[c[0]]] = c[0]
+    clusters_ranked.append(index_cluster[c[0]])
+
 #cluster files by date
 date_files = defaultdict(list)
 date = re.compile(r"(\d{4})(\d{2})(\d{2})-")
@@ -69,62 +66,41 @@ date = re.compile(r"(\d{4})-(\d{2})-(\d{2})")
 for f in args.f:
     dates = date.search(f.split("/")[-2]).groups()
     infile = codecs.open(f,"r","utf-8")
-    clusters = [x.strip().split("\t")[1] for x in infile.readlines()]
+    clusters = [x.strip().split("\t")[:2] for x in infile.readlines()]
     infile.close()
     date_clusters[datetime.date(int(dates[0]),int(dates[1]),int(dates[2]))] = clusters
 
-print date_clusters
+cluster_data = defaultdict(list)
+for date in date_clusters.keys():
+    clusters = [x for x in date_clusters.keys() if x[0] in clusters_ranked]
+    print (len(clusters)),"clusters in",date
+    for c in clusters:
+        cluster_data[c[0]].append(c[1]) 
+    #collect tweets
+    tweets = []
+    for f in date_files[date]:
+        infile = codecs.open(f,"r","utf-8")
+        tweets.extend([l.strip() for l in infile.readlines()])
+        infile.close()
+    #link clusters to tweets
+    print "extracting tweets"    
+    q = multiprocessing.Queue()
+    tweet_chunks = gen_functions.make_chunks(tweets,dist=True)
+    for i in range(len(tweet_chunks)):
+        p = multiprocessing.Process(target=extract_tweets,args=[tweetchunks[i],clusters,q])
+        p.start()
 
-# for date in 
-# for c in classifications[:1000]:
+        ds = []
+        while True:
+            l = q.get()
+            ds.append(l)
+            for clustind in l.keys():
+                #print l[clustind]
+                cluster_data[clustind].append(l[clustind])
+            if len(ds) == len(cluster_chunks):
+                break
 
-    
-
-
-
-
-
-
-# print "making bursty term graph"
-# #make date-burstyterm-graph
-# burstyfile = codecs.open(args.b,"r","utf-8")
-# bursties = {}
-# for line in burstyfile.readlines():
-#     tokens = line.strip().split("\t")
-#     bursties[tokens[0]] = float(tokens[1])
-# burstyfile.close()
-
-# #for each date
-# for j,date in enumerate(sorted(date_files.keys())):
-#     print date
-#     #collect tweets
-#     tweets = []
-#     for f in date_files[date]:
-#         infile = codecs.open(f,"r","utf-8")
-#         tweets.extend([l.strip() for l in infile.readlines()])
-#         infile.close()
-#     #extract clusters
-#     clusters = []
-#     for i,line in enumerate(date_clusters[date]):
-#         units = line.split("\t")
-#         mean_sim = units[0]
-#         terms = [x.split(" ") for x in units[1:]]
-#         clusters.append([i,mean_sim,terms])
-#     #link clusters to tweets
-#     print "extracting tweets"    
-#     q = multiprocessing.Queue()
-#     cluster_chunks = gen_functions.make_chunks(clusters,dist=True)
-#     for i in range(len(cluster_chunks)):
-#         p = multiprocessing.Process(target=extract_tweets,args=[tweets,cluster_chunks[i],q])
-#         p.start()
-
-#     ds = []
-#     while True:
-#         l = q.get()
-#         ds.append(l)
-#         for clustind in l.keys():
-#             l[clustind].sort(key=lambda x : x[0],reverse=True)
-#             #print l[clustind]
-#             clusters[clustind].append(l[clustind])
-#         if len(ds) == len(cluster_chunks):
-#             break
+outfile = codecs.open(args.o,"w","utf-8")
+for c in classifications:
+    outfile.write("\t".join(c) + "\t" + cluster_data[c[2]][0] + "\t" + "|".join(cluster_data[c[2]][1:]) + "\n")
+outfile.close()
