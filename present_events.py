@@ -33,10 +33,10 @@ date_clusters = defaultdict(list)
 def extract_tweets(tweets,clusters,queue):
     cluster_tweets = defaultdict(list)
     for tweet in tweets:
-        words = list(set(tweet.split("\t")[-1].split(" ")))
+        words = list(set(tweet.split("\t")[-1].lower().split(" ")))
         for cluster in clusters:
             terms = [x[0] for x in cluster[2]]
-            if len(set(words) & set(terms)) >= 1:
+            if len(set(words) & set(terms)) > (len(terms) / 3) * 2:
                 tokens = tweet.split("\t")
                 if tokens[0] == "dutch":
                     words = tokens[-1].split(" ")

@@ -3,6 +3,8 @@ import re
 from collections import defaultdict
 import datetime
 import codecs
+import multiprocessing
+import gen_functions
 
 parser = argparse.ArgumentParser(description = "Script to rank and summarize the extracted events on a day")
 parser.add_argument('-i', action = 'store', nargs='+',required = True, help = "The files with tweets per hour")  
@@ -16,11 +18,13 @@ classificationfile = open(args.s)
 ic = open(args.ic)
 
 def extract_tweets(tweets,clusters,queue):
+    print len(tweets)
     cluster_tweets = defaultdict(list)
     for tweet in tweets:
-        words = list(set(tweet.strip().split("\t")[-1].split(" ")))
+        words = list(set(tweet.strip().split("\t")[-1].lower().split(" ")))
         for cluster in clusters:
             terms = cluster[1].split(" ")
+            #print words,terms,set(words) & set(terms)
             if len(set(words) & set(terms)) == len(terms): 
                 cluster_tweets[cluster[0]].append(tweet.strip().split("\t")[-1])                
     queue.put(cluster_tweets)
@@ -85,27 +89,44 @@ for date in date_clusters.keys():
         cluster_data[c[0]].append(c[1]) 
     #collect tweets
     tweets = []
+    print len(tweets)
+    try: 
+        for f in date_files[date - datetime.timedelta(days=1)]:
+            infile = codecs.open(f,"r","utf-8")
+            tweets.extend([l.strip() for l in infile.readlines()])
+            infile.close()
+        for f in date_files[date + datetime.timedelta(days=1)]:
+           infile = codecs.open(f,"r","utf-8")
+           tweets.extend([l.strip() for l in infile.readlines()])
+           infile.close()
+    except:
+        print "not before or after",date
+            
+    print len(tweets)
     for f in date_files[date]:
         infile = codecs.open(f,"r","utf-8")
         tweets.extend([l.strip() for l in infile.readlines()])
         infile.close()
+    print len(tweets)
+
     #link clusters to tweets
     print "extracting tweets"    
     q = multiprocessing.Queue()
     tweet_chunks = gen_functions.make_chunks(tweets,dist=True)
     for i in range(len(tweet_chunks)):
-        p = multiprocessing.Process(target=extract_tweets,args=[tweetchunks[i],clusters,q])
+        p = multiprocessing.Process(target=extract_tweets,args=[tweet_chunks[i],clusters,q])
         p.start()
 
-        ds = []
-        while True:
-            l = q.get()
-            ds.append(l)
-            for clustind in l.keys():
-                #print l[clustind]
-                cluster_data[clustind].append(l[clustind])
-            if len(ds) == len(cluster_chunks):
-                break
+    ds = []
+    while True:
+        l = q.get()
+        ds.append(l)
+        for clustind in l.keys():
+            print [x[1] for x in clusters if x[0] == clustind]
+            print l[clustind]
+            cluster_data[clustind].append(l[clustind])
+        if len(ds) == len(tweet_chunks):
+             break
 
 outfile = codecs.open(args.o,"w","utf-8")
 for c in classifications:
