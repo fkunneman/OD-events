@@ -32,22 +32,27 @@ date_clusters = defaultdict(list)
 
 def extract_tweets(tweets,clusters,queue):
     cluster_tweets = defaultdict(list)
+    all_cterms = []
+    for cluster in clusters:
+        all_cterms.extend([x[0] for x in cluster[2]])
+    act = set(all_cterms)
     for tweet in tweets:
         words = list(set(tweet.split("\t")[-1].lower().split(" ")))
-        for cluster in clusters:
-            terms = [x[0] for x in cluster[2]]
-            if len(set(words) & set(terms)) > (len(terms) / 3) * 2:
-                tokens = tweet.split("\t")
-                if tokens[0] == "dutch":
-                    words = tokens[-1].split(" ")
-                    hashtags = len([x for x in words if re.search("^#",x)])
-                    urls = len([x for x in words if re.search("^http://",x)])
-                    if re.search("^@",words[0]):
-                        reply = 1
-                    else:
-                        reply = 0
-                    mentions = len([x for x in words[1:] if re.search("^@",x)])
-                    cluster_tweets[cluster[0]].append([len(set(words) & set(terms)),hashtags,urls,reply,mentions,tokens[2],tokens[-1]])                
+        if bool(act & set(words)):
+            for cluster in clusters:
+                terms = [x[0] for x in cluster[2]]
+                if len(set(words) & set(terms)) > (len(terms) / 3) * 2:
+                    tokens = tweet.split("\t")
+                    if tokens[0] == "dutch":
+                        words = tokens[-1].split(" ")
+                        hashtags = len([x for x in words if re.search("^#",x)])
+                        urls = len([x for x in words if re.search("^http://",x)])
+                        if re.search("^@",words[0]):
+                            reply = 1
+                        else:
+                            reply = 0
+                        mentions = len([x for x in words[1:] if re.search("^@",x)])
+                        cluster_tweets[cluster[0]].append([len(set(words) & set(terms)),hashtags,urls,reply,mentions,tokens[2],tokens[-1]])                
     queue.put(cluster_tweets)
 
 #cluster files by date
