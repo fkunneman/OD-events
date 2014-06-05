@@ -36,6 +36,7 @@ def extract_tweets(tweets,clusters,queue):
     for cluster in clusters:
         all_cterms.extend([x[0] for x in cluster[2]])
     act = set(all_cterms)
+    print act
     for tweet in tweets:
         if tweet.split("\t")[0] == "dutch":
             words = list(set(tweet.split("\t")[-1].lower().split(" ")))
