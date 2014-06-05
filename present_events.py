@@ -94,7 +94,7 @@ for j,date in enumerate(sorted(date_files.keys())):
     print "extracting tweets"    
     q = multiprocessing.Queue()
     tweet_chunks = gen_functions.make_chunks(tweets,dist=True)
-    for i in range(len(cluster_chunks)):
+    for i in range(len(tweet_chunks)):
         p = multiprocessing.Process(target=extract_tweets,args=[tweet_chunks[i],clusters,q])
         p.start()
 
