@@ -37,14 +37,13 @@ def extract_tweets(tweets,clusters,queue):
         all_cterms.extend([x[0] for x in cluster[2]])
     act = set(all_cterms)
     for tweet in tweets:
-        words = list(set(tweet.split("\t")[-1].lower().split(" ")))
-        if bool(act & set(words)):
-            for cluster in clusters:
-                terms = [x[0] for x in cluster[2]]
-                if len(set(words) & set(terms)) > (len(terms) / 3) * 2:
-                    tokens = tweet.split("\t")
-                    if tokens[0] == "dutch":
-                        words = tokens[-1].split(" ")
+        if tweet.split("\t")[0] == "dutch":
+            words = list(set(tweet.split("\t")[-1].lower().split(" ")))
+            if bool(act & set(words)):
+                for cluster in clusters:
+                    terms = [x[0] for x in cluster[2]]
+                    if len(set(words) & set(terms)) > (len(terms) / 3) * 2:
+                        tokens = tweet.strip().split("\t")
                         hashtags = len([x for x in words if re.search("^#",x)])
                         urls = len([x for x in words if re.search("^http://",x)])
                         if re.search("^@",words[0]):
