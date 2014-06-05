@@ -43,7 +43,7 @@ classifications.sort(key = lambda x : x[1],reverse=True)
 index_cluster = {}
 for i in ic.readlines():
     tokens = i.strip().split(" ")
-    index_cluster[tokens[0]] = tokens[1]
+    index_cluster[int(tokens[0])] = tokens[1]
 ic.close()    
 
 cluster_rank = {}
@@ -72,8 +72,15 @@ for f in args.f:
 
 cluster_data = defaultdict(list)
 for date in date_clusters.keys():
-    clusters = [x for x in date_clusters.keys() if x[0] in clusters_ranked]
-    print (len(clusters)),"clusters in",date
+    print "month",date.month,"day",date.day,"cluster",date_clusters[date][0][0]
+    if len(str(date.day)) == 2:
+        day = str(date.day)
+    else:
+        day = "0" + str(date.day)    
+    shab = "0" + str(date.month) + "_" + day + "_"
+    clusters = [x for x in date_clusters[date] if shab + x[0] in clusters_ranked]
+    print (len(clusters)),"clusters in",date, clusters
+    quit()
     for c in clusters:
         cluster_data[c[0]].append(c[1]) 
     #collect tweets
