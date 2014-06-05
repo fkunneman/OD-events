@@ -106,7 +106,7 @@ for j,date in enumerate(sorted(date_files.keys())):
             l[clustind].sort(key=lambda x : x[0],reverse=True)
             #print l[clustind]
             clusters[clustind].append(l[clustind])
-        if len(ds) == len(cluster_chunks):
+        if len(ds) == len(tweet_chunks):
             break
 
 #    print clusters
