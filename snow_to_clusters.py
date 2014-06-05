@@ -79,9 +79,9 @@ for date in date_clusters.keys():
         day = "0" + str(date.day)    
     shab = "0" + str(date.month) + "_" + day + "_"
     clusters = [x for x in date_clusters[date] if shab + x[0] in clusters_ranked]
-    print (len(clusters)),"clusters in",date, clusters
-    quit()
+    print (len(clusters)),"clusters in",date,
     for c in clusters:
+        c[0] = "0" + str(date.month) + "_" + day + "_" + c[0]
         cluster_data[c[0]].append(c[1]) 
     #collect tweets
     tweets = []
