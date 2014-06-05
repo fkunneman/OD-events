@@ -1,3 +1,4 @@
+from __future__ import division
 import argparse
 import re
 from collections import defaultdict
@@ -5,6 +6,8 @@ import datetime
 import codecs
 import multiprocessing
 import gen_functions
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 parser = argparse.ArgumentParser(description = "Script to rank and summarize the extracted events on a day")
 parser.add_argument('-i', action = 'store', nargs='+',required = True, help = "The files with tweets per hour")  
@@ -29,6 +32,36 @@ def extract_tweets(tweets,clusters,queue):
             if bool(swords & set(terms)): 
                 cluster_tweets[cluster[0]].append(tweet.strip().split("\t")[-1])                
     queue.put(cluster_tweets)
+
+def rank_tweets(tweets):
+    vectorizer = CountVectorizer(min_df=1)
+    X = vectorizer.fit_transform(tweets)
+    vectors = X.toarray()
+    sumvectors = [0] * len(vectors[0])
+    for v in vectors:
+        for i,val in enumerate(v):
+            sumvectors[i] += val
+    centroid = [(x/len(vectors)) for x in sumvectors]
+    #calculate cosines
+    dists = []
+    for i,vector in enumerate(vectors):
+        dists.append([i,cosine_similarity(vector,centroid)])
+    ranked_tweets = []
+    ranked_vectors = []
+    dists = dists.sort(key = lambda x : x[1],reverse=True)
+    for v in dists:
+        vector = vectors[v[0]]
+        sim = False
+        for v2 in ranked_vectors:
+            if cosine_similarity(vector,v2) == 1.0:
+                sim = True
+        if not sim:
+            ranked_tweets.append(tweets[v[0]])
+            ranked_vectors.append()
+    if len(ranked_tweets) > 10:
+        return ranked_tweets[:10]
+    else:
+        return ranked_tweets
 
 classifications = []
 conf = re.compile(r"(0\.\d+)")
@@ -131,5 +164,6 @@ for date in date_clusters.keys():
 
 outfile = codecs.open(args.o,"w","utf-8")
 for c in classifications:
-    outfile.write("\t".join(c) + "\t" + cluster_data[c[2]][0] + "\t" + "|".join(cluster_data[c[2]][1:]) + "\n")
+    ranked_tweets = rank_tweets(cluster_data[c[2]][1:])
+    outfile.write("\t".join(c) + "\t" + cluster_data[c[2]][0] + "\t" + "|".join(ranked_tweets) + "\n")
 outfile.close()
