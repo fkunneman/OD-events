@@ -1,6 +1,8 @@
 import argparse
 import re
 from collections import defaultdict
+import datetime
+import codecs
 
 parser = argparse.ArgumentParser(description = "Script to rank and summarize the extracted events on a day")
 parser.add_argument('-i', action = 'store', nargs='+',required = True, help = "The files with tweets per hour")  
@@ -44,7 +46,7 @@ for line in classificationfile:
         c = conf.search(line).groups()[0]
         classifications.append([i,float(c)])
         i += 1
-classificaitonsfile.close()
+classificationfile.close()
 
 classifications.sort(key = lambda x : x[1],reverse=True)
 
@@ -63,16 +65,15 @@ for f in args.i:
 
 #make date-cluster dict
 date_clusters = defaultdict(list)
-date = re.compile(r"(\d{1})-(\d{1,2})\.txt")
+date = re.compile(r"(\d{4})-(\d{2})-(\d{2})")
 for f in args.f:
-    dates = date.search(f.split("/")[-1]).groups()
+    dates = date.search(f.split("/")[-2]).groups()
     infile = codecs.open(f,"r","utf-8")
-    clusters = [x.strip() for x in infile.readlines()]
+    clusters = [x.strip().split("\t")[1] for x in infile.readlines()]
     infile.close()
-    date_clusters[datetime.date(2013,int(dates[0]),int(dates[1]))] = clusters
+    date_clusters[datetime.date(int(dates[0]),int(dates[1]),int(dates[2]))] = clusters
 
 print date_clusters
-print date_files
 
 # for date in 
 # for c in classifications[:1000]:
