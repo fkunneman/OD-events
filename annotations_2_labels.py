@@ -8,16 +8,23 @@ annotationfiles = sys.argv[2:]
 cluster_annotations = defaultdict(list)
 
 for af in annotationfiles:
+    print af
     r = open(af)
-    for l in r.readlines():
+    for l in r.readlines()[2:]:
+#        print l
         tokens = l.strip().split("\t")
-        cid = tokens[1]
+#        print tokens
+#        print tokens
+        try:
+            cid = tokens[1]
+        except:
+            continue
         eventlabel = tokens[2][0]
         sociallabelstring = tokens[3]
         if len(sociallabelstring) > 0:
-            sociallabel = 1
+            sociallabel = '1'
         else:
-            sociallabel = 0
+            sociallabel = '0'
 
         if cluster_annotations.has_key(cid):
             cluster_annotations[cid].append(sociallabel)
@@ -27,5 +34,5 @@ for af in annotationfiles:
     r.close()
 
 for cid in cluster_annotations.keys():
-    labelfile.write(cid + "\t" + "\t".join(cluster_annotations[cid] + "\n"))
+    labelfile.write(cid + "\t" + "\t".join(cluster_annotations[cid]) + "\n")
 labelfile.close()

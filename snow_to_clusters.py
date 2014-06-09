@@ -21,19 +21,21 @@ classificationfile = open(args.s)
 ic = open(args.ic)
 
 def extract_tweets(tweets,clusters,queue):
-    print len(tweets)
+#    print len(tweets)
     cluster_tweets = defaultdict(list)
     for tweet in tweets:
-        words = tweet.strip().split("\t")[-1].lower().split(" ")
-        swords = set(words)
-        for cluster in clusters:
-            terms = cluster[1].split(" ")
-            #print words,terms,set(words) & set(terms)
-            if bool(swords & set(terms)): 
-                cluster_tweets[cluster[0]].append(tweet.strip().split("\t")[-1])                
+        if tweet.split("\t")[0] == "dutch":
+            words = tweet.strip().split("\t")[-1].lower().split(" ")
+            swords = set(words)
+            for cluster in clusters:
+                terms = cluster[1].split(" ")
+                #print words,terms,set(words) & set(terms)
+                if bool(swords & set(terms)): 
+                    cluster_tweets[cluster[0]].append(tweet.strip().split("\t")[-1])                
     queue.put(cluster_tweets)
 
 def rank_tweets(tweets):
+#    print tweets
     vectorizer = CountVectorizer(min_df=1)
     X = vectorizer.fit_transform(tweets)
     vectors = X.toarray()
@@ -48,7 +50,7 @@ def rank_tweets(tweets):
         dists.append([i,cosine_similarity(vector,centroid)])
     ranked_tweets = []
     ranked_vectors = []
-    dists = dists.sort(key = lambda x : x[1],reverse=True)
+    dists.sort(key = lambda x : x[1],reverse=True)
     for v in dists:
         vector = vectors[v[0]]
         sim = False
@@ -57,11 +59,10 @@ def rank_tweets(tweets):
                 sim = True
         if not sim:
             ranked_tweets.append(tweets[v[0]])
-            ranked_vectors.append()
-    if len(ranked_tweets) > 10:
-        return ranked_tweets[:10]
-    else:
-        return ranked_tweets
+            ranked_vectors.append(vector)
+        if len(ranked_tweets) == 10:
+            break
+    return ranked_tweets
 
 classifications = []
 conf = re.compile(r"(0\.\d+)")
@@ -123,7 +124,7 @@ for date in date_clusters.keys():
         cluster_data[c[0]].append(c[1]) 
     #collect tweets
     tweets = []
-    print len(tweets)
+#    print len(tweets)
     try: 
         for f in date_files[date - datetime.timedelta(days=1)]:
             infile = codecs.open(f,"r","utf-8")
@@ -156,14 +157,16 @@ for date in date_clusters.keys():
         l = q.get()
         ds.append(l)
         for clustind in l.keys():
-            print [x[1] for x in clusters if x[0] == clustind]
-            print l[clustind]
-            cluster_data[clustind].append(l[clustind])
+#            print [x[1] for x in clusters if x[0] == clustind]
+#            print l[clustind]
+            cluster_data[clustind].extend(l[clustind])
         if len(ds) == len(tweet_chunks):
              break
 
 outfile = codecs.open(args.o,"w","utf-8")
 for c in classifications:
-    ranked_tweets = rank_tweets(cluster_data[c[2]][1:])
-    outfile.write("\t".join(c) + "\t" + cluster_data[c[2]][0] + "\t" + "|".join(ranked_tweets) + "\n")
+    if len(cluster_data[c[2]]) > 0:
+        print c[2]    
+        ranked_tweets = rank_tweets(cluster_data[c[2]][1:])
+        outfile.write("\t".join([str(x) for x in c]) + "\t" + cluster_data[c[2]][0] + "\t" + "|".join(ranked_tweets) + "\n")
 outfile.close()
