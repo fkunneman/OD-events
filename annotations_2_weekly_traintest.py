@@ -9,6 +9,7 @@ annotations = open(sys.argv[1])
 index_cluster = open(sys.argv[2])
 test_large = open(sys.argv[3])
 classifierdir = sys.argv[4]
+default_train = sys.argv[5]
 
 #dict with date - number-label
 date_annotations = defaultdict(list)
@@ -57,9 +58,11 @@ for week in range(i):
         os.mkdir(outdir)
     except:
         print "exists"
-    train = open(outdir + "train.txt","w")
-    for cluster in window_events[week]:
-        train.write(cluster[1] + "," + index_features[cluster[0]])
+    os.system("cat " + default_train + " > " + outdir + "train.txt")
+    train = open(outdir + "train.txt","a")
+    for w in range(0,(week+1))
+        for cluster in window_events[w]:
+            train.write(cluster[1] + "," + index_features[cluster[0]])
     for j,t in enumerate(range((week+1),i)):
         test = open(outdir + "test" + str(j) + ".txt","w")
         for cluster in window_events[t]:
