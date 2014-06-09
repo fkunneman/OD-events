@@ -28,7 +28,7 @@ for line in annotations.readlines():
 i = 0
 da_sorted = sorted(date_annotations.keys())
 date = da_sorted[0]
-while date < datetime.date(2013,8,10):
+while date < datetime.date(2013,8,15):
     for w in range(7):
         d = date + datetime.timedelta(days = w)
         window_events[i].extend(date_annotations[d])
