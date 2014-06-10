@@ -19,23 +19,17 @@ for tf in testfiles:
     num = tf[-5]
     numdir = filesdir + "snow" + num
     os.system("mkdir " + numdir)
-    print "cp " + trainfile + " ."
     os.system("cp " + trainfile + " .")
-    print "ls"
     os.system("ls")
-    print "cp " + tf + " ." 
     os.system("cp " + tf + " .")
-    print "ls"
     os.system("ls")
     os.system("paramsearch winnow " + train + " 2")
     param = open(train + ".winnow.bestsetting")
     paramline = param.read()
     param.close()
-    print param
     params = bs.search(paramline).groups()
-    print params
-    print "snow -train -I " + train + " -F test.net -W " + params[0] + "," + params[1] + "," + params[2] + "," + params[3] + ":0-1 -r " + params[4] + " -S " + params[5] + " -c"
-    os.system("snow -train -I " + train + " -F test.net -W " + params[0] + "," + params[1] + "," + params[2] + "," + params[3] + ":0-1 -r " + params[4] + " -S " + params[5])
-    os.system("snow -test -I " + test + " -F test.net -o allactivations > test.out")
+    print "snow -train -I " + train + " -F test.net -W " + params[0] + "," + params[1] + "," + params[2] + "," + params[3] + ":0-1 -r " + params[4] + " -S 0.5"
+    os.system("snow -train -I " + train + " -F test.net -W " + params[0] + "," + params[1] + "," + params[2] + "," + params[3] + ":0-1 -r " + params[4] + " -S 0.5")
+    os.system("snow -test -I " + test + " -F test.net -o allactivations -S 0.5 -i + > test.out")
     os.system("mv *  " + numdir)
 
