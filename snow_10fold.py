@@ -38,6 +38,8 @@ for line in annotations.readlines():
                     event_label.append((cluster_index[tokens[0]],'1'))
                 else:
                     event_label.append((cluster_index[tokens[0]],'0'))
+            else:
+                event_label.append((cluster_index[tokens[0]],'0'))
     else:
         if tokens[1] == '1':
             event_label.append((cluster_index[tokens[0]],tokens[1]))
