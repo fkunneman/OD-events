@@ -66,7 +66,7 @@ for i in range(10):
         j += 10
         offset += 1
     #classify
-    print train
+    print len(train),len(test)
     trainf = open(outdir + "train.txt","w")
     testf = open(outdir + "test.txt","w")
     for cluster in train:
