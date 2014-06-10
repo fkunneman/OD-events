@@ -60,7 +60,7 @@ for week in range(i):
         print "exists"
     os.system("cat " + default_train + " > " + outdir + "train.txt")
     train = open(outdir + "train.txt","a")
-    for w in range(0,(week+1))
+    for w in range(0,(week+1)):
         for cluster in window_events[w]:
             train.write(cluster[1] + "," + index_features[cluster[0]])
     for j,t in enumerate(range((week+1),i)):
