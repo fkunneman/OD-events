@@ -23,10 +23,10 @@ classifications.sort(key = lambda x : x[2])
 #relate conf to F1
 conf_f1 = {}
 for i,c in enumerate(classifications):
-    tp = len[x for x in classifications[:(i+1)] if x == '1']
-    fp = len[x for x in classifications[:(i+1)] if x == '0']
-    tn = len[x for x in classifications[(i+1):] if x == '1']
-    fn = len[x for x in classifications[(i+1):] if x == '0']
+    tp = len([x for x in classifications[:(i+1)] if x == '1'])
+    fp = len([x for x in classifications[:(i+1)] if x == '0'])
+    tn = len([x for x in classifications[(i+1):] if x == '1'])
+    fn = len([x for x in classifications[(i+1):] if x == '0'])
     pr = tp / (tp+fp)
     re = tp / (tp+fn)
     f1 = 2 * ((pr*re) / (pr+re))
