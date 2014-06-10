@@ -54,6 +54,27 @@ def extract_tweets(tweets,terms,queue):
                     #         standard_vectors[term][tind[word]] += 1
     queue.put(appended_docs)
 
+def score_tagsim(cs,csegs):
+    tsims = defaultdict(lambda : defaultdict(float))
+    for i,c in enumerate(cs):
+        print "cooc burstscore",i,"of",len(combis)
+        cooc = sorted(c)
+        seq = [x for x in cseqs[cooc[0]][cooc[1]] if x > 0]
+        if len(seq) > 0:
+            freq = sum(cooc_seqs[cooc[0]][cooc[1]][seqstart:seqend])
+            if freq > 0:
+                mean = sum(seq)/len(seq)
+                st_dev = gen_functions.return_standard_deviation(seq)
+                burstscore_coocs = freq-mean-(2*st_dev)
+            #cooc_freq[cooc[0]][cooc[1]] = freq
+                term_sims[cooc[0]][cooc[1]] = burstscore_coocs + (burstscore_terms[cooc[0]]*freq) + (burstscore_terms[cooc[1]]*freq)
+                print cooc[0],cooc[1],"a",burstscore_coocs,"b1",burstscore_terms[cooc[0]],"b2",freq,"c1",burstscore_terms[cooc[1]],"c2",freq,"sim",burstscore_coocs + (burstscore_terms[cooc[0]]*freq) + (burstscore_terms[cooc[1]]*freq)
+            else:
+                term_sims[cooc[0]][cooc[1]] = 0
+        else:
+            term_sims[cooc[0]][cooc[1]] = 0
+    return tsims
+
 #make date-burstyterm-graph
 burstyfile = codecs.open(args.b,"r","utf-8")
 bursties = []
@@ -98,7 +119,6 @@ for j,date in enumerate(sorted(date_burstyterms.keys())):
     term_sims = defaultdict(lambda : defaultdict(float))
     burstyterms = date_burstyterms[date]
     print date,"num terms:",len(burstyterms)
-    combis = [comb for comb in combinations(burstyterms, 2)]
 
     if args.a == "twevent":
         bursty_seqs = defaultdict(list)
@@ -196,7 +216,7 @@ for j,date in enumerate(sorted(date_burstyterms.keys())):
         seqstart = j*24
         seqend = seqstart+24
         for i,bt in enumerate(burstyterms):
-            #print "burstscore",i,"of",len(burstyterms)
+            print "burstscore",i,"of",len(burstyterms)
             seq = [x for x in term_seqs[bt] if x > 0]
             mean = sum(seq)/len(seq)
             st_dev = gen_functions.return_standard_deviation(seq)
@@ -206,24 +226,8 @@ for j,date in enumerate(sorted(date_burstyterms.keys())):
 
         burstscore_coocs = defaultdict(lambda : defaultdict(list))
         cooc_freq = defaultdict(lambda : {})
-        print "cooc burstscores"
-        for i,c in enumerate(combis):
-            #print "cooc burstscore",i,"of",len(combis)
-            cooc = sorted(c)
-            seq = [x for x in cooc_seqs[cooc[0]][cooc[1]] if x > 0]
-            if len(seq) > 0:
-                freq = sum(cooc_seqs[cooc[0]][cooc[1]][seqstart:seqend])
-                if freq > 0:
-                    mean = sum(seq)/len(seq)
-                    st_dev = gen_functions.return_standard_deviation(seq)
-                    burstscore_coocs = freq-mean-(2*st_dev)
-                #cooc_freq[cooc[0]][cooc[1]] = freq
-                    term_sims[cooc[0]][cooc[1]] = burstscore_coocs + (burstscore_terms[cooc[0]]*(freq/term_freq[cooc[0]])) + (burstscore_terms[cooc[1]]*(freq/term_freq[cooc[1]]))
-                    #print cooc[0],cooc[1],"a",burstscore_coocs,"b1",burstscore_terms[cooc[0]],"b2",freq,"c1",burstscore_terms[cooc[1]],"c2",freq,"sim",burstscore_coocs + (burstscore_terms[cooc[0]]*freq) + (burstscore_terms[cooc[1]]*freq)
-                else:
-                    term_sims[cooc[0]][cooc[1]] = 0
-            else:
-                term_sims[cooc[0]][cooc[1]] = 0
+        combis = [comb for comb in combinations(burstyterms, 2)]
+
                 #burstscore_coocs[cooc[0]][cooc[1]] = 0
                 #cooc_freq[cooc[0]][cooc[1]] = freq
 

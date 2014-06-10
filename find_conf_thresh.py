@@ -3,18 +3,19 @@ import sys
 import re
 
 #extract cluster-label-conf pairs
-classificationfile = open(sys.argv[1])
 classifications = []
 conf = re.compile(r"(0\.\d+)")
 example_label = re.compile(r"Example (\d{2}) Label: (\d)")
 el = []
-for line in classificationfile.readlines():
-    if example_label.search(line):
-        el = example_label.search(line).groups()
-    if re.search(r"^1:",line):
-        c = conf.search(line).groups()[0]
-        classifications.append([el[0],el[1],float(c)])
-classificationfile.close()
+for c in sys.argv[1:]:
+    classificationfile = open(c)
+    for line in classificationfile.readlines():
+        if example_label.search(line):
+            el = example_label.search(line).groups()
+        if re.search(r"^1:",line):
+            c = conf.search(line).groups()[0]
+            classifications.append([el[0],el[1],float(c)])
+    classificationfile.close()
 
 #sort by conf
 classifications.sort(key = lambda x : x[2])
