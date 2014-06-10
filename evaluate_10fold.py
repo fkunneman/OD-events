@@ -21,7 +21,7 @@ for cl in sys.argv[2:]:
 #sort by conf
 classifications.sort(key = lambda x : x[2],reverse = True)
 
-precision_at = [50,100,250,500,1000]
+precision_at = [1,5,10,25,50,100,250,500,1000]
 outfile = open(sys.argv[1],"w")
 for i in precision_at:
     tp = len([x for x in classifications[:i] if x[1] == '1'])
