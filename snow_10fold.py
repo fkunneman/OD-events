@@ -39,7 +39,10 @@ for line in annotations.readlines():
                 else:
                     event_label.append((cluster_index[tokens[0]],'0'))
     else:
-        event_label.append((cluster_index[tokens[0]],tokens[1]))
+        if tokens[1] == '1':
+            date_annotations[date].append((cluster_index[tokens[0]],tokens[1]))
+        else:
+            date_annotations[date].append((cluster_index[tokens[0]],'0'))
 annotations.close()
 
 #sort instances based on their label       
