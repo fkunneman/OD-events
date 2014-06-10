@@ -6,6 +6,7 @@ labelfile = open(sys.argv[1],"w")
 annotationfiles = sys.argv[2:]
 
 cluster_annotations = defaultdict(list)
+annotations = []
 
 for af in annotationfiles:
     print af
@@ -36,3 +37,5 @@ for cid in cluster_annotations.keys():
     #print cid,cluster_annotations[cid]
     labelfile.write(cid + "\t" + "\t".join(cluster_annotations[cid]) + "\n")
 labelfile.close()
+
+annotations = 
