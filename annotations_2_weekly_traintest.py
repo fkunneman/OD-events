@@ -10,6 +10,7 @@ index_cluster = open(sys.argv[2])
 test_large = open(sys.argv[3])
 classifierdir = sys.argv[4]
 default_train = sys.argv[5]
+lax = int(sys.argv[6])
 
 #dict with date - number-label
 date_annotations = defaultdict(list)
@@ -33,10 +34,13 @@ for line in annotations.readlines():
     date = datetime.date(2013,int(datesearch[0]),int(datesearch[1]))
     if len(tokens) == 4:
         if tokens[1] == tokens[2] and tokens[1] == '1':
-            print tokens[0],cluster_index[tokens[0]]
             date_annotations[date].append((cluster_index[tokens[0]],'1'))
         else:
-            date_annotations[date].append((cluster_index[tokens[0]],'0'))
+            if lax:
+                if tokens[1] == '1' or tokens[2] == '1':
+                    date_annotations[date].append((cluster_index[tokens[0]],'1'))
+                else:
+                    date_annotations[date].append((cluster_index[tokens[0]],'0'))
     else:
         date_annotations[date].append((cluster_index[tokens[0]],tokens[1]))
 annotations.close()
