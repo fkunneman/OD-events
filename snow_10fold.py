@@ -47,6 +47,7 @@ for line in annotations.readlines():
             event_label.append((cluster_index[tokens[0]],'0'))
 annotations.close()
 
+bs = re.compile(r"p-([\d\.]+)=d-([\d\.]+)=t-([\d\.]+)=c-(\d+)=r-(\d+)=s-([\d\.]+)")
 #sort instances based on their label       
 sorted_instances = sorted(event_label, key = lambda k: k[1])
 #make folds based on taking the n-th instance as test
