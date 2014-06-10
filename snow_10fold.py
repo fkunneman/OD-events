@@ -56,6 +56,7 @@ for i in range(10):
     except:
         print "exists"
     train = sorted_instances[:]
+    print len(sorted_instances)
     test = []
     j = i
     offset = 0
