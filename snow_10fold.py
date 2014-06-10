@@ -10,6 +10,7 @@ index_cluster = open(sys.argv[2])
 test_large = open(sys.argv[3])
 classifierdir = sys.argv[4]
 expdir = sys.argv[5]
+lax = int(sys.argv[6])
 
 os.chdir(expdir)
 #dict with date - number-label
@@ -58,10 +59,11 @@ for i in range(10):
     while j < size:
         test.append(sorted_instances[j])
         #print i,j-offset,len(train_test["train"]),j,size,len(sorted_instances)
-        del train_test["training"][j-offset]
+        del train[j-offset]
         j += 10
         offset += 1
     #classify
+    print train
     trainf = open(outdir + "train.txt","w")
     testf = open(outdir + "test.txt","w")
     for cluster in train:
@@ -69,7 +71,7 @@ for i in range(10):
     for cluster in test:
         testf.write(cluster[1] + "," + index_features[cluster[0]])
     trainf.close()
-    test.close()
+    testf.close()
 
     os.system("cp " + outdir + "train.txt" + " .")
     os.system("cp " + outdir + "test.txt" + " .")

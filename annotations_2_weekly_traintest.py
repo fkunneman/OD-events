@@ -17,10 +17,12 @@ date_annotations = defaultdict(list)
 window_events = defaultdict(list)
 cluster_index = {}
 index_features = {}
+i_c = {}
 
 for line in index_cluster.readlines():
     tokens = line.strip().split(" ")
     cluster_index[tokens[1]] = int(tokens[0])
+    i_c[int(tokens[0])] = tokens[1] 
 index_cluster.close()
 
 for i,line in enumerate(test_large.readlines()):
@@ -41,8 +43,13 @@ for line in annotations.readlines():
                     date_annotations[date].append((cluster_index[tokens[0]],'1'))
                 else:
                     date_annotations[date].append((cluster_index[tokens[0]],'0'))
+            else:
+                date_annotations[date].append((cluster_index[tokens[0]],'0'))
     else:
-        date_annotations[date].append((cluster_index[tokens[0]],tokens[1]))
+        if tokens[1] == '1':
+            date_annotations[date].append((cluster_index[tokens[0]],tokens[1]))
+        else:
+            date_annotations[date].append((cluster_index[tokens[0]],'0'))
 annotations.close()
 
 i = 0
@@ -64,16 +71,19 @@ for week in range(i):
         print "exists"
     os.system("cat " + default_train + " > " + outdir + "train.txt")
     train = open(outdir + "train.txt","a")
+    ind_train = open(outdir + "train_index.txt","w")
     for w in range(0,(week+1)):
-        for cluster in window_events[w]:
+        for x,cluster in enumerate(window_events[w]):
             train.write(cluster[1] + "," + index_features[cluster[0]])
+            #print cluster[0]
+            ind_train.write(str(x) + " " + i_c[cluster[0]] + "\n")
     for j,t in enumerate(range((week+1),i)):
         test = open(outdir + "test" + str(j) + ".txt","w")
         for cluster in window_events[t]:
             test.write(cluster[1] + "," + index_features[cluster[0]])
         test.close()
     train.close()
-
+    ind_train.close()
 
 
 
