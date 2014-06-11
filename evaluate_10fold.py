@@ -17,12 +17,12 @@ for cl in sys.argv[2:]:
             els = True
         if re.search(r"^1:",line):
             if els:
-                classifications.append(el[1],'1')
+                classifications.append([el[1],'1'])
                 els = False
             c = conf.search(line).groups()[0]
             classifications_score.append([el[0],el[1],float(c)])
         if re.search(r"^0:",line) and els:
-            classifications.append(el[1],'0')
+            classifications.append([el[1],'0'])
             els = False
 
     print len(classifications_score)
