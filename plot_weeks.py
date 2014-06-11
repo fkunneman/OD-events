@@ -7,7 +7,7 @@ xlabel = sys.argv[2]
 ylabel = sys.argv[3]
 plotfiles = sys.argv[4:]
 
-for i,pf in plotfiles:
+for pf in plotfiles:
     pf_open = open(pf)
     x = []
     y = []

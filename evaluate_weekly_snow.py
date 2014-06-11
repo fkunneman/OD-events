@@ -8,13 +8,14 @@ outfile = open(sys.argv[1],"w")
 classifications = []
 #conf = re.compile(r"(0\.\d+)")
 example_label = re.compile(r"Example (\d+) Label: (\d)")
+weeknum = int(sys.argv[1].split("/")[-2][-1])
 for week in sys.argv[2:]:
     el = []
     els = False
     classifications = []
     num = week[-5]
     d = "/".join(week.split("/")[:-1]) + "/"
-    classificationfile = open(d + snow + num + "/test.out")
+    classificationfile = open(d + "snow" + num + "/test.out")
     for line in classificationfile.readlines():
         if example_label.search(line):
             el = example_label.search(line).groups()
@@ -35,7 +36,7 @@ for week in sys.argv[2:]:
     precision = tp / (tp+fp)
     #recall = tp / (tp+fn)
     #f1 = 2 * ((precision*recall) / (precision+recall))
-    outfile.write(num + " " + str(precision) + "\n")
+    outfile.write(str(int(num) + weeknum + 1) + " " + str(precision) + "\n")
 
     classificationfile.close()
 
