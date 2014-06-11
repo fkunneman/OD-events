@@ -23,7 +23,7 @@ for cl in sys.argv[2:]:
             classifications_score.append([el[0],el[1],float(c)])
         if re.search(r"^0:",line) and els:
             classifications.append(el[1],'0')
-            else = False
+            els = False
 
     print len(classifications_score)
     classificationfile.close()
