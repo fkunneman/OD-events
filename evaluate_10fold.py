@@ -11,7 +11,7 @@ conf = re.compile(r"(0\.\d+)")
 example_label = re.compile(r"Example (\d+) Label: (\d)")
 el = []
 els = False
-for cl in sys.argv[3:]:
+for cl in sys.argv[4:]:
     classificationfile = open(cl)
     for line in classificationfile.readlines():
         if example_label.search(line):
@@ -35,17 +35,18 @@ classifications_score.sort(key = lambda x : x[2],reverse = True)
 
 #precision_at = [1,5,10,25,50,100,250,500,1000]
 #plotfile = open(sys.argv[1],"w")
+if int(sys.argv[3]):
 x = []
 y = []
-for i,x in enumerate(classifications_score):
+for i,z in enumerate(classifications_score):
     if i > 0:
-        tp = len([x for x in classifications_score[:i] if x[1] == '1'])
+        tp = len([p for p in classifications_score[:i] if p[1] == '1'])
         precision = tp / i
         #plotfile.write(str(i) + " " + str(precision) + "\n")
         x.append(i)
         y.append(precision)
 
-plt.plot(x,y,linewidth=4,)
+plt.plot(x,y,linewidth=3)
 plt.ylabel('Precision')
 plt.xlabel('Rank by classifier confidence')
 plt.savefig(sys.argv[1],bbox_inches="tight")
