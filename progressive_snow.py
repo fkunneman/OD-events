@@ -9,15 +9,14 @@ testfiles = sys.argv[3:]
 
 bs = re.compile(r"p-([\d\.]+)=d-([\d\.]+)=t-([\d\.]+)=c-(\d+)=r-(\d+)=s-([\d\.]+)")
 train = trainfile.split("/")[-1]
-print "trainsplit",trainfile.split("/")
 os.chdir(expdir)
 filesdir = "/".join(trainfile.split("/")[:-1]) + "/"
 print "filesdir",filesdir
 for tf in testfiles:
-    print "testsplit",tf.split("/")
     test = tf.split("/")[-1]
     num = tf[-5]
     numdir = filesdir + "snow" + num
+    print numdir
     os.system("mkdir " + numdir)
     os.system("cp " + trainfile + " .")
     os.system("ls")
