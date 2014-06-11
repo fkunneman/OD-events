@@ -1,6 +1,8 @@
 from __future__ import division
 import sys
 import re
+import matplotlib.pyplot as plt
+from pylab import *
 
 #extract cluster-label-conf pairs
 classifications_score = []
@@ -32,13 +34,22 @@ for cl in sys.argv[3:]:
 classifications_score.sort(key = lambda x : x[2],reverse = True)
 
 #precision_at = [1,5,10,25,50,100,250,500,1000]
-plotfile = open(sys.argv[1],"w")
+#plotfile = open(sys.argv[1],"w")
+x = []
+y = []
 for i,x in enumerate(classifications_score):
     if i > 0:
         tp = len([x for x in classifications_score[:i] if x[1] == '1'])
         precision = tp / i
-        plotfile.write(str(i) + " " + str(precision) + "\n")
-plotfile.close()
+        #plotfile.write(str(i) + " " + str(precision) + "\n")
+        x.append(i)
+        y.append(precision)
+
+plt.plot(x,y,linewidth=4,)
+plt.ylabel('Precision')
+plt.xlabel('Rank by classifier confidence')
+plt.savefig(sys.argv[1],bbox_inches="tight")
+#plotfile.close()
 
 outfile = open(sys.argv[2],"w")
 tp = len([x for x in classifications if x[0] == '1' and x[1] == '1'])
