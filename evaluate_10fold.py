@@ -37,12 +37,12 @@ for i in precision_at:
     tp = len([x for x in classifications_score[:i] if x[1] == '1'])
     precision = tp / i
     outfile.write(str(i) + " " + str(precision) + "\n")
-outfile.close()
 
 tp = len([x for x in classifications if x[0] == '1' and x[1] == '1'])
 fp = len([x for x in classifications if x[0] == '0' and x[1] == '1'])
 fn = len([x for x in classifications if x[0] == '1' and x[1] == '0'])
 precision = tp / (tp+fp)
 recall = tp / (tp+fn)
-f1 = 2 * ((pr*re) / (pr+re))
-outfile.write("\n" + " ".join([precision,recall,f1]) + "\n")
+f1 = 2 * ((precision*recall) / (precision+recall))
+outfile.write("\n" + " ".join([str(x) for x in [precision,recall,f1]]) + "\n")
+outfile.close()
