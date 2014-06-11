@@ -37,7 +37,7 @@ for i,x in enumerate(classifications_score):
     if i > 0:
         tp = len([x for x in classifications_score[:i] if x[1] == '1'])
         precision = tp / i
-        plotfile.write(str(i) + " " + str(precision) + "\n")
+        plotfile.write(str(i) + "\t" + str(precision) + "\n")
 plotfile.close()
 
 outfile = open(sys.argv[2],"w")
