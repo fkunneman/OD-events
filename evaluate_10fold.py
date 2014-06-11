@@ -9,7 +9,7 @@ conf = re.compile(r"(0\.\d+)")
 example_label = re.compile(r"Example (\d+) Label: (\d)")
 el = []
 els = False
-for cl in sys.argv[2:]:
+for cl in sys.argv[3:]:
     classificationfile = open(cl)
     for line in classificationfile.readlines():
         if example_label.search(line):
@@ -31,13 +31,16 @@ for cl in sys.argv[2:]:
 #sort by conf
 classifications_score.sort(key = lambda x : x[2],reverse = True)
 
-precision_at = [1,5,10,25,50,100,250,500,1000]
-outfile = open(sys.argv[1],"w")
-for i in precision_at:
-    tp = len([x for x in classifications_score[:i] if x[1] == '1'])
-    precision = tp / i
-    outfile.write(str(i) + " " + str(precision) + "\n")
+#precision_at = [1,5,10,25,50,100,250,500,1000]
+plotfile = open(sys.argv[1],"w")
+for i,x in enumerate(classifications_score):
+    if i > 0:
+        tp = len([x for x in classifications_score[:i] if x[1] == '1'])
+        precision = tp / i
+        plotfile.write(str(i) + " " + str(precision) + "\n")
+plotfile.close()
 
+outfile = open(sys.argv[2],"w")
 tp = len([x for x in classifications if x[0] == '1' and x[1] == '1'])
 fp = len([x for x in classifications if x[0] == '0' and x[1] == '1'])
 fn = len([x for x in classifications if x[0] == '1' and x[1] == '0'])
