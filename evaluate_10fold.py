@@ -36,21 +36,21 @@ classifications_score.sort(key = lambda x : x[2],reverse = True)
 #precision_at = [1,5,10,25,50,100,250,500,1000]
 #plotfile = open(sys.argv[1],"w")
 if int(sys.argv[3]):
-x = []
-y = []
-for i,z in enumerate(classifications_score):
-    if i > 0:
-        tp = len([p for p in classifications_score[:i] if p[1] == '1'])
-        precision = tp / i
-        #plotfile.write(str(i) + " " + str(precision) + "\n")
-        x.append(i)
-        y.append(precision)
+    x = []
+    y = []
+    for i,z in enumerate(classifications_score):
+        if i > 0:
+            tp = len([p for p in classifications_score[:i] if p[1] == '1'])
+            precision = tp / i
+            #plotfile.write(str(i) + " " + str(precision) + "\n")
+            x.append(i)
+            y.append(precision)
 
-plt.plot(x,y,linewidth=3)
-plt.ylabel('Precision')
-plt.xlabel('Rank by classifier confidence')
-plt.savefig(sys.argv[1],bbox_inches="tight")
-#plotfile.close()
+    plt.plot(x,y,linewidth=3)
+    plt.ylabel('Precision')
+    plt.xlabel('Rank by classifier confidence')
+    plt.savefig(sys.argv[1],bbox_inches="tight")
+    #plotfile.close()
 
 outfile = open(sys.argv[2],"w")
 tp = len([x for x in classifications if x[0] == '1' and x[1] == '1'])
