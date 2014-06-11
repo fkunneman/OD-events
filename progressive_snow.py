@@ -18,6 +18,7 @@ for tf in testfiles:
     test = tf.split("/")[-1]
     num = tf[-5]
     numdir = filesdir + "snow" + num
+    print numdir
     os.system("mkdir " + numdir)
     os.system("cp " + trainfile + " .")
     os.system("ls")
