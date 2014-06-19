@@ -47,12 +47,11 @@ elif args.u == "minute":
 #count word and add to sequence
 windowtime = starttime + heap
 num_windows = (endtime-starttime) / heap
-for word in vocabulary:
-    word_timewindow[word] = num_windows * [0]
-print word_timewindow
+#for word in vocabulary:
+#    word_timewindow[word] = num_windows * [0]
+#print word_timewindow
 time = starttime
 i = 0
-w = 0
 while windowtime <= endtime:
     wordcount = defaultdict(int)
     while time <= windowtime:
@@ -61,9 +60,12 @@ while windowtime <= endtime:
             wordcount[word] += 1
         i += 1
         time = sorted_time[i]
-    for word in wordcount.keys():
-        word_timewindow[word][w] = wordcount[word]
-    w += 1
+    for word in vocabulary: 
+        try:
+            word_timewindow[word].append(wordcount[word]):
+        except:
+            word_timewindow[word].append(0)
+        # word_timewindow[word][w] = wordcount[word]
     windowtime += heap
 
 #write to file
