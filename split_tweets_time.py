@@ -4,6 +4,7 @@ import argparse
 import datetime
 from collections import defaultdict
 import codecs
+import time_functions
 
 parser = argparse.ArgumentParser(description = "Program to sort tweets in time and make sequences of words")
 

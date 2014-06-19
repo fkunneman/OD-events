@@ -32,15 +32,18 @@ classifications_score.sort(key = lambda x : x[2],reverse = True)
 rank_score_precision = []
 rank_at_threshold = -1
 
+#print classifications_score
 for i,z in enumerate(classifications_score):
     if i > 0:
         tp = len([p for p in classifications_score[:i] if p[1] == '1'])
         precision = tp / i
+#        print precision
         #plotfile.write(str(i) + " " + str(precision) + "\n")
         if precision > threshold:
             rank_at_threshold = i
             rank_score_precision.append([i,p[2],precision])
 
+print rank_score_precision
 conf_threshold = rank_score_precision[-1][1]
 
 for i,week in enumerate(sys.argv[4:]):
@@ -70,11 +73,13 @@ for i,week in enumerate(sys.argv[4:]):
     classifications_score.sort(key = lambda x : x[2],reverse = True)
 
     for i,z in enumerate(classifications_score):
-        if classifications_score[i][1] < conf_threshold:
+        print z[2]
+        if classifications_score[i][2] < conf_threshold:
             numbers = i-1
             tp = len([p for p in classifications_score[:i] if p[1] == '1'])
             precision = tp / i
             outfile.write(str(int(num) + weeknum + 1) + " " + str(numbers) + " " + str(precision) + "\n")
+            break
 
     #print len(classifications_score)
     #tp = len([x for x in classifications if x[0] == '1' and x[1] == '1'])
