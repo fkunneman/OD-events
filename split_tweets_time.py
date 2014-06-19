@@ -12,6 +12,7 @@ parser.add_argument('-o', action='store', required=True, help = "the outfile")
 parser.add_argument('-u', action = 'store', default = "day", choices = ["day","hour","minute"], help="specify the time unit to divide tweets by")
 parser.add_argument('-d', action='store', default = 2, type = int, help = "the date column in the tweet")
 parser.add_argument('-t', action='store', default = 3, type = int, help = "the time column in the tweet")
+args = parser.parse_args()
 
 outfile = codecs.open(args.o,"w","utf-8")
 word_timewindow = defaultdict(list)
