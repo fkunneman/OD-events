@@ -81,7 +81,6 @@ while bd <= ordered_dates[1]:
         else:
             term_seqs[term].append(0)
             term_tweets[term].append([])
-    tweet_seqs.extend
     n = n + datetime.timedelta(minutes = 15)
 
 bursty_seqs = defaultdict(list)
