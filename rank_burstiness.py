@@ -108,7 +108,7 @@ for term in term_burst_sorted:
             elif args.u == "minute":
                 dates.append(begin_d+datetime.timedelta(minutes=i*args.s))
     #output term\tburstiness\tdays
-    outwrite.write("\t".join([term[0],str(term[2])," ".join([d.strftime('%y/%m/%d %h:%m') for d in dates])]) + "\n")
+    outwrite.write("\t".join([term[0],str(term[2])," ".join([str(d) for d in dates])]) + "\n")
 
 
     # bursts = []
