@@ -68,6 +68,7 @@ while bd <= ordered_dates[1]:
             totaltweets.extend(tweets)
             for t in tweets:
                 words = t.strip().split("\t")[-1].split(" ")
+                print words
                 for w in words:
                     c[w] += 1
                     l[w].extend(t.strip().split("\t")[-1].split(" "))
@@ -100,7 +101,7 @@ for s in range(len(term_seqs[terms[0]])):
     for bt in terms:
         print bt
         subwin = term_tweets[bt][s] 
-        pseudodocs.append((term,subwin))
+        pseudodocs.append((bt,subwin))
 
     #print "calculating similarities"
     tfidf_vectorizer = TfidfVectorizer()
