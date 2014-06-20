@@ -102,6 +102,7 @@ for s in range(len(term_seqs[terms[0]])):
 
     #print "calculating similarities"
     tfidf_vectorizer = TfidfVectorizer()
+    print pseudodocs
     tfidf_matrix = tfidf_vectorizer.fit_transform([x[1] for x in pseudodocs])
     cosim = cosine_similarity(tfidf_matrix, tfidf_matrix)
     print "calculating feature-pair subwindow-scores"
