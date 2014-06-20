@@ -19,7 +19,7 @@ import gen_functions
 Script to generate similarity graphs of bursty features
 """
 parser = argparse.ArgumentParser(description = "Script to generate similarity graphs of bursty features")  
-parser.add_argument('-b', action = 'store', required = True, help = "the file with bursty unigrams")
+# parser.add_argument('-b', action = 'store', required = True, help = "the file with bursty unigrams")
 parser.add_argument('-t', action = 'store', required = True, help = "the file with term frequencies over time")
 parser.add_argument('-i', action = 'store', nargs='+',required = False, help = "The files with tweets")
 parser.add_argument('-w', action = 'store', required = True, help = "the file to write similarity files to")
