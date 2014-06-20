@@ -18,12 +18,14 @@ parser.add_argument('-i', action = 'store', required = True, help = "the input f
 parser.add_argument('-w', action = 'store', required = True, help = "the output file")
 parser.add_argument('-m', action = 'store', choices = ["minus","divide","hmm"], help = "the burstiness metric")
 parser.add_argument('-s', action = 'store', type = int, default = 24, help = "the size of the sliding window (in the amount of hours; default = 24)")
+parser.add_argument('-b', action = 'store', nargs='+', help = "the begin date time")
+parser.add_argument('-u', action = 'store', default = "day", help = "the unit of time windows")
 
 args = parser.parse_args()
 
 inread = codecs.open(args.i,"r","utf-8")
 outwrite = codecs.open(args.w,"w","utf-8")
-begin_date = datetime.date(2013,6,22)
+begin_d = datetime.datetime(args.b[0],args.b[1],args.b[2],args.b[3],args.b[4],args.b[5])
 term_windows = defaultdict(list)
 term_burst = []
 p = defaultdict(lambda : {}) 
@@ -97,9 +99,14 @@ term_burst_sorted = sorted(term_burst, key=itemgetter(2,0,1),reverse=True)
 for term in term_burst_sorted:
     #retrieve day/days
     dates = []
-    for i,day in enumerate(term[1]):
-        if day == 1:
-            dates.append(begin_date+datetime.timedelta(days=i))
+    for i,u in enumerate(term[1]):
+        if u == 1:
+            if args.u == "day":
+                dates.append(begin_date+datetime.timedelta(days=i*args.s))
+            elif args.u == "hour":
+                dates.append(begin_date+datetime.timedelta(hours=i*args.s))
+            elif args.u == "minute":
+                dates.append(begin_date+datetime.timedelta(minutes=i*args.s))
     #output term\tburstiness\tdays
     outwrite.write("\t".join([term[0],str(term[2])," ".join([d.strftime('%y/%m/%d') for d in dates])]) + "\n")
 
