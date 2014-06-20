@@ -18,7 +18,7 @@ parser.add_argument('-i', action = 'store', required = True, help = "the input f
 parser.add_argument('-w', action = 'store', required = True, help = "the output file")
 parser.add_argument('-m', action = 'store', choices = ["minus","divide","hmm"], help = "the burstiness metric")
 parser.add_argument('-s', action = 'store', type = int, default = 24, help = "the size of the sliding window (in the amount of hours; default = 24)")
-parser.add_argument('-b', action = 'store', nargs='+', help = "the begin date time")
+parser.add_argument('-b', action = 'store', type = int, nargs='+', help = "the begin date time")
 parser.add_argument('-u', action = 'store', default = "day", help = "the unit of time windows")
 
 args = parser.parse_args()
