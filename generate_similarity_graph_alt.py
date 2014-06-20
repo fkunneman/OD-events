@@ -62,10 +62,8 @@ while bd <= ordered_dates[-1]:
     c = defaultdict(int)
     l = defaultdict(list)
     while bd <= n:
-        print bd
         try:
             tweets = datetime_tweets[bd]
-            print tweets
             for t in tweets:
                 words = t.strip().split("\t")[-1].split(" ")
                 print words
@@ -99,13 +97,12 @@ for s in range(len(term_seqs[terms[0]])):
     pseudodocs = []
     #calculate similarity between bursty terms
     for bt in terms:
-        print bt,term_tweets[bt],term_tweets[bt][s]
+        # print bt,term_tweets[bt],term_tweets[bt][s]
         subwin = term_tweets[bt][s] 
         pseudodocs.append((bt," ".join(subwin)))
 
     #print "calculating similarities"
     tfidf_vectorizer = TfidfVectorizer()
-    print pseudodocs
     try:
         tfidf_matrix = tfidf_vectorizer.fit_transform([x[1] for x in pseudodocs])
         cosim = cosine_similarity(tfidf_matrix, tfidf_matrix)
@@ -127,5 +124,5 @@ for c,term1 in enumerate(terms[:-1]):
         outfile.write(term1 + " " + " ".join([str(term_sims[termpre][term1]) for termpre in terms[:c]]))
     outfile.write(" 1.0 ")
     outfile.write(" ".join([str(term_sims[term1][term2]) for term2 in terms[c+1:]]) + "\n")
-outfile.write(burstyterms[-1] + " " + " ".join([str(term_sims[termpre][burstyterms[-1]]) for termpre in terms[:-1]]) + " 1.0\n")
+outfile.write(burstyterms[-1] + " " + " ".join([str(term_sims[termpre][terms[-1]]) for termpre in terms[:-1]]) + " 1.0\n")
 outfile.close()
