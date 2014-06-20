@@ -114,6 +114,8 @@ for s in range(len(term_seqs[terms[0]])):
             for term2 in terms[c:]:
                 # if not bt_weight[term1] == 0.0 or bt_weight[term2] == 0.0:
                 term_sims[term1][term2] += (bt_weight[term1] * bt_weight[term2] * cosim[terms.index(term1),terms.index(term2)])   
+    except:
+        print "voc too little"
 
 outfile = codecs.open(args.w,"w","utf-8")
 print "printing similarities"
