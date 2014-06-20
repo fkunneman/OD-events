@@ -100,7 +100,7 @@ for s in range(len(term_seqs[terms[0]])):
     pseudodocs = []
     #calculate similarity between bursty terms
     for bt in terms:
-        print bt
+        print bt,term_tweets[bt],term_tweets[bt][s]
         subwin = term_tweets[bt][s] 
         pseudodocs.append((bt,subwin))
 
