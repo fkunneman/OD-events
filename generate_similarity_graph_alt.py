@@ -33,9 +33,10 @@ date_seqs = defaultdict(lambda : defaultdict(list))
 datetime_tweets = defaultdict(list)
 #cluster files by date
 vocabulary = []
-datetime = re.compile(r"(\d{4})-(\d{2})-(\d{2}) \d{2}:\d{2}")
+datet = re.compile(r"(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})")
 for f in args.i:
-    dt = datetime.search(f).groups()
+    dt = datet.search(f).groups()
+    print dt,f
     dto = datetime.datetime(int(dt[0]),int(dt[1]),int(dt[2]),int(dt[3]),int(dt[4]))
     o = codecs.open(f)
     for tweet in o.readlines():

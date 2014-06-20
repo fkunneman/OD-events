@@ -199,6 +199,7 @@ for j,date in enumerate(sorted(date_burstyterms.keys())):
                     index_term[k] = y
                     y += 1
                     pseudodocs.append((k," ".join(d[k])))
+            print pseudodocs
             #compute similarities
             print "calculating similarities"
             tfidf_vectorizer = TfidfVectorizer()
