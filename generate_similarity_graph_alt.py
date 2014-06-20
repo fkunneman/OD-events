@@ -36,7 +36,6 @@ vocabulary = []
 datet = re.compile(r"(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})")
 for f in args.i:
     dt = datet.search(f).groups()
-    print dt,f
     dto = datetime.datetime(int(dt[0]),int(dt[1]),int(dt[2]),int(dt[3]),int(dt[4]))
     o = codecs.open(f)
     for tweet in o.readlines():
@@ -63,8 +62,10 @@ while bd <= ordered_dates[1]:
     c = defaultdict(int)
     l = defaultdict(list)
     while bd <= n:
+        print bd
         try:
             tweets = datetime_tweets[bd]
+            print tweets
             totaltweets.extend(tweets)
             for t in tweets:
                 words = t.strip().split("\t")[-1].split(" ")
