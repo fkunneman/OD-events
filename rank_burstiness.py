@@ -102,11 +102,11 @@ for term in term_burst_sorted:
     for i,u in enumerate(term[1]):
         if u == 1:
             if args.u == "day":
-                dates.append(begin_date+datetime.timedelta(days=i*args.s))
+                dates.append(begin_d+datetime.timedelta(days=i*args.s))
             elif args.u == "hour":
-                dates.append(begin_date+datetime.timedelta(hours=i*args.s))
+                dates.append(begin_d+datetime.timedelta(hours=i*args.s))
             elif args.u == "minute":
-                dates.append(begin_date+datetime.timedelta(minutes=i*args.s))
+                dates.append(begin_d+datetime.timedelta(minutes=i*args.s))
     #output term\tburstiness\tdays
     outwrite.write("\t".join([term[0],str(term[2])," ".join([d.strftime('%y/%m/%d') for d in dates])]) + "\n")
 
