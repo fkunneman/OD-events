@@ -106,13 +106,14 @@ for s in range(len(term_seqs[terms[0]])):
     #print "calculating similarities"
     tfidf_vectorizer = TfidfVectorizer()
     print pseudodocs
-    tfidf_matrix = tfidf_vectorizer.fit_transform([x[1] for x in pseudodocs])
-    cosim = cosine_similarity(tfidf_matrix, tfidf_matrix)
-    print "calculating feature-pair subwindow-scores"
-    for c,term1 in enumerate(terms[:-1]):
-        for term2 in terms[c:]:
-            # if not bt_weight[term1] == 0.0 or bt_weight[term2] == 0.0:
-            term_sims[term1][term2] += (bt_weight[term1] * bt_weight[term2] * cosim[terms.index(term1),terms.index(term2)])   
+    try:
+        tfidf_matrix = tfidf_vectorizer.fit_transform([x[1] for x in pseudodocs])
+        cosim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+        print "calculating feature-pair subwindow-scores"
+        for c,term1 in enumerate(terms[:-1]):
+            for term2 in terms[c:]:
+                # if not bt_weight[term1] == 0.0 or bt_weight[term2] == 0.0:
+                term_sims[term1][term2] += (bt_weight[term1] * bt_weight[term2] * cosim[terms.index(term1),terms.index(term2)])   
 
 outfile = codecs.open(args.w,"w","utf-8")
 print "printing similarities"
