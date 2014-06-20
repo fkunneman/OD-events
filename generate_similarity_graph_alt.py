@@ -101,7 +101,7 @@ for s in range(len(term_seqs[terms[0]])):
     for bt in terms:
         print bt,term_tweets[bt],term_tweets[bt][s]
         subwin = term_tweets[bt][s] 
-        pseudodocs.append((bt,subwin))
+        pseudodocs.append((bt," ".join(subwin)))
 
     #print "calculating similarities"
     tfidf_vectorizer = TfidfVectorizer()
