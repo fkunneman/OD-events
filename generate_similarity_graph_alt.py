@@ -124,5 +124,5 @@ for c,term1 in enumerate(terms[:-1]):
         outfile.write(term1 + " " + " ".join([str(term_sims[termpre][term1]) for termpre in terms[:c]]))
     outfile.write(" 1.0 ")
     outfile.write(" ".join([str(term_sims[term1][term2]) for term2 in terms[c+1:]]) + "\n")
-outfile.write(burstyterms[-1] + " " + " ".join([str(term_sims[termpre][terms[-1]]) for termpre in terms[:-1]]) + " 1.0\n")
+outfile.write(terms[-1] + " " + " ".join([str(term_sims[termpre][terms[-1]]) for termpre in terms[:-1]]) + " 1.0\n")
 outfile.close()
