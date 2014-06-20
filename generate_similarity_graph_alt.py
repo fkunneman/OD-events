@@ -66,7 +66,6 @@ while bd <= ordered_dates[-1]:
         try:
             tweets = datetime_tweets[bd]
             print tweets
-            totaltweets.extend(tweets)
             for t in tweets:
                 words = t.strip().split("\t")[-1].split(" ")
                 print words
