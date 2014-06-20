@@ -58,7 +58,7 @@ term_seqs = defaultdict(list)
 term_tweets = defaultdict(list)
 bd = ordered_dates[0]
 n = bd + datetime.timedelta(minutes=15)
-while bd <= ordered_dates[1]:
+while bd <= ordered_dates[-1]:
     c = defaultdict(int)
     l = defaultdict(list)
     while bd <= n:
