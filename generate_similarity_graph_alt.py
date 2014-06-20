@@ -98,7 +98,9 @@ for s in range(len(term_seqs[terms[0]])):
     pseudodocs = []
     #calculate similarity between bursty terms
     for bt in terms:
-        pseudodocs.append((term,term_tweets[bt]))
+        print bt
+        subwin = term_tweets[bt][s] 
+        pseudodocs.append((term,subwin))
 
     #print "calculating similarities"
     tfidf_vectorizer = TfidfVectorizer()
