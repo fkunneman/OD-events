@@ -34,18 +34,15 @@ def select_f(stage,feature_list):
         os.system("python ~/OD-events/evaluate_10fold.py " + tenfold + "pratplot.txt " + results + " " + tenfold + "fold_*/test.out")
     results = []
     highest = [0,0]
+    outfile.write("\n")
     for f in resultfiles:
         fileopen = open(f[1])
         result = fileopen.readlines()[1]
         fileopen.close()
-        if result[-1] > highest[1]:
-            highest = [f[0],result[-1]]
-        scores = ",".join([str(x) for x in f[0]]) + result.strip().split(" ")
-        results.append(scores)
-    outfile.write("\n")
-    for s in results:
-        outfile.write(" ".join(s) + "\n")
-    outfile.write("\n")
+        result = result.strip().split(" ")
+        if float(result[-1]) > highest[1]:
+            highest = [f[0],float(result[-1])]
+        outfile.write(",".join([str(x) for x in f[0]]) + " " + " ".join(result) + "\n")
     if len(f[0]) < len(all_features):
         select_f(stage+1,highest[0])
 
