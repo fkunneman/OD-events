@@ -28,7 +28,7 @@ for ts in termseqs:
     termseqs_order[l] = seq
 
 fig, ax = plt.subplots()
-for term in terms:
+for j,term in enumerate(terms):
     seq = termseqs_order[term]
     i = time_begin
     x = []
@@ -37,7 +37,7 @@ for term in terms:
         x.append((time_start + datetime.timedelta(hours=i)))
         y.append(seq[i])
         i+=1
-    ax.plot(x,y,linestyle="-",linewidth=2)
+    ax.plot(x,y,linestyle=linestyles[j],linewidth=2)
 
 #numpy.array([base + datetime.timedelta(hours=i) for i in xrange(24)])
 
