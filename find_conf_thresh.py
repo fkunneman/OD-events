@@ -45,4 +45,3 @@ for i,c in enumerate(classifications):
 cf = sorted(conf_f1.items(), key=lambda x: x[1],reverse=True)
 for c in cf:
     print c[0],c[1]
-
