@@ -21,7 +21,10 @@ for cl in sys.argv[4:]:
             if els:
                 classifications.append([el[1],'1'])
                 els = False
-            c = conf.search(line).groups()[0]
+            try:
+                c = conf.search(line).groups()[0]
+            except:
+                c=1.0
             classifications_score.append([el[0],el[1],float(c)])
         if re.search(r"^0:",line) and els:
             classifications.append([el[1],'0'])

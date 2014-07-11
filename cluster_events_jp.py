@@ -34,7 +34,9 @@ term_nearest_neighbours[bursty_terms[0]] = [bursty_terms[x] for x in nns[1:(1+ar
 print "extracting nearest neighbours for",len(bursty_terms),"bursty terms"
 for line in lines[2:]:
     similarities = [float(x) for x in line.strip().split(" ")[1:] if float(x) != 1.0]
+    print similarities,sum(similarities)
     if sum(similarities) != 0:
+        print "yes"
         nns = sorted(range(len(similarities)), key=lambda ke: similarities[ke],reverse=True)
         tnn = [bursty_terms[x] for x in nns[1:(1+args.k)]]
         term = line.split(" ")[0]
@@ -46,11 +48,16 @@ for line in lines[2:]:
 
 print "extracting term links"
 for term in bursty_terms:
+    print "term",term
     for neighbour in term_nearest_neighbours[term]:
+        print "neighbour",neighbour
+        print term_nearest_neighbours[neighbour]	
         if term in term_nearest_neighbours[neighbour]:
             term_nearest_neighbours[neighbour].remove(term)
             term_links[term].append(neighbour)
             term_links[neighbour].append(term)
+
+print term_links
 
 print "making clusters"
 clust_index = 0

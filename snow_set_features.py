@@ -9,5 +9,5 @@ testfile.close()
 
 for l in lines:
     tokens = l.split(":")[0].split(",")
-    outfile.write(",".join([tokens[x-2] for x in features]) + ":\n")
-outfile.close()
+    testout.write(",".join([tokens[x-2] for x in features]) + ":\n")
+testout.close()

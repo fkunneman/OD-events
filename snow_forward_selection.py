@@ -12,7 +12,8 @@ all_features = set([int(x) for x in sys.argv[5:]])
 def select_f(stage,feature_list):
     resultfiles = []
     d = selection_dir + "stage" + str(stage) + "/"
-    os.mkdir(d)
+    if not os.path.isdir(d):
+        os.mkdir(d)
     #for each combi
     for feature in list(all_features - set(feature_list)):
         combi = feature_list + [feature]
@@ -21,9 +22,11 @@ def select_f(stage,feature_list):
         tenfold = testdir + "tenfold/"
         results = testdir + "results.txt"
         resultfiles.append((combi,results))
-        os.mkdir(testdir)
-        os.mkdir(tenfold)
-        os.system("python ~/OD-events/snow_set_features.py " + test + " " + testfile + " " + " ".join([str(x) for x in combi]))
+        if not os.path.isdir(testdir):
+            os.mkdir(testdir)
+        if not os.path.isdir(tenfold):
+            os.mkdir(tenfold)
+        os.system("python ~/OD-events/snow_set_features.py " + test + " " + testf + " " + " ".join([str(x) for x in combi]))
         #classify
         os.system("python ~/OD-events/snow_10fold.py /vol/tensusers/fkunneman/exp/od-events/annotations/cluster_labels.txt "
             "/vol/tensusers/fkunneman/exp/od-events/snow/index_cluster.txt " + test + " " + tenfold + " /scratch/fkunneman/experiment1/ 0")

@@ -88,6 +88,6 @@ for i in range(10):
     param.close()
     params = bs.search(paramline).groups()
     print "snow -train -I train.txt -F test.net -W " + params[0] + "," + params[1] + "," + params[2] + "," + params[3] + ":0-1 -r " + params[4] + " -S " + params[5]
-    os.system("snow -train -I train.txt -F test.net -W " + params[0] + "," + params[1] + "," + params[2] + "," + params[3] + ":0-1 -r " + params[4] + " -S 0.5")
-    os.system("snow -test -I test.txt -F test.net -o allactivations -i + -S 0.5 > test.out")
+    os.system("snow -train -I train.txt -F test.net -W " + params[0] + "," + params[1] + "," + params[2] + "," + params[3] + ":0-1 -r " + params[4] + " -S " + params[5])
+    os.system("snow -test -I test.txt -F test.net -o allactivations -i + -S " + params[5] + " > test.out")
     os.system("mv * " + outdir)
