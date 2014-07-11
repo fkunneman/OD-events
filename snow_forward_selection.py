@@ -29,7 +29,7 @@ def select_f(stage,feature_list):
         os.system("python ~/OD-events/snow_set_features.py " + test + " " + testf + " " + " ".join([str(x) for x in combi]))
         #classify
         os.system("python ~/OD-events/snow_10fold.py /vol/tensusers/fkunneman/exp/od-events/annotations/cluster_labels.txt "
-            "/vol/tensusers/fkunneman/exp/od-events/snow/index_cluster.txt " + test + " " + tenfold + " /scratch/fkunneman/experiment1/ 0")
+            "/vol/tensusers/fkunneman/exp/od-events/snow/index_cluster.txt " + testf + " " + tenfold + " /scratch/fkunneman/experiment1/ 0")
         #evaluate
         os.system("python ~/OD-events/evaluate_10fold.py " + tenfold + "pratplot.txt " + results + " " + tenfold + "fold_*/test.out")
     results = []
