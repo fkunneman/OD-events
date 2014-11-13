@@ -76,10 +76,13 @@ for line in inread.readlines():
     term = tokens[0]
 #    if not re.search("^@",term):
     vals = tokens[1].split("|")
-    i = 0
-    while i < len(vals):
-        term_windows[term].append(sum([int(x) for x in vals[i:i+args.s]])) 
-        i += args.s
+    if args.s == 1:
+        term_windows[term] = vals
+    else:
+        i = 0
+        while i < len(vals):
+            term_windows[term].append(sum([int(x) for x in vals[i:i+args.s]])) 
+            i += args.s
     #print vals, term_windows[term]
 
 print "calculating burstiness"
