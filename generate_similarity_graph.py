@@ -57,7 +57,7 @@ def extract_tweets(tweets,terms,queue):
 def score_tagsim(cs,csegs):
     tsims = defaultdict(lambda : defaultdict(float))
     for i,c in enumerate(cs):
-        print "cooc burstscore",i,"of",len(combis)
+#        print "cooc burstscore",i,"of",len(combis)
         cooc = sorted(c)
         seq = [x for x in cseqs[cooc[0]][cooc[1]] if x > 0]
         if len(seq) > 0:
@@ -68,7 +68,7 @@ def score_tagsim(cs,csegs):
                 burstscore_coocs = freq-mean-(2*st_dev)
             #cooc_freq[cooc[0]][cooc[1]] = freq
                 term_sims[cooc[0]][cooc[1]] = burstscore_coocs + (burstscore_terms[cooc[0]]*freq) + (burstscore_terms[cooc[1]]*freq)
-                print cooc[0],cooc[1],"a",burstscore_coocs,"b1",burstscore_terms[cooc[0]],"b2",freq,"c1",burstscore_terms[cooc[1]],"c2",freq,"sim",burstscore_coocs + (burstscore_terms[cooc[0]]*freq) + (burstscore_terms[cooc[1]]*freq)
+#                print cooc[0],cooc[1],"a",burstscore_coocs,"b1",burstscore_terms[cooc[0]],"b2",freq,"c1",burstscore_terms[cooc[1]],"c2",freq,"sim",burstscore_coocs + (burstscore_terms[cooc[0]]*freq) + (burstscore_terms[cooc[1]]*freq)
             else:
                 term_sims[cooc[0]][cooc[1]] = 0
         else:
@@ -129,11 +129,15 @@ for j,date in enumerate(sorted(date_burstyterms.keys())):
         for s in range(0,24,2):
             bt_weight = {}
             #calculate weight for each bursty term
-            for bt in burstyterms:
+            for bt in burstyterms:               
                 win = bursty_seqs[bt]
+                if (bt == "busongeval" or bt == "montenegro"):
+                    print date,bt,win
                 subwin = [win[s],win[s+1]]
                 try:
                     bt_weight[bt] = sum(subwin)/sum(win)
+                    if (bt == "busongeval" or bt == "montenegro"):
+                        print s,bt_weight[bt]
                 except ZeroDivisionError:
                     bt_weight[bt] = 0.0
 
@@ -199,7 +203,7 @@ for j,date in enumerate(sorted(date_burstyterms.keys())):
                     index_term[k] = y
                     y += 1
                     pseudodocs.append((k," ".join(d[k])))
-            print pseudodocs
+#            print pseudodocs
             #compute similarities
             print "calculating similarities"
             tfidf_vectorizer = TfidfVectorizer()
@@ -207,9 +211,11 @@ for j,date in enumerate(sorted(date_burstyterms.keys())):
             cosim = cosine_similarity(tfidf_matrix, tfidf_matrix)
             print "calculating feature-pair subwindow-scores"
             for c,term1 in enumerate(sorted(index_term.keys()[:-1])):
-                for term2 in sorted(index_term.keys()[c:]):
+                for term2 in sorted(index_term.keys()[c:]):                    
                     # if not bt_weight[term1] == 0.0 or bt_weight[term2] == 0.0:
                     term_sims[term1][term2] += (bt_weight[term1] * bt_weight[term2] * cosim[index_term[term1],index_term[term2]])
+                    if (term1 == "busongeval" and term2 == "montenegro") or (term1 == "montenegro" and term2 == "busongeval"):
+                        print date,term1,term2,term_sims[term1][term2]
 
     elif args.a == "tags":
         burstscore_terms = defaultdict(list)

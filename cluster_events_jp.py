@@ -21,7 +21,7 @@ term_nearest_neighbours = defaultdict(list)
 term_links = defaultdict(list)
 term_termsims = defaultdict(lambda : defaultdict(float))
 
-print args.i
+#print args.i
 #make term nearest neighbor dict
 infile = codecs.open(args.i,"r","utf-8")
 lines = infile.readlines()
@@ -33,13 +33,16 @@ term_nearest_neighbours[bursty_terms[0]] = [bursty_terms[x] for x in nns[1:(1+ar
 #print bursty_terms[0],nns,nns[:5],[bursty_terms[x] for x in nns[:5]]
 print "extracting nearest neighbours for",len(bursty_terms),"bursty terms"
 for line in lines[2:]:
-    similarities = [float(x) for x in line.strip().split(" ")[1:] if float(x) != 1.0]
-    print similarities,sum(similarities)
+    similarities = [float(x) for x in line.strip().split(" ")[1:]]
+   # print similarities,sum(similarities)
     if sum(similarities) != 0:
-        print "yes"
+        #print "yes"
         nns = sorted(range(len(similarities)), key=lambda ke: similarities[ke],reverse=True)
         tnn = [bursty_terms[x] for x in nns[1:(1+args.k)]]
         term = line.split(" ")[0]
+        if term == "busongeval" or term == "montenegro" or term == "ravijn":
+            print term,tnn
+
         term_nearest_neighbours[term] = tnn
         for neigh in nns[1:(1+args.k)]:
             neighterm = bursty_terms[neigh]
@@ -48,16 +51,18 @@ for line in lines[2:]:
 
 print "extracting term links"
 for term in bursty_terms:
-    print "term",term
+#    print "term",term
+#    if term == "busongeval" or term == "montenegro":
+#        print term,term_nearest_neighbours[term][:10]
     for neighbour in term_nearest_neighbours[term]:
-        print "neighbour",neighbour
-        print term_nearest_neighbours[neighbour]	
+        #print "neighbour",neighbour
+        #print term_nearest_neighbours[neighbour]	
         if term in term_nearest_neighbours[neighbour]:
             term_nearest_neighbours[neighbour].remove(term)
             term_links[term].append(neighbour)
             term_links[neighbour].append(term)
 
-print term_links
+#print term_links
 
 print "making clusters"
 clust_index = 0
@@ -112,3 +117,4 @@ for i,clust in enumerate(clust_terms):
     clust.sort(key=lambda k: (k[1],k[2]), reverse=True)
     outfile.write(str(mean_sim) + "\t" + "\t".join(" ".join([t[0],str(t[1]),str(t[2])]) for t in clust) + "\n")
 outfile.close()
+

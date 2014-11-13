@@ -103,7 +103,9 @@ for f in args.i:
 date_clusters = defaultdict(list)
 date = re.compile(r"(\d{4})-(\d{2})-(\d{2})")
 for f in args.f:
+    print f
     dates = date.search(f.split("/")[-2]).groups()
+    print dates
     infile = codecs.open(f,"r","utf-8")
     clusters = [x.strip().split("\t")[:2] for x in infile.readlines()]
     infile.close()

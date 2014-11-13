@@ -20,7 +20,7 @@ termseqs = [x for x in termfile.readlines() if x.split("\t")[0] in terms]
 
 #plot term seqs
 time_start = datetime.datetime(2013,6,22,0,0,0)
-linestyles = ["-","-","--","|"]
+linestyles = ["-","-.","--","|"]
 for ts in termseqs:
     tokens = ts.strip().split("\t")
     l = tokens[0]

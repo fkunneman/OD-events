@@ -46,7 +46,7 @@ def retrieve_states_hmm(sequence):
     #calculate mean
     mean = numpy.mean(sequence)
     st_dev = gen_functions.return_standard_deviation(sequence)
-    print mean, st_dev
+#    print mean, st_dev
     #m = [mean,mean*3]
     po = [poisson(mean),poisson(mean*3)]    
     optimal_state = [[po[0].pmf(sequence[0]),[0]],[po[1].pmf(sequence[0]),[1]],0]
@@ -66,7 +66,7 @@ def retrieve_states_hmm(sequence):
         optimal_state = optimal_state_new
     pathprobs = [optimal_state[0][0],optimal_state[1][0]]
     top_path_index = pathprobs.index(max(pathprobs))
-    print [optimal_state[top_path_index][1],optimal_state[2]] 
+#    print [optimal_state[top_path_index][1],optimal_state[2]] 
     return [optimal_state[top_path_index][1],optimal_state[2]]
 
 print "making sliding windows"
@@ -84,10 +84,12 @@ for line in inread.readlines():
 
 print "calculating burstiness"
 for term in term_windows.keys():
-    print term,term_windows[term]
+    if term == "busongeval" or term == "montenegro":
+    	print term,term_windows[term]
     if args.m == "hmm":
         path = retrieve_states_hmm(term_windows[term])
-#        print term,path
+        if term == "busongeval" or term == "montenegro":
+            print term,path
         if 1 in path[0]:
             term_burst.append([term] + path)
 
