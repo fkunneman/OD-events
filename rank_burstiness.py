@@ -54,6 +54,7 @@ def make_windows(lines,queue):
 
 def retrieve_states_hmm(sequences,queue):
     for sequence in sequences:
+        print sequence
         s = sequence[1]
         mean = numpy.mean(s)
         st_dev = gen_functions.return_standard_deviation(s)
