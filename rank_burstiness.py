@@ -69,14 +69,14 @@ def retrieve_states_hmm(sequences,queue):
                 opts = []
                 observed = po[state].pmf(interval)
                 print "optimal_state[0][0]",optimal_state[0][0]
-                print "p[0][state]",p[0][state]
+                print "pro[0][state]",pro[0][state]
                 print "observed",observed
-                print "(optimal_state[0][0]*p[0][state]*observed)",(optimal_state[0][0]*p[0][state]*observed)
+                print "(optimal_state[0][0]*pro[0][state]*observed)",(optimal_state[0][0]*pro[0][state]*observed)
                 print "optimal_state[1][0]",optimal_state[0][0]
-                print "p[1][state]",p[0][state]
+                print "pro[1][state]",pro[0][state]
                 print "observed",observed
-                print "(optimal_state[1][0]*p[1][state]*observed)",(optimal_state[0][0]*p[0][state]*observed)
-                opts = [(optimal_state[statem1][0]*p[statem1][state]*observed) for statem1 in [0,1]]
+                print "(optimal_state[1][0]*pro[1][state]*observed)",(optimal_state[0][0]*pro[0][state]*observed)
+                opts = [(optimal_state[statem1][0]*pro[statem1][state]*observed) for statem1 in [0,1]]
                 quit()
                 best = opts.index(max(opts))
                 optimal_state_new[state].append(max(opts))
