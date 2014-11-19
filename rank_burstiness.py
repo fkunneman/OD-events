@@ -56,17 +56,21 @@ def retrieve_states_hmm(sequences,queue):
     for sequence in sequences:
         print sequence
         s = sequence[1]
+        print s
         mean = numpy.mean(s)
         st_dev = gen_functions.return_standard_deviation(s)
         po = [poisson(mean),poisson(mean*3)]    
         optimal_state = [[po[0].pmf(s[0]),[0]],[po[1].pmf(s[0]),[1]],0]
         for i,interval in enumerate(s[1:]):
+            print interval
             optimal_state_new = [[],[],optimal_state[2]]
             bconfs = []
             for state in [0,1]:
                 opts = []
                 observed = po[state].pmf(interval)
+                print observed
                 opts = [(optimal_state[statem1][0]*p[statem1][state]*observed) for statem1 in [0,1]]
+                quit()
                 best = opts.index(max(opts))
                 optimal_state_new[state].append(max(opts))
                 optimal_state_new[state].append(optimal_state[best][1] + [state])
