@@ -31,11 +31,11 @@ outwrite = codecs.open(args.w,"w","utf-8")
 begin_d = datetime.datetime(args.b[0],args.b[1],args.b[2],args.b[3],args.b[4],args.b[5])
 term_windows = defaultdict(list)
 term_burst = []
-p = defaultdict(lambda : {}) 
-p[0][0] = 0.9
-p[1][1] = 0.6
-p[0][1] = 0.1
-p[1][0] = 0.4
+pro = defaultdict(lambda : {}) 
+pro[0][0] = 0.9
+pro[1][1] = 0.6
+pro[0][1] = 0.1
+pro[1][0] = 0.4
 
 def make_windows(lines,queue):
     for line in lines:
