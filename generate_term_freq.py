@@ -5,7 +5,9 @@ from collections import defaultdict
 
 outfile = codecs.open(sys.argv[1],"w","utf-8")
 termtype = sys.argv[2] #either 'uni' or 'cooc'
-infiles = sys.argv[3:]
+mincount = int(sys.argv[3])
+mincount_burst = int(sys.argv[4])
+infiles = sys.argv[5:]
 
 wordfreq = defaultdict(list)
 wordcount = defaultdict(int)
@@ -43,7 +45,7 @@ else:
 
 print "pruning terms"
 for term in wordcount.keys():
-    if wordcount[term] >= 10:
+    if wordcount[term] >= mincount:
         wordfreq[term] = (i+1) * ['0']
         include[term] = True
     else:
@@ -66,5 +68,5 @@ for i,infile in enumerate(infiles):
                 wordfreq[term][i] = tokens[1]
 
 for term in wordfreq.keys():
-    if max([int(x) for x in wordfreq[term]]) >= 10:
+    if max([int(x) for x in wordfreq[term]]) >= mincount_burst:
         outfile.write(term + "\t" + "|".join(wordfreq[term]) + "\n")

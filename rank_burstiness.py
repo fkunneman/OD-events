@@ -127,7 +127,7 @@ while True:
         for i,u in enumerate(l[1]):
             if u == 1:
                 if args.u == "day":
-                    dates.append(begin_d+datetime.timedelta(days=i*args.s))
+                    dates.append(begin_d+datetime.timedelta(days=i,args.s))
                 elif args.u == "hour":
                     dates.append(begin_d+datetime.timedelta(hours=i*args.s))
                 elif args.u == "minute":
