@@ -79,10 +79,10 @@ for term in bursties:
     vals = []
     for i,window in enumerate(windows):
         if window > 0:
-            Fst = window
+            Fst = window # f_u,t
             Nt = date_num_tweets[i]
             vals.append(Fst/Nt)
-    Ps = sum(vals) / len(vals)
+    Ps = sum(vals) / len(vals) # similar to 1/l * sum(vals)
     #print term,vals,Fst,Nt,Ps
     term_Ps[term] = Ps
 
